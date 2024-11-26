@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->string('category_name')->nullable(); // Add the category_name column
+        Schema::create('colors', function (Blueprint $table) {
+            $table->id(); // Primary key
+            $table->string('color_name'); // Color name
+            $table->timestamps(); // Timestamps for created_at and updated_at
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('carts', function (Blueprint $table) {
-            $table->dropColumn('category_name'); // Remove the category_name column if rolled back
-        });
+        Schema::dropIfExists('colors');
     }
 };

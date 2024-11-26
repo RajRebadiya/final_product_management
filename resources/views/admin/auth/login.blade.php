@@ -132,17 +132,17 @@
                                         </div>
                                         <div class="position-relative">
                                             <hr class="bg-body-secondary mt-5 mb-4" />
-                                            <div class="divider-content-center bg-body-emphasis">Use Your Mobile</div>
+                                            <div class="divider-content-center bg-body-emphasis">Use Your Email</div>
                                         </div>
                                         <form action="{{ route('login_staff') }}" method="post">
                                             @csrf
                                             <div class="mb-3 text-start"><label class="form-label"
-                                                    for="mobile_no">Mobile No</label>
+                                                    for="email">Email</label>
                                                 <div class="form-icon-container"><input
-                                                        class="form-control form-icon-input" id="mobile_no"
-                                                        type="text" name='mobile_no' placeholder="5488745415" value="{{ old('mobile_no') }}" /><span
+                                                        class="form-control form-icon-input" id="email"
+                                                        type="text" name='email' placeholder="xyz@veer.com" value="{{ old('email') }}" /><span
                                                         class="fas fa-user text-body fs-9 form-icon"></span>
-                                                        @error('mobile_no')
+                                                        @error('email')
                                                             <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                       </div>

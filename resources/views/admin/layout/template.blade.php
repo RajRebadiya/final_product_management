@@ -20,14 +20,22 @@
     <!--    Favicons-->
     <!-- ===============================================-->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/img/favicons/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/img/favicons/veer_creation-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/img/favicons/veer_creation-16x16.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32"
+        href="{{ asset('assets/img/favicons/veer_creation-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16"
+        href="{{ asset('assets/img/favicons/veer_creation-16x16.png') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('assets/img/favicons/veer_creation-32x32.ico') }}">
     <link rel="manifest" href="{{ asset('assets/img/favicons/manifest.json') }}">
     <meta name="msapplication-TileImage" content="{{ asset('assets/img/favicons/mstile-150x150.png') }}">
     <meta name="theme-color" content="#ffffff">
     <script src="{{ asset('assets/vendors/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('assets/js/config.js') }}"></script>
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     {{-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script> --}}
 
 
@@ -45,36 +53,109 @@
     <link href="{{ asset('assets/css/user-rtl.min.css') }}" type="text/css" rel="stylesheet" id="user-style-rtl">
     <link href="{{ asset('assets/css/user.min.css') }}" type="text/css" rel="stylesheet" id="user-style-default">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Choices.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <!-- Choices.js JS -->
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
-    <!--<style>-->
-        <!--/* Loader Styles */-->
-    <!--    #page-loader {-->
-    <!--        position: fixed;-->
-    <!--        top: 0;-->
-    <!--        left: 0;-->
-    <!--        width: 100%;-->
-    <!--        height: 100%;-->
-    <!--        background-color: rgba(255, 255, 255, 0.9);-->
-    <!--        z-index: 9999;-->
-    <!--        display: flex;-->
-    <!--        justify-content: center;-->
-    <!--        align-items: center;-->
-    <!--    }-->
+    <style>
+        /* Loader Styles */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            /* Semi-transparent black */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            color: #ffffff;
+            /* White text for the loader */
+            font-family: Arial, sans-serif;
+        }
 
-    <!--    #page-loader .spinner {-->
-    <!--        border: 8px solid #f3f3f3;-->
-    <!--        border-top: 8px solid #3498db;-->
-    <!--        border-radius: 50%;-->
-    <!--        width: 50px;-->
-    <!--        height: 50px;-->
-    <!--        animation: spin 1s linear infinite;-->
-    <!--    }-->
+        .loader {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            /* Space between circles */
+        }
 
-    <!--    @keyframes spin {-->
-    <!--        0% { transform: rotate(0deg); }-->
-    <!--        100% { transform: rotate(360deg); }-->
-    <!--    }-->
-    <!--</style>-->
+        .loader .circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            /* Default color */
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        .loader .circle:nth-child(1) {
+            background-color: #FF5733;
+            /* Red */
+            animation-delay: 0s;
+        }
+
+        .loader .circle:nth-child(2) {
+            background-color: #FFC300;
+            /* Yellow */
+            animation-delay: 0.2s;
+        }
+
+        .loader .circle:nth-child(3) {
+            background-color: #28A745;
+            /* Green */
+            animation-delay: 0.4s;
+        }
+
+        .loader .circle:nth-child(4) {
+            background-color: #007BFF;
+            /* Blue */
+            animation-delay: 0.6s;
+        }
+
+        .loader .circle:nth-child(5) {
+            background-color: #6F42C1;
+            /* Purple */
+            animation-delay: 0.8s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                /* At the original position */
+            }
+
+            50% {
+                transform: translateY(-20px);
+                /* Move upward */
+            }
+        }
+
+        #page-loader p {
+            margin-top: 20px;
+            font-size: 18px;
+            letter-spacing: 1px;
+            animation: fadeIn 1.5s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0.5;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
     <script>
         var phoenixIsRTL = window.config.config.phoenixIsRTL;
         if (phoenixIsRTL) {
@@ -96,7 +177,19 @@
 </head>
 
 <body>
-     <!-- Page Loader -->
+    <div id="page-loader">
+        <div class="loader">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+        <p>Loading, please wait...</p>
+    </div>
+
+
+    <!-- Page Loader -->
     <!-- <div id="page-loader">-->
     <!--    <div class="spinner"></div>-->
     <!--</div>-->
@@ -110,49 +203,52 @@
                 <div class="navbar-vertical-content">
                     <ul class="navbar-nav flex-column" id="navbarVerticalNav">
                         <li class="nav-item">
-                            <!-- parent pages-->
-                            <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1"
-                                    href="{{ route('dashboard') }}" role="button" data-bs-toggle="collapse"
-                                    aria-expanded="true" aria-controls="nv-home">
+                            <!-- Dashboard -->
+                            <div class="nav-item-wrapper">
+                                <a class="nav-link dropdown-indicator label-1 theme-text"
+                                    href="{{ route('dashboard') }}">
                                     <div class="d-flex align-items-center">
-                                        <span data-feather="pie-chart"></span>
-                                        <a class='text-dark' href="{{ route('dashboard_2') }}">Dashboard</a>
+                                        <span data-feather="home"></span>
+                                        <span style='margin-left: 10px;'>Dashboard</span>
                                     </div>
                                 </a>
-
                             </div>
-                            <!--<div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1"-->
-                            <!--        href="{{ route('dashboard') }}" role="button" data-bs-toggle="collapse"-->
-                            <!--        aria-expanded="true" aria-controls="nv-home">-->
-                            <!--        <div class="d-flex align-items-center">-->
-                            <!--            <span data-feather="pie-chart"></span>-->
-                            <!--            <a class='text-dark' href="{{ route('add-category') }}">Category</a>-->
-                            <!--        </div>-->
-                            <!--    </a>-->
 
-                            <!--</div>-->
-                            <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1"
-                                href="{{ route('category') }}" role="button" data-bs-toggle="collapse"
-                                aria-expanded="true" aria-controls="nv-home">
-                                <div class="d-flex align-items-center">
-                                    <span data-feather="pie-chart"></span>
-                                    <a class='text-dark' href="{{ route('category') }}">Category</a>
-                                </div>
-                            </a>
-
-                        </div>
-                            <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1"
-                                    href="{{ route('dashboard') }}" role="button" data-bs-toggle="collapse"
-                                    aria-expanded="true" aria-controls="nv-home">
+                            <!-- Category -->
+                            <div class="nav-item-wrapper">
+                                <a class="nav-link dropdown-indicator label-1 theme-text"
+                                    href="{{ route('category') }}">
                                     <div class="d-flex align-items-center">
-                                        <span data-feather="pie-chart"></span>
-                                        <a class='text-dark' href="{{ route('dashboard_2') }}">Product</a>
+                                        <span data-feather="grid"></span>
+                                        <span style='margin-left: 10px;'>Category</span>
                                     </div>
                                 </a>
+                            </div>
 
+                            <!-- Product -->
+                            <div class="nav-item-wrapper">
+                                <a class="nav-link dropdown-indicator label-1 theme-text"
+                                    href="{{ route('product') }}">
+                                    <div class="d-flex align-items-center">
+                                        <span data-feather="shopping-bag"></span>
+                                        <span style='margin-left: 10px;'>Product</span>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- Cart -->
+                            <div class="nav-item-wrapper">
+                                <a class="nav-link dropdown-indicator label-1 theme-text"
+                                    href="{{ route('cart_detail') }}">
+                                    <div class="d-flex align-items-center">
+                                        <span data-feather="shopping-cart"></span>
+                                        <span style='margin-left: 10px;'>Cart</span>
+                                    </div>
+                                </a>
                             </div>
                         </li>
                     </ul>
+
                 </div>
             </div>
             {{-- <div class="navbar-vertical-footer"><button
@@ -169,10 +265,10 @@
                         aria-controls="navbarVerticalCollapse" aria-expanded="false"
                         aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span
                                 class="toggle-line"></span></span></button>
-                    <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard_2') }}">
+                    <a class="navbar-brand me-1 me-sm-3" href="{{ route('dashboard') }}">
                         <div class="d-flex align-items-center">
                             <div class="d-flex align-items-center"><img src="assets/img/favicons/veer_logo_1.png"
-                                    alt="phoenix" height='55px'/>
+                                    alt="phoenix" height='55px' />
                                 <!--<h5 class="logo-text ms-2 d-none d-sm-block">Veer Creation</h5>-->
                             </div>
                         </div>
@@ -202,6 +298,83 @@
                                 for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left"
                                 data-bs-title="Switch theme" style="height:32px;width:32px;"><span class="icon"
                                     data-feather="sun"></span></label></div>
+                    </li>
+                    <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser"
+                            href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                            aria-haspopup="true" aria-expanded="false">
+                            <div class="avatar avatar-l ">
+                                <img class="rounded-circle " src="assets/img/team/30.webp" alt="">
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
+                            aria-labelledby="navbarDropdownUser">
+                            <div class="card position-relative border-0">
+                                <div class="card-body p-0">
+                                    <div class="text-center pt-4 pb-3">
+                                        <div class="avatar avatar-xl ">
+                                            <img class="rounded-circle " src="assets/img/team/30.webp"
+                                                alt="">
+                                        </div>
+                                        <h6 class="mt-2 text-body-emphasis">{{ Auth::guard('staff')->user()->name }}
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="overflow-auto scrollbar" style="height: 4rem;">
+                                    <ul class="nav d-flex flex-column mb-2 pb-1">
+                                        <li class="nav-item"><a class="nav-link px-3 d-block"
+                                                href={{ route('profile') }}> <svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16px" height="16px" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="feather feather-user me-2 text-body align-bottom">
+                                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="12" cy="7" r="4"></circle>
+                                                </svg><span>Profile</span></a></li>
+                                        <li class="nav-item"><a class="nav-link px-3 d-block"
+                                                href="{{ route('dashboard') }}"><svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="feather feather-pie-chart me-2 text-body align-bottom">
+                                                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                                                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                                                </svg>Dashboard</a></li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer p-0 border-top border-translucent">
+                                    <ul class="nav d-flex flex-column my-3">
+                                        <li class="nav-item"><a class="nav-link px-3 d-block"
+                                                href={{ route('register') }}> <svg xmlns="http://www.w3.org/2000/svg"
+                                                    width="16px" height="16px" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    class="feather feather-user-plus me-2 text-body align-bottom">
+                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                                    <line x1="20" y1="8" x2="20"
+                                                        y2="14"></line>
+                                                    <line x1="23" y1="11" x2="17"
+                                                        y2="11"></line>
+                                                </svg>Add another account</a></li>
+                                    </ul>
+                                    <hr>
+                                    <div class="px-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100"
+                                            href={{ route('logout') }}> <svg xmlns="http://www.w3.org/2000/svg"
+                                                width="16px" height="16px" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="feather feather-log-out me-2">
+                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                                <polyline points="16 17 21 12 16 7"></polyline>
+                                                <line x1="21" y1="12" x2="9" y2="12">
+                                                </line>
+                                            </svg>Sign out</a></div>
+                                    <div class="my-2 text-center fw-bold fs-10 text-body-quaternary"><a
+                                            class="text-body-quaternary me-1" href="#!">Privacy policy</a>•<a
+                                            class="text-body-quaternary mx-1" href="#!">Terms</a>•<a
+                                            class="text-body-quaternary ms-1" href="#!">Cookies</a></div>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -994,8 +1167,7 @@
                                                         class="me-2 uil"></span>Trip</span></div>
                                         </a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item"
-                                                    href="apps/travel-agency/trip/homepage.html">
+                                            <li><a class="dropdown-item" href="apps/travel-agency/trip/homepage.html">
                                                     <div class="dropdown-item-wrapper"><span
                                                             class="me-2 uil"></span>Homepage</div>
                                                 </a></li>
@@ -1004,8 +1176,7 @@
                                                     <div class="dropdown-item-wrapper"><span
                                                             class="me-2 uil"></span>Trip details</div>
                                                 </a></li>
-                                            <li><a class="dropdown-item"
-                                                    href="apps/travel-agency/trip/checkout.html">
+                                            <li><a class="dropdown-item" href="apps/travel-agency/trip/checkout.html">
                                                     <div class="dropdown-item-wrapper"><span
                                                             class="me-2 uil"></span>Checkout</div>
                                                 </a></li>
@@ -1088,8 +1259,8 @@
                                             </div>
                                         </a></li>
                                     <li><a class="dropdown-item" href="apps/social/settings.html">
-                                            <div class="dropdown-item-wrapper"><span
-                                                    class="me-2 uil"></span>Settings</div>
+                                            <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>Settings
+                                            </div>
                                         </a></li>
                                 </ul>
                             </li>
@@ -1137,8 +1308,8 @@
                                             </div>
                                         </a></li>
                                     <li><a class="dropdown-item" href="pages/landing/alternate.html">
-                                            <div class="dropdown-item-wrapper"><span
-                                                    class="me-2 uil"></span>Alternate</div>
+                                            <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>Alternate
+                                            </div>
                                         </a></li>
                                 </ul>
                             </li>
@@ -1238,8 +1409,7 @@
                                                     <div class="dropdown-item-wrapper"><span
                                                             class="me-2 uil"></span>Lock screen</div>
                                                 </a></li>
-                                            <li><a class="dropdown-item"
-                                                    href="pages/authentication/simple/2FA.html">
+                                            <li><a class="dropdown-item" href="pages/authentication/simple/2FA.html">
                                                     <div class="dropdown-item-wrapper"><span
                                                             class="me-2 uil"></span>2FA</div>
                                                 </a></li>
@@ -1341,8 +1511,8 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="demo/vertical-sidenav.html">
-                                            <div class="dropdown-item-wrapper"><span
-                                                    class="me-2 uil"></span>Vertical sidenav</div>
+                                            <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>Vertical
+                                                sidenav</div>
                                         </a></li>
                                     <li><a class="dropdown-item" href="demo/dark-mode.html">
                                             <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>Dark
@@ -6808,7 +6978,8 @@
                                         <div
                                             class="my-2 text-center fw-bold fs-10 text-body-tertiary text-opactity-85">
                                             <a class="fw-bolder" href="pages/notifications.html">Notification
-                                                history</a></div>
+                                                history</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -8171,158 +8342,6 @@
                 </div>
             </footer>
         </div>
-        {{-- <div class="modal fade" id="searchBoxModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="true" data-phoenix-modal="data-phoenix-modal" style="--phoenix-backdrop-opacity: 1;">
-        <div class="modal-dialog">
-          <div class="modal-content mt-15 rounded-pill">
-            <div class="modal-body p-0">
-              <div class="search-box navbar-top-search-box" data-list='{"valueNames":["title"]}' style="width: auto;">
-                <form class="position-relative" data-bs-toggle="search" data-bs-display="static"><input class="form-control search-input fuzzy-search rounded-pill form-control-lg" type="search" placeholder="Search..." aria-label="Search" />
-                  <span class="fas fa-search search-box-icon"></span>
-                </form>
-                <div class="btn-close position-absolute end-0 top-50 translate-middle cursor-pointer shadow-none" data-bs-dismiss="search"><button class="btn btn-link p-0" aria-label="Close"></button></div>
-                <div class="dropdown-menu border start-0 py-0 overflow-hidden w-100">
-                  <div class="scrollbar-overlay" style="max-height: 30rem;">
-                    <div class="list pb-3">
-                      <h6 class="dropdown-header text-body-highlight fs-10 py-2">24 <span class="text-body-quaternary">results</span></h6>
-                      <hr class="my-0" />
-                      <h6 class="dropdown-header text-body-highlight fs-9 border-bottom border-translucent py-2 lh-sm">Recently Searched </h6>
-                      <div class="py-2"><a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"><span class="fa-solid fa-clock-rotate-left" data-fa-transform="shrink-2"></span> Store Macbook</div>
-                          </div>
-                        </a>
-                        <a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"> <span class="fa-solid fa-clock-rotate-left" data-fa-transform="shrink-2"></span> MacBook Air - 13″</div>
-                          </div>
-                        </a>
-                      </div>
-                      <hr class="my-0" />
-                      <h6 class="dropdown-header text-body-highlight fs-9 border-bottom border-translucent py-2 lh-sm">Products</h6>
-                      <div class="py-2"><a class="dropdown-item py-2 d-flex align-items-center" href="apps/e-commerce/landing/product-details.html">
-                          <div class="file-thumbnail me-2"><img class="h-100 w-100 object-fit-cover rounded-3" src="assets/img/products/60x60/3.png" alt="" /></div>
-                          <div class="flex-1">
-                            <h6 class="mb-0 text-body-highlight title">MacBook Air - 13″</h6>
-                            <p class="fs-10 mb-0 d-flex text-body-tertiary"><span class="fw-medium text-body-tertiary text-opactity-85">8GB Memory - 1.6GHz - 128GB Storage</span></p>
-                          </div>
-                        </a>
-                        <a class="dropdown-item py-2 d-flex align-items-center" href="apps/e-commerce/landing/product-details.html">
-                          <div class="file-thumbnail me-2"><img class="img-fluid" src="assets/img/products/60x60/3.png" alt="" /></div>
-                          <div class="flex-1">
-                            <h6 class="mb-0 text-body-highlight title">MacBook Pro - 13″</h6>
-                            <p class="fs-10 mb-0 d-flex text-body-tertiary"><span class="fw-medium text-body-tertiary text-opactity-85">30 Sep at 12:30 PM</span></p>
-                          </div>
-                        </a>
-                      </div>
-                      <hr class="my-0" />
-                      <h6 class="dropdown-header text-body-highlight fs-9 border-bottom border-translucent py-2 lh-sm">Quick Links</h6>
-                      <div class="py-2"><a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"><span class="fa-solid fa-link text-body" data-fa-transform="shrink-2"></span> Support MacBook House</div>
-                          </div>
-                        </a>
-                        <a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"> <span class="fa-solid fa-link text-body" data-fa-transform="shrink-2"></span> Store MacBook″</div>
-                          </div>
-                        </a>
-                      </div>
-                      <hr class="my-0" />
-                      <h6 class="dropdown-header text-body-highlight fs-9 border-bottom border-translucent py-2 lh-sm">Files</h6>
-                      <div class="py-2"><a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"><span class="fa-solid fa-file-zipper text-body" data-fa-transform="shrink-2"></span> Library MacBook folder.rar</div>
-                          </div>
-                        </a>
-                        <a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"> <span class="fa-solid fa-file-lines text-body" data-fa-transform="shrink-2"></span> Feature MacBook extensions.txt</div>
-                          </div>
-                        </a>
-                        <a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"> <span class="fa-solid fa-image text-body" data-fa-transform="shrink-2"></span> MacBook Pro_13.jpg</div>
-                          </div>
-                        </a>
-                      </div>
-                      <hr class="my-0" />
-                      <h6 class="dropdown-header text-body-highlight fs-9 border-bottom border-translucent py-2 lh-sm">Members</h6>
-                      <div class="py-2"><a class="dropdown-item py-2 d-flex align-items-center" href="pages/members.html">
-                          <div class="avatar avatar-l status-online  me-2 text-body">
-                            <img class="rounded-circle " src="assets/img/team/40x40/10.webp" alt="" />
-                          </div>
-                          <div class="flex-1">
-                            <h6 class="mb-0 text-body-highlight title">Carry Anna</h6>
-                            <p class="fs-10 mb-0 d-flex text-body-tertiary">anna@technext.it</p>
-                          </div>
-                        </a>
-                        <a class="dropdown-item py-2 d-flex align-items-center" href="pages/members.html">
-                          <div class="avatar avatar-l  me-2 text-body">
-                            <img class="rounded-circle " src="assets/img/team/40x40/12.webp" alt="" />
-                          </div>
-                          <div class="flex-1">
-                            <h6 class="mb-0 text-body-highlight title">John Smith</h6>
-                            <p class="fs-10 mb-0 d-flex text-body-tertiary">smith@technext.it</p>
-                          </div>
-                        </a>
-                      </div>
-                      <hr class="my-0" />
-                      <h6 class="dropdown-header text-body-highlight fs-9 border-bottom border-translucent py-2 lh-sm">Related Searches</h6>
-                      <div class="py-2"><a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"><span class="fa-brands fa-firefox-browser text-body" data-fa-transform="shrink-2"></span> Search in the Web MacBook</div>
-                          </div>
-                        </a>
-                        <a class="dropdown-item" href="apps/e-commerce/landing/product-details.html">
-                          <div class="d-flex align-items-center">
-                            <div class="fw-normal text-body-highlight title"> <span class="fa-brands fa-chrome text-body" data-fa-transform="shrink-2"></span> Store MacBook″</div>
-                          </div>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="text-center">
-                      <p class="fallback fw-bold fs-7 d-none">No Result Found.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="support-chat-container">
-        <div class="container-fluid support-chat">
-          <div class="card bg-body-emphasis">
-            <div class="card-header d-flex flex-between-center px-4 py-3 border-bottom border-translucent">
-              <h5 class="mb-0 d-flex align-items-center gap-2">Demo widget<span class="fa-solid fa-circle text-success fs-11"></span></h5>
-              <div class="btn-reveal-trigger"><button class="btn btn-link p-0 dropdown-toggle dropdown-caret-none transition-none d-flex" type="button" id="support-chat-dropdown" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h text-body"></span></button>
-                <div class="dropdown-menu dropdown-menu-end py-2" aria-labelledby="support-chat-dropdown"><a class="dropdown-item" href="#!">Request a callback</a><a class="dropdown-item" href="#!">Search in chat</a><a class="dropdown-item" href="#!">Show history</a><a class="dropdown-item" href="#!">Report to Admin</a><a class="dropdown-item btn-support-chat" href="#!">Close Support</a></div>
-              </div>
-            </div>
-            <div class="card-body chat p-0">
-              <div class="d-flex flex-column-reverse scrollbar h-100 p-3">
-                <div class="text-end mt-6"><a class="mb-2 d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" href="#!">
-                    <p class="mb-0 fw-semibold fs-9">I need help with something</p><span class="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                  </a><a class="mb-2 d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" href="#!">
-                    <p class="mb-0 fw-semibold fs-9">I can’t reorder a product I previously ordered</p><span class="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                  </a><a class="mb-2 d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" href="#!">
-                    <p class="mb-0 fw-semibold fs-9">How do I place an order?</p><span class="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                  </a><a class="false d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" href="#!">
-                    <p class="mb-0 fw-semibold fs-9">My payment method not working</p><span class="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                  </a></div>
-                <div class="text-center mt-auto">
-                  <div class="avatar avatar-3xl status-online"><img class="rounded-circle border border-3 border-light-subtle" src="assets/img/team/30.webp" alt="" /></div>
-                  <h5 class="mt-2 mb-3">Eric</h5>
-                  <p class="text-center text-body-emphasis mb-0">Ask us anything – we’ll get back to you here or by email within 24 hours.</p>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer d-flex align-items-center gap-2 border-top border-translucent ps-3 pe-4 py-3">
-              <div class="d-flex align-items-center flex-1 gap-3 border border-translucent rounded-pill px-4"><input class="form-control outline-none border-0 flex-1 fs-9 px-0" type="text" placeholder="Write message" /><label class="btn btn-link d-flex p-0 text-body-quaternary fs-9 border-0" for="supportChatPhotos"><span class="fa-solid fa-image"></span></label><input class="d-none" type="file" accept="image/*" id="supportChatPhotos" /><label class="btn btn-link d-flex p-0 text-body-quaternary fs-9 border-0" for="supportChatAttachment"> <span class="fa-solid fa-paperclip"></span></label><input class="d-none" type="file" id="supportChatAttachment" /></div><button class="btn p-0 border-0 send-btn"><span class="fa-solid fa-paper-plane fs-9"></span></button>
-            </div>
-          </div>
-        </div><button class="btn btn-support-chat p-0 border border-translucent"><span class="fs-8 btn-text text-primary text-nowrap">Chat demo</span><span class="ping-icon-wrapper mt-n4 ms-n6 mt-sm-0 ms-sm-2 position-absolute position-sm-relative"><span class="ping-icon-bg"></span><span class="fa-solid fa-circle ping-icon"></span></span><span class="fa-solid fa-headset text-primary fs-8 d-sm-none"></span><span class="fa-solid fa-chevron-down text-primary fs-7"></span></button>
-      </div> --}}
     </main><!-- ===============================================-->
     <!--    End of Main Content-->
     <!-- ===============================================-->
@@ -8489,15 +8508,14 @@
     <!-- ===============================================-->
     <!--    JavaScripts-->
     <!-- ===============================================-->
-     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const loader = document.getElementById('page-loader');
-            // Hide the loader once the page has fully loaded
-            window.onload = function () {
-                loader.style.display = 'none';
-            };
+    <script>
+        // Simulate page loading
+        window.addEventListener("load", function() {
+            const loader = document.getElementById("page-loader");
+            loader.style.display = "none"; // Hide the loader when the page is fully loaded
         });
     </script>
+
     <script src="{{ asset('assets/vendors/popper/popper.min.js') }}"></script>
     <script src="{{ asset('assets/vendors/bootstrap/bootstrap.min.js') }}"></script>
     <script src="{{ asset('assets/vendors/anchorjs/anchor.min.js') }}"></script>

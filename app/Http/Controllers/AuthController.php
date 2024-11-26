@@ -25,8 +25,9 @@ class AuthController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'mobile_no' => 'required|string|max:255|unique:tbl_staff,mobile_no|min:10|max:10',
-            'password' => 'required|string|min:8|same:confirm_password',
+            'email' => 'required|string|max:255|unique:tbl_staff,email',
+            'mobile_no' => 'required|string|max:255|unique:tbl_staff,mobile_no',
+            'password' => 'required|string|min:6|same:confirm_password',
             'confirm_password' => 'required'
         ]);
 
@@ -36,6 +37,7 @@ class AuthController extends Controller
         $staff = new Staff();
         $staff->name = $request->name;
         $staff->mobile_no = $request->mobile_no;
+        $staff->email = $request->email;
         $staff->password = $request->password;
         $staff->emp_code = $lastEmpCode + 1;
         $staff->permission = '1,2,3';
@@ -47,12 +49,12 @@ class AuthController extends Controller
     public function login_staff(Request $request)
     {
         $request->validate([
-            'mobile_no' => 'required|string|max:255',
-            'password' => 'required|string|min:8'
+            'email' => 'required|string|max:255',
+            'password' => 'required|string|min:6'
         ]);
 
         // Fetch the staff member by mobile number
-        $staff = Staff::where('mobile_no', $request->mobile_no)->first();
+        $staff = Staff::where('email', $request->email)->first();
 
         if (!$staff || $request->password !== $staff->password) {
             return redirect()->back()->with('error', 'Invalid credentials');
@@ -61,7 +63,7 @@ class AuthController extends Controller
         // Manually log the staff in
         Auth::guard('staff')->login($staff);
 
-        return redirect()->route('dashboard_2')->with('success', 'Login successful');
+        return redirect()->route('dashboard')->with('login_success', 'Login successful');
     }
 
     public function logout()
@@ -72,5 +74,42 @@ class AuthController extends Controller
         } else {
             return redirect()->route('login')->with('success', 'Logout successful');
         }
+    }
+
+    public function profile()
+    {
+        return view('admin.auth.profile');
+    }
+
+    public function update_profile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|max:255',
+            'mobile_no' => 'required|string|max:255',
+        ]);
+
+        if($request->password != null && $request->confirm_password != null && $request->old_password != null){
+            $request->validate([
+                'password' => 'required|string|min:6|same:confirm_password',
+                'confirm_password' => 'required|string|min:6',
+            ]);
+            $staff = auth()->guard('staff')->user();
+            if($staff->password != $request->old_password){
+                return redirect()->back()->with('error', 'Old Password is incorrect');
+            }
+            $staff->password = $request->password;
+            $staff->save();
+
+        }
+
+
+        $staff = auth()->guard('staff')->user();
+        $staff->name = $request->name;
+        $staff->email = $request->email;
+        $staff->mobile_no = $request->mobile_no;
+        $staff->save();
+
+        return redirect()->route('profile')->with('success', 'Profile updated successfully');
     }
 }

@@ -132,7 +132,7 @@
                                         </div>
                                         <div class="position-relative mt-4">
                                             <hr class="bg-body-secondary" />
-                                            <div class="divider-content-center bg-body-emphasis">Use Your Mobile</div>
+                                            <div class="divider-content-center bg-body-emphasis">Use Your Email</div>
                                         </div>
                                         <form action='{{ route('register_staff') }}' method="post">
                                             @csrf
@@ -145,10 +145,18 @@
                                                 @enderror
                                             </div>
                                             <div class="mb-3 text-start"><label class="form-label"
-                                                    for="mobile">Mobile Number</label><input class="form-control"
-                                                    id="mobile" type="text" name='mobile_no'
-                                                    placeholder="98574 58487" value="{{ old('mobile_no') }}" />
+                                                    for="mobile_no">Mobile No</label><input class="form-control"
+                                                    id="mobile_no" type="text" name='mobile_no'
+                                                    placeholder="Name" value="{{ old('mobile_no') }}" />
                                                 @error('mobile_no')
+                                                    <span class="text-danger">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="mb-3 text-start"><label class="form-label"
+                                                    for="email">Email</label><input class="form-control"
+                                                    id="email" type="email" name='email'
+                                                    placeholder="xyz@veer.com" value="{{ old('email') }}" />
+                                                @error('email')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
                                             </div>

@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+// Route::get('/', function () {
+//     return view('admin.product.dashboard_2');
+// })->name('dashboard');
 
 Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'product_detail')->name('product_detail');
@@ -26,8 +26,10 @@ Route::controller(ProductController::class)->group(function () {
 
 Route::controller(HomeController::class)->middleware('auth:staff')->group(function () {
 
+    // Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/dashboard', 'dashboard')->name('dashboard');
-    Route::get('/dashboard_2', 'dashboard_2')->name('dashboard_2');
+    Route::get('/', 'dashboard')->name('dashboard');
+    Route::get('/product', 'dashboard_2')->name('product');
     Route::get('/category', 'category')->name('category');
     Route::post('/add-product', 'add_product')->name('add-product');
     Route::get('/add-category', 'add_category')->name('add-category');
@@ -50,6 +52,9 @@ Route::controller(HomeController::class)->middleware('auth:staff')->group(functi
     Route::get('/generate_pdf', 'generatePdf')->name('generate_pdf');
     Route::get('/cart-detail' , 'cart_detail')->name('cart_detail');
     Route::get('/filter','filter')->name('products.filter');
+
+    Route::post('/save-cart','save_cart')->name('save-cart');
+
     
 
   
@@ -66,4 +71,6 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/register_staff' , 'register_staff')->name('register_staff');
     // Route::post('/register-post', 'register_post')->name('register-post');
     Route::get('/logout', 'logout')->name('logout');
+    Route::get('/profile', 'profile')->name('profile');
+    Route::post('/update_profile', 'update_profile')->name('update_profile');
 });

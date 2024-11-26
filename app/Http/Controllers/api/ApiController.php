@@ -6,10 +6,34 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Color;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ProductColor;
+use Illuminate\Support\Facades\Auth;
 
 class ApiController extends Controller
 {
+
+    public function displayAllProducts()
+    {
+        // Fetch all products with their associated colors
+        $products = Product::with('colors')->orderBY('id', 'desc')->get();
+
+        if ($products->isEmpty()) {
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'No products found.',
+                'data' => []
+            ]);
+        }
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Products retrieved successfully.',
+            'data' => $products
+        ]);
+    }
+
     //
     public function category_data()
     {
@@ -18,7 +42,7 @@ class ApiController extends Controller
         $search = request()->search;
 
 
-        $categories = Category::where('name', 'LIKE', "{$search}%")->where('status' , 'Active')->orderBy('name', 'asc')->get();
+        $categories = Category::where('name', 'LIKE', "{$search}%")->where('status', 'Active')->orderBy('name', 'asc')->get();
         // dd($categories);
 
         // dd($categories);
@@ -123,8 +147,9 @@ class ApiController extends Controller
             'image' => 'required',
             'category_id' => 'required',
             'category_name' => 'required',
-            'price'=>'required',
-            'thumb'=>'required'
+            'price' => 'required',
+            'thumb' => 'required',
+            'qty' => 'required',
         ];
 
         $messages = [
@@ -173,19 +198,19 @@ class ApiController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = $image->getClientOriginalName();
-             $imageExtansion = $image->getClientOriginalExtension();
-           $destinationPath = public_path('storage/images/' . $category_name);
+            $imageExtansion = $image->getClientOriginalExtension();
+            $destinationPath = public_path('storage/images/' . $category_name);
             $image->move($destinationPath, $imageName);
         } else {
             return redirect()->back()->with('error', 'Product image is required.');
         }
-        
-        
-          if ($request->hasFile('thumb')) {
+
+
+        if ($request->hasFile('thumb')) {
             $thumbimage = $request->file('thumb');
             $thumbimageName = $thumbimage->getClientOriginalName();
-             $thumbimageExtansion = $thumbimage->getClientOriginalExtension();
-           $destinationPath = public_path('storage/thumbnail/' . $category_name);
+            $thumbimageExtansion = $thumbimage->getClientOriginalExtension();
+            $destinationPath = public_path('storage/thumbnail/' . $category_name);
             $thumbimage->move($destinationPath, $thumbimageName);
         } else {
             return redirect()->back()->with('error', 'Product thumb image is required.');
@@ -200,14 +225,56 @@ class ApiController extends Controller
         $product->category_id = $request->category_id;
         $product->category_name = $request->category_name;
         $product->status = 'Active';
-        $product->sync =1;
+        $product->qty = $request->qty;
+        $product->sync = 1;
         $product->price = $request->price;
         $product->save();
+
+
+        // Process the color data from the request
+        if ($request->color) {
+
+            $colors = json_decode($request->color, true);
+            if ($colors) {
+                foreach ($colors as $colorData) {
+                    $colorName = null;
+
+                    if (isset($colorData['color_name'])) {
+                        $colorName = $colorData['color_name'];
+                    } else {
+                        $colorName = $colorData['new_color'];
+                    }
+                    // Check if the color already exists in the Color table
+                    $existingColor = Color::where('color_name', $colorName)->first();
+
+                    if (!$existingColor) {
+                        // Only create a new entry if the color doesn't already exist
+                        $color = new Color();
+                        $color->color_name = $colorName;
+                        $color->save();
+                    }
+
+
+                    $color = new ProductColor();
+                    $color->product_id = $product->id; // Associate with the newly created product
+                    $color->color_name = $colorData['color_name']; // Get color name from the object
+                    $color->quantity = $colorData['quantity']; // Get quantity from the object
+                    $color->save(); // Save color details
+                }
+
+                $productwithcolor = Product::with('colors')->find($product->id);
+            }
+        }
+
+        // dd($colors);
+
+        // Loop through the color data and save each color in the product_colors table
+
 
         return response()->json([
             'status_code' => 200,
             'message' => 'Product added successfully',
-            'data' => [$product]
+            'data' => [$productwithcolor ?? $product]
         ]);
     }
 
@@ -305,8 +372,13 @@ class ApiController extends Controller
                 'name' => $product->p_name,
                 'category_name' => $product->category ? $product->category->name : null,
                 'image' => $product->image,
-                'thumb'=>$product->thumb,
-                'price'=>$product->price,
+                'thumb' => $product->thumb,
+                'price' => $product->price,
+                'barcode' => $product->barcode ?? "",
+                'type' => $product->type ?? "",
+                'level' => $product->level ?? "",
+                'qty' => $product->qty,
+                'colors' => $product->colors ?? [],
                 'stock_status' => $product->stock_status,
                 'category_id' => $product->category_id,
                 'created_at' => $product->created_at->format('Y-m-d H:i:s'),
@@ -319,7 +391,7 @@ class ApiController extends Controller
             'status_code' => 200,
             'message' => 'Products successfully loaded',
             'data' => $products->items(),
-            
+
 
         ]);
     }
@@ -353,10 +425,10 @@ class ApiController extends Controller
 
         // Use page and limit for pagination
         $categoryQuery = Category::where('name', 'LIKE', "{$search}%")->where('status', 'Active')->orderBy('name', 'asc');
-        
-        
-     // Count total matching categories
-    $totalCount = $categoryQuery->count();
+
+
+        // Count total matching categories
+        $totalCount = $categoryQuery->count();
 
 
 
@@ -371,7 +443,7 @@ class ApiController extends Controller
                 'id' => $category->id,
                 'name' => $category->name,
                 'status' => $category->status,
-                'price'=>$category->price,
+                'price' => $category->price,
                 'count' => $category->products()->where('status', 'Active')->count(),
 
                 // 'created_at' => $category->created_at->format('Y-m-d H:i:s'),
@@ -383,7 +455,7 @@ class ApiController extends Controller
         return response()->json([
             'status_code' => 200,
             'message' => 'categories successfully loaded',
-             'total_count' => $totalCount, // Total count of matching categories
+            'total_count' => $totalCount, // Total count of matching categories
             'data' => $categorys->items(),
             // 'count' => $categorys->products()->count(),
 
@@ -506,18 +578,17 @@ class ApiController extends Controller
 
     public function edit_product(Request $request)
     {
+
         // dd($request->all());
         $rules = [
             'id' => 'required',
             'p_name' => 'required',
             'category_id' => 'required',
-            
         ];
 
         // Validate the incoming request
         $validator = Validator::make($request->all(), $rules);
 
-        // Check if validation fails
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             $errorMessage = implode(' ', $errors);
@@ -537,9 +608,10 @@ class ApiController extends Controller
                 'data' => []
             ]);
         }
-        $category_name = $categories->name;
 
+        $category_name = $categories->name;
         $product = Product::find($request->id);
+
         if (!$product) {
             return response()->json([
                 'status_code' => 400,
@@ -548,77 +620,114 @@ class ApiController extends Controller
             ]);
         }
 
-          $imageName = $product->image; // Default to the current image name
-
+        // Handle image upload
+        $imageName = $product->image; // Default to current image
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME); // Get the base name without extension
-            $extension = $image->getClientOriginalExtension(); // Get the extension
+            $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $image->getClientOriginalExtension();
             $destinationPath = public_path('storage/images/' . $category_name);
-            $imageName = $originalName . '.' . $extension; // Default name
+            $imageName = $originalName . '.' . $extension;
             $counter = 1;
 
-            // Check if a file with the same name exists, and append a counter if it does
             while (file_exists($destinationPath . '/' . $imageName)) {
                 $imageName = $originalName . '_' . $counter . '.' . $extension;
                 $counter++;
             }
 
-            // Move the uploaded file to the destination
             $image->move($destinationPath, $imageName);
-            // $product->image = $imageName;
         }
-        
-          if ($request->hasFile('thumb')) {
+
+        // Handle thumb image upload
+        $thumbimageName = $product->thumb; // Default to current thumb
+        if ($request->hasFile('thumb')) {
             $thumbimage = $request->file('thumb');
-            // dd()
-            $thumboriginalName = pathinfo($thumbimage->getClientOriginalName(), PATHINFO_FILENAME); // Get the base name without extension
-            $thumbextension = $thumbimage->getClientOriginalExtension(); // Get the extension
+            $thumboriginalName = pathinfo($thumbimage->getClientOriginalName(), PATHINFO_FILENAME);
+            $thumbextension = $thumbimage->getClientOriginalExtension();
             $thumbdestinationPath = public_path('storage/thumbnail/' . $category_name);
-            $thumbimageName = $thumboriginalName . '.' . $extension; // Default name
+            $thumbimageName = $thumboriginalName . '.' . $thumbextension;
             $counter = 1;
 
-            // Check if a file with the same name exists, and append a counter if it does
             while (file_exists($thumbdestinationPath . '/' . $thumbimageName)) {
-                $thumbimageName = $thumboriginalName . '_' . $counter . '.' . $extension;
+                $thumbimageName = $thumboriginalName . '_' . $counter . '.' . $thumbextension;
                 $counter++;
             }
 
-            // Move the uploaded file to the destination
             $thumbimage->move($thumbdestinationPath, $thumbimageName);
-            // $product->image = $imageName;
         }
 
+        // Update product details
+        $product->p_name = $request->p_name;
+        $product->image = $imageName;
+        $product->thumb = $thumbimageName;
+        $product->price = $request->price;
+        $product->qty = $request->qty;
+        $product->sync = 1;
+        $product->save();
 
-        if($request->p_name != $product->p_name){
-            
-            if (Product::where('p_name', $request->p_name)->exists()) {
+        // Handle colors
+        if ($request->colors) {
+            $colors = json_decode($request->colors, true);
+
+            // Check for duplicate colors in the input
+            $colorNames = array_column($colors, 'color_name');
+            $duplicateColors = array_diff_assoc($colorNames, array_unique($colorNames));
+
+            if (!empty($duplicateColors)) {
                 return response()->json([
                     'status_code' => 400,
-                    'message' => 'This Product Name already exists.',
+                    'message' => 'Duplicate colors found: ' . implode(', ', $duplicateColors),
                     'data' => []
                 ]);
+            }
+
+            foreach ($colors as $colorData) {
+                $colorName = $colorData['color_name'] ?? null;
+                $quantity = $colorData['quantity'] ?? 0;
+                $c_id = $colorData['c_id'] ?? null;
+
+                // Ensure the color exists in the Color table
+                $existingColor = Color::firstOrCreate(['color_name' => $colorName]); 
+
+                if ($c_id) {
+                    // Update existing product color by c_id
+                    $productColor = ProductColor::find($c_id);
+
+                    if ($productColor) {
+                        $productColor->color_name = $colorName;
+                        $productColor->quantity = $quantity;
+                        $productColor->save();
+                    } else {
+                        // If c_id is invalid, create a new color record
+                        ProductColor::create([
+                            'product_id' => $product->id,
+                            'color_name' => $colorName,
+                            'quantity' => $quantity
+                        ]);
+                    }
+                } else {
+                    // Create a new color record if c_id is missing
+                    ProductColor::create([
+                        'product_id' => $product->id,
+                        'color_name' => $colorName,
+                        'quantity' => $quantity
+                    ]);
+                }
             }
         }
 
 
 
 
-
-        $product->p_name =  $request->p_name;
-        $product->image = $imageName ?? $product->image;
-        $product->thumb = $thumbimageName ?? $product->thumb;
-        $product->price = $request->price;
-        $product->sync = 1;
-        // $product->category_id = $request->category_id;
-        $product->save();
+        $productWithColors = Product::with('colors')->find($product->id);
 
         return response()->json([
             'status_code' => 200,
             'message' => 'Product updated successfully',
-            'data' => [$product]
+            'data' => [$productWithColors ?? $product]
         ]);
     }
+
 
     public function product_stock_update(Request $request)
     {
@@ -658,8 +767,8 @@ class ApiController extends Controller
             'data' => [$product]
         ]);
     }
-    
-  public function new_arrival_product(Request $request)
+
+    public function new_arrival_product(Request $request)
     {
         // Validation rules
         $rules = [
@@ -700,14 +809,14 @@ class ApiController extends Controller
                 // $query->where('category_id', $category_id);
             })
             ->orderBy('id', 'desc');
-            
-             if(!$productsQuery->exists()){
-                return response()->json([
-                    'status_code' => 400,
-                    'message' => 'No products found',
-                    'data' => []
-                ]);
-            }
+
+        if (!$productsQuery->exists()) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'No products found',
+                'data' => []
+            ]);
+        }
 
         // Paginate the query
         $products = $productsQuery->paginate($limit, ['*'], 'page', $page);
@@ -719,9 +828,14 @@ class ApiController extends Controller
                 'name' => $product->p_name,
                 'category_name' => $product->category ? $product->category->name : null,
                 'image' => $product->image,
-                'thumb'=>$product->thumb,
+                'thumb' => $product->thumb,
                 'stock_status' => $product->stock_status,
                 'price' => $product->price,
+                'barcode' => $product->barcode ?? "",
+                'type' => $product->type ?? "",
+                'level' => $product->level ?? "",
+                'qty' => $product->qty,
+                'colors' => $product->colors ?? [],
                 'category_id' => $product->category_id,
                 'created_at' => $product->created_at->format('Y-m-d H:i:s'),
                 'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
@@ -735,8 +849,8 @@ class ApiController extends Controller
             'data' => $products->items(),
         ]);
     }
-    
-     public function get_product_with_cat(Request $request)
+
+    public function get_product_with_cat(Request $request)
     {
         // Validation rules
         $rules = [
@@ -787,8 +901,13 @@ class ApiController extends Controller
                 'name' => $product->p_name,
                 'category_name' => $product->category ? $product->category->name : null,
                 'image' => $product->image,
-                 'price' => $product->price,
-                 'thumb'=>$product->thumb,
+                'price' => $product->price,
+                'thumb' => $product->thumb,
+                'barcode' => $product->barcode ?? "",
+                'type' => $product->type ?? "",
+                'level' => $product->level ?? "",
+                'qty' => $product->qty,
+                'colors' => $product->colors ?? [],
                 'stock_status' => $product->stock_status,
                 'category_id' => $product->category_id,
                 'created_at' => $product->created_at->format('Y-m-d H:i:s'),
@@ -803,9 +922,9 @@ class ApiController extends Controller
             'data' => $products->items(),
         ]);
     }
-    
-      public function update_product_price(Request $request)
-    {   
+
+    public function update_product_price(Request $request)
+    {
         $rules = [
             'id' => 'required|integer',
             'price' => 'required|numeric',
@@ -840,126 +959,131 @@ class ApiController extends Controller
         return response()->json([
             'status_code' => 200,
             'message' => 'Product price updated successfully',
-            
+
         ]);
     }
-    
-   public function product_filter(Request $request)
- {
-    //   dd($request->all());
-     $rules = [
-         'limit' => 'numeric|min:1|max:100',
-         'page' => 'numeric|min:1',
-         'search' => 'nullable|string|max:255',
-         'filter' => 'nullable|string'
-     ];
- 
-     // Validate the incoming request
-     $validator = Validator::make($request->all(), $rules);
- 
-     if ($validator->fails()) {
-         $errors = $validator->errors()->all();
-         $errorMessage = implode(' ', $errors);
-         return response()->json([
-             'status_code' => 400,
-             'message' => $errorMessage,
-         ]);
-     }
- 
-     // Retrieve filter, search, limit, and page parameters
-     $limit = $request->input('limit'); // Default to 10 items per page
-     $page = $request->input('page'); // Default to the first page
-     $search = $request->input('search'); // Search keyword
-     $filter = $request->input('filter'); // Sorting/filtering option
- 
-       // Start building the product!uery
-       $productQuery = Product::where('status', 'Active');
 
-       // Apply search functionality
-       if ($search) {
-           $productsQuery->where(function ($query) use ($search) {
-               $query->where('p_name', 'LIKE', "{$search}%")
-                     ->orWhere('category_name', 'LIKE', "{$search}%");
-           });
-       }
-       
- 
-     // Apply sorting based on the filter value
-     if ($filter) {
-         switch ($filter) {
-             // Product filters
-             case 'p_new_to_old':
-                 $productQuery->orderBy('created_at', 'desc');
-                 break;
-             case 'p_old_to_new':
-                 $productQuery->orderBy('created_at', 'asc');
-                 break;
- 
-             // Price filters
-             case 'price_low_to_high':
-                 $productQuery->orderBy('price', 'asc');
-                 break;
-             case 'price_high_to_low':
-                 $productQuery->orderBy('price', 'desc');
-                 break;
- 
-             // Category filters
-             case 'c_new_to_old':
-                 $productQuery->orderBy('category_id', 'desc');
-                 break;
-             case 'c_old_to_new':
-                 $productQuery->orderBy('category_id', 'asc');
-                 break;
-             case 'c_a_to_z':
-                 $productQuery->orderBy('category_name', 'asc');
-                 break;
-             case 'c_z_to_a':
-                 $productQuery->orderBy('category_name', 'desc');
-                 break;
-            // Latest updated product
-            case 'latest_updated':
-                $productQuery->orderBy('updated_at', 'desc');
-                break;
-     
-             default:
-                 return response()->json([
-                     'status_code' => 400,
-                     'message' => 'Invalid filter parameter.',
-                 ]);
-         }
-     } else {
-         // Default sorting if no filter is provided
-         $productQuery->orderBy('category_name', 'asc');
-     }
- 
-     // Paginate the results
-     $products = $productQuery->paginate($limit, ['*'], 'page', $page);
- 
-     // Transform the products data
-     $products->getCollection()->transform(function ($product) {
-         return [
-             'id' => $product->id,
-             'name' => $product->p_name,
-             'category_name' => $product->category ? $product->category->name : null,
-             'image' => $product->image,
-             'thumb' => $product->thumb,
-             'price' => $product->price,
-             'stock_status' => $product->stock_status,
-             'category_id' => $product->category_id,
-             'created_at' => $product->created_at->format('Y-m-d H:i:s'),
-             'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
-         ];
-     });
- 
-     // Return the response with products and pagination details
-     return response()->json([
-         'status_code' => 200,
-         'message' => 'Products successfully loaded',
-         'data' => $products->items(), // Paginated data
-     ]);
- }
-    
-  /* public function product_filter(Request $request)
+    public function product_filter(Request $request)
+    {
+        //   dd($request->all());
+        $rules = [
+            'limit' => 'numeric|min:1|max:100',
+            'page' => 'numeric|min:1',
+            'search' => 'nullable|string|max:255',
+            'filter' => 'nullable|string'
+        ];
+
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode(' ', $errors);
+            return response()->json([
+                'status_code' => 400,
+                'message' => $errorMessage,
+            ]);
+        }
+
+        // Retrieve filter, search, limit, and page parameters
+        $limit = $request->input('limit'); // Default to 10 items per page
+        $page = $request->input('page'); // Default to the first page
+        $search = $request->input('search'); // Search keyword
+        $filter = $request->input('filter'); // Sorting/filtering option
+
+        // Start building the product!uery
+        $productQuery = Product::where('status', 'Active');
+
+        // Apply search functionality
+        if ($search) {
+            $productQuery->where(function ($query) use ($search) {
+                $query->where('p_name', 'LIKE', "{$search}%")
+                    ->orWhere('category_name', 'LIKE', "{$search}%");
+            });
+        }
+
+
+        // Apply sorting based on the filter value
+        if ($filter) {
+            switch ($filter) {
+                    // Product filters
+                case 'p_new_to_old':
+                    $productQuery->orderBy('created_at', 'desc');
+                    break;
+                case 'p_old_to_new':
+                    $productQuery->orderBy('created_at', 'asc');
+                    break;
+
+                    // Price filters
+                case 'price_low_to_high':
+                    $productQuery->orderBy('price', 'asc');
+                    break;
+                case 'price_high_to_low':
+                    $productQuery->orderBy('price', 'desc');
+                    break;
+
+                    // Category filters
+                case 'c_new_to_old':
+                    $productQuery->orderBy('category_id', 'desc');
+                    break;
+                case 'c_old_to_new':
+                    $productQuery->orderBy('category_id', 'asc');
+                    break;
+                case 'c_a_to_z':
+                    $productQuery->orderBy('category_name', 'asc');
+                    break;
+                case 'c_z_to_a':
+                    $productQuery->orderBy('category_name', 'desc');
+                    break;
+                    // Latest updated product
+                case 'latest_updated':
+                    $productQuery->orderBy('updated_at', 'desc');
+                    break;
+
+                default:
+                    return response()->json([
+                        'status_code' => 400,
+                        'message' => 'Invalid filter parameter.',
+                    ]);
+            }
+        } else {
+            // Default sorting if no filter is provided
+            $productQuery->orderBy('category_name', 'asc');
+        }
+
+        // Paginate the results
+        $products = $productQuery->paginate($limit, ['*'], 'page', $page);
+
+        // Transform the products data
+        $products->getCollection()->transform(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->p_name,
+                'category_name' => $product->category ? $product->category->name : null,
+                'image' => $product->image,
+                'thumb' => $product->thumb,
+                'price' => $product->price,
+                'barcode' => $product->barcode ?? "",
+                'type' => $product->type ?? "",
+                'level' => $product->level ?? "",
+                'qty' => $product->qty,
+                'colors' => $product->colors ?? [],
+                'stock_status' => $product->stock_status,
+                'category_id' => $product->category_id,
+                'created_at' => $product->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
+        // Return the response with products and pagination details
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Products successfully loaded',
+            'data' => $products->items(), // Paginated data
+        ]);
+    }
+
+    /* public function product_filter(Request $request)
     {
         // Retrieve the filter parameter
         $filter = $request->input('filter'); // Single key for all filters
@@ -1037,68 +1161,68 @@ class ApiController extends Controller
             'data' => $products
         ]);
     }*/
-    
-        public function productSync(Request $request)
-        {
-            // Validation rules for 'limit' and 'page'
-            $rules = [
-                'limit' => 'required|integer',
-                'page' => 'required|integer',
-            ];
-        
-            // Validate the incoming request
-            $validator = Validator::make($request->all(), $rules);
-        
-            // Check if validation fails
-            if ($validator->fails()) {
-                $errors = $validator->errors()->all();
-                $errorMessage = implode(' ', $errors);
-                return response()->json([
-                    'status_code' => 400,
-                    'message' => $errorMessage,
-                    'data' => []
-                ]);
-            }
-        
-            // Get limit and page from request
-            $limit = $request->limit;
-            $page = $request->page;
-        
-            // Retrieve products where product_sync is 0
-            $productsQuery = Product::where('sync', 0); // Order by created_at for consistency
-        
-            // Paginate the query results based on the provided 'limit' and 'page'
-            $products = $productsQuery->paginate($limit, ['*'], 'page', $page);
-        
-            // Add category name and other fields directly to each product
-            $products->getCollection()->transform(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->p_name,
-                    'category_name' => $product->category ? $product->category->name : null,
-                    'image' => $product->image,
-                    'thumb' => $product->thumb,
-                    'price' => $product->price,
-                    'stock_status' => $product->stock_status,
-                    'category_id' => $product->category_id,
-                    'created_at' => $product->created_at->format('Y-m-d H:i:s'),
-                    'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
-                ];
-            });
-        
-            // Return a response with paginated data and pagination details
+
+    public function productSync(Request $request)
+    {
+        // Validation rules for 'limit' and 'page'
+        $rules = [
+            'limit' => 'required|integer',
+            'page' => 'required|integer',
+        ];
+
+        // Validate the incoming request
+        $validator = Validator::make($request->all(), $rules);
+
+        // Check if validation fails
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode(' ', $errors);
             return response()->json([
-                'status_code' => 200,
-                'message' => 'Products successfully fetched',
-                'product_count' => $products->total(),  // Total number of products
-                // 'current_page' => $products->currentPage(),  // Current page number
-                // 'total_pages' => $products->lastPage(),  // Total number of pages
-                'data' => $products->items()  // Return the transformed collection
+                'status_code' => 400,
+                'message' => $errorMessage,
+                'data' => []
             ]);
         }
 
-        
-     public function updatedProductSync(Request $request)
+        // Get limit and page from request
+        $limit = $request->limit;
+        $page = $request->page;
+
+        // Retrieve products where product_sync is 0
+        $productsQuery = Product::where('sync', 0); // Order by created_at for consistency
+
+        // Paginate the query results based on the provided 'limit' and 'page'
+        $products = $productsQuery->paginate($limit, ['*'], 'page', $page);
+
+        // Add category name and other fields directly to each product
+        $products->getCollection()->transform(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->p_name,
+                'category_name' => $product->category ? $product->category->name : null,
+                'image' => $product->image,
+                'thumb' => $product->thumb,
+                'price' => $product->price,
+                'stock_status' => $product->stock_status,
+                'category_id' => $product->category_id,
+                'created_at' => $product->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
+        // Return a response with paginated data and pagination details
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Products successfully fetched',
+            'product_count' => $products->total(),  // Total number of products
+            // 'current_page' => $products->currentPage(),  // Current page number
+            // 'total_pages' => $products->lastPage(),  // Total number of pages
+            'data' => $products->items()  // Return the transformed collection
+        ]);
+    }
+
+
+    public function updatedProductSync(Request $request)
     {
         // Validation rules
         $rules = [
@@ -1106,9 +1230,9 @@ class ApiController extends Controller
             'image' => 'required|image',
             'thumb' => 'required|image',
         ];
-    
+
         $validator = Validator::make($request->all(), $rules);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status_code' => 400,
@@ -1116,38 +1240,38 @@ class ApiController extends Controller
                 'errors' => $validator->errors(),
             ], 400);
         }
-    
+
         // Retrieve the product
         $product = Product::find($request->product_id);
-    
+
         if (!$product) {
             return response()->json([
                 'status_code' => 404,
                 'message' => 'Product not found',
             ], 404);
         }
-    
+
         // Get category name
         $category_name = $product->category_name;
 
-    
-       // Handle the image upload
+
+        // Handle the image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = $image->getClientOriginalName();
-             $imageExtansion = $image->getClientOriginalExtension();
-           $destinationPath = public_path('storage/images/' . $category_name);
+            $imageExtansion = $image->getClientOriginalExtension();
+            $destinationPath = public_path('storage/images/' . $category_name);
             $image->move($destinationPath, $imageName);
         } else {
             return redirect()->back()->with('error', 'Product image is required.');
         }
-        
-        
-          if ($request->hasFile('thumb')) {
+
+
+        if ($request->hasFile('thumb')) {
             $thumbimage = $request->file('thumb');
             $thumbimageName = $thumbimage->getClientOriginalName();
-             $thumbimageExtansion = $thumbimage->getClientOriginalExtension();
-           $destinationPath = public_path('storage/thumbnail/' . $category_name);
+            $thumbimageExtansion = $thumbimage->getClientOriginalExtension();
+            $destinationPath = public_path('storage/thumbnail/' . $category_name);
             $thumbimage->move($destinationPath, $thumbimageName);
         } else {
             return redirect()->back()->with('error', 'Product thumb image is required.');
@@ -1155,36 +1279,28 @@ class ApiController extends Controller
         // Mark product as synced
         $product->sync = 1;
         $product->save();
-        
-            // Prepare success message
-            $message = 'Product updated successfully.';
-        
-            // // Add information about deleted files if applicable
-            // if ($imageDeleted) {
-            //     $message .= ' Old image was deleted successfully.';
-            // } else if ($request->hasFile('image')) {
-            //     $message .= ' No old image to delete, new image uploaded.';
-            // }
-        
-            // if ($thumbDeleted) {
-            //     $message .= ' Old thumbnail was deleted successfully.';
-            // } else if ($request->hasFile('thumb')) {
-            //     $message .= ' No old thumbnail to delete, new thumbnail uploaded.';
-            // }
-        
-            // Return success response with detailed message
-            return response()->json([
-                'status_code' => 200,
-                'message' => $message,
-                
-            ]);
-        }
 
+        // Prepare success message
+        $message = 'Product updated successfully.';
 
+        // // Add information about deleted files if applicable
+        // if ($imageDeleted) {
+        //     $message .= ' Old image was deleted successfully.';
+        // } else if ($request->hasFile('image')) {
+        //     $message .= ' No old image to delete, new image uploaded.';
+        // }
 
+        // if ($thumbDeleted) {
+        //     $message .= ' Old thumbnail was deleted successfully.';
+        // } else if ($request->hasFile('thumb')) {
+        //     $message .= ' No old thumbnail to delete, new thumbnail uploaded.';
+        // }
 
+        // Return success response with detailed message
+        return response()->json([
+            'status_code' => 200,
+            'message' => $message,
 
-
-
-      
+        ]);
+    }
 }

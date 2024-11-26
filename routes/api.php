@@ -41,6 +41,8 @@ Route::controller(ApiController::class)->group(function () {
     Route::post('/product-sync','productSync');
     Route::post('/update-product-sync','updatedProductSync');
 
+    Route::get('/displayAllProducts', 'displayAllProducts')->name('displayAllProducts');
+
 
 
     
@@ -50,4 +52,9 @@ Route::controller(ApiController::class)->group(function () {
 Route::controller(StaffController::class)->group(function () {
     Route::post('/api_login', 'api_login')->name('api_login');
     Route::post('/api_logout', 'api_logout')->name('api_logout')->middleware('auth:sanctum');
+    Route::get('/get_profile', 'get_profile')->name('get_profile')->middleware('auth:sanctum');
+    Route::get('/get_permissions', 'get_permissions')->name('get_permissions')->middleware('auth:sanctum');
+    Route::get('/get_config', 'get_config')->name('get_config')->middleware('auth:sanctum');
+    Route::post('/get_colors', 'get_colors')->name('get_colors')->middleware('auth:sanctum');
+    Route::post('/add_color', 'add_color')->name('add_color')->middleware('auth:sanctum');
 });

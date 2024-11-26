@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carts', function (Blueprint $table) {
-            $table->id();
-            $table->string('product_id'); // Linking to the product table
-            $table->string('image'); // The image of the product
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->integer('qty')->after('price')->default(0); // Replace 'existing_column' with the column after which you want to add this field.
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carts');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('qty');
+        });
     }
 };
