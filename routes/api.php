@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ApiController;
+use App\Http\Controllers\api\OrderController;
 use App\Http\Controllers\api\StaffController;
 
 /*
@@ -38,14 +39,14 @@ Route::controller(ApiController::class)->group(function () {
     Route::post('/update_product_price', 'update_product_price')->name('update_product_price');
     Route::post('/product_filter', 'product_filter')->name('product_filter');
     // In routes/api.php or routes/web.php
-    Route::post('/product-sync','productSync');
-    Route::post('/update-product-sync','updatedProductSync');
+    Route::post('/product-sync', 'productSync');
+    Route::post('/update-product-sync', 'updatedProductSync');
 
     Route::get('/displayAllProducts', 'displayAllProducts')->name('displayAllProducts');
 
 
 
-    
+
 
 });
 
@@ -57,4 +58,13 @@ Route::controller(StaffController::class)->group(function () {
     Route::get('/get_config', 'get_config')->name('get_config')->middleware('auth:sanctum');
     Route::post('/get_colors', 'get_colors')->name('get_colors')->middleware('auth:sanctum');
     Route::post('/add_color', 'add_color')->name('add_color')->middleware('auth:sanctum');
+});
+
+Route::controller(OrderController::class)->group(function () {
+    Route::post('/search_party', 'search_party')->name('search_party');
+    Route::post('/create_offer_form', 'create_offer_form')->name('create_offer_form');
+    Route::post('/create_offer_order', 'create_offer_order')->name('create_offer_order');
+    Route::post('/order_form_list', 'order_form_list')->name('order_form_list');
+    Route::post('/delete-temp-order', 'delete_temp_order')->name('delete-temp-order');
+
 });

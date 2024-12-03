@@ -40,16 +40,19 @@ class HomeController extends Controller
         $categories = Category::orderBy('name', 'asc')->get();
 
         // Load and paginate products with the required fields, applying search filter if present
-        $products = Product::with(['category' => function ($query) {
-            $query->select('id', 'name'); // Only load 'id' and 'name' from categories
-        }])
+        $products = Product::with([
+            'category' => function ($query) {
+                $query->select('id', 'name'); // Only load 'id' and 'name' from categories
+            }
+        ])
             ->where(function ($query) use ($search) {
                 // Apply search condition for product name and category name
                 $query->where('p_name', 'like', "%$search%")
                     ->orWhereHas('category', function ($query) use ($search) {
-                        $query->where('name', 'like', "%$search%");
-                    });
+                    $query->where('name', 'like', "%$search%");
+                });
             })
+            ->where('status', "Active")
             ->paginate(10); // Paginate products with 10 items per page
 
         // Transform the products to include the category name directly
@@ -69,9 +72,10 @@ class HomeController extends Controller
                 'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
             ];
         });
+        $lastProduct = Product::latest('id')->first(); // Fetch the last product
 
         // Pass paginated products and categories to the view
-        return view('admin.product.dashboard_2', compact('products', 'categories', 'colors'));
+        return view('admin.product.dashboard_2', compact('products', 'categories', 'colors', 'lastProduct'));
     }
 
 
@@ -95,7 +99,7 @@ class HomeController extends Controller
             'stock_status' => 'required|string|max:255',
             'image' => 'required|image',
             'price' => 'required|numeric|min:0',
-            'qty' => 'required|integer|min:0',
+            // 'qty' => 'required|integer|min:0',
         ]);
 
         // Find the category
@@ -136,7 +140,7 @@ class HomeController extends Controller
 
             // Ensure unique name for the thumbnail image
             while (file_exists($thumbdestinationPath . '/' . $thumbImageName)) {
-                $thumbimageName = $category_name . '_' . $originalName . '_' . $thumbCounter . '_thumbnail' .  '.webp';
+                $thumbimageName = $category_name . '_' . $originalName . '_' . $thumbCounter . '_thumbnail' . '.webp';
                 $thumbCounter++;
             }
 
@@ -157,7 +161,7 @@ class HomeController extends Controller
         $product->image = $imageName;
         $product->thumb = $thumbImageName;
         $product->sync = 0;
-        $product->qty = $request->input('qty');
+        $product->qty = 0;
         $product->stock_status = $request->input('stock_status');
         $product->price = $request->input('price');
         $product->category_name = $category_name;
@@ -177,7 +181,7 @@ class HomeController extends Controller
 
                 // Check for duplicate within the input array
                 if (in_array($colorName, $processedColors)) {
-                    return redirect()->back()->with('error', 'Duplicate color name found in the input.' . $colorName);   
+                    return redirect()->back()->with('error', 'Duplicate color name found in the input.' . $colorName);
                 }
 
                 $processedColors[] = $colorName; // Add to the list of processed colors
@@ -245,11 +249,32 @@ class HomeController extends Controller
 
     public function delete($id)
     {
-        $data = Product::find($id);
-        $data->status = 'Inactive';
-        $data->save();
+        // Find the product record
+        $product = Product::find($id);
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
+        }
+
+        // // Paths for the images
+        // $imagePath = public_path('storage/images/' . $product->category_name . '/' . $product->image); // Adjust if your path is different
+        // $thumbnailPath = public_path('storage/thumbnail/' . $product->category_name . '/' . $product->thumb); // Adjust if your path is different
+        // // dd($imagePath);
+        // // Delete the images if they exist
+        // if (file_exists($imagePath)) {
+        //     unlink($imagePath);
+        // }
+        // if (file_exists($thumbnailPath)) {
+        //     unlink($thumbnailPath);
+        // }
+
+        // Delete the product record
+        $product->status = 'Inactive';
+        $product->save();
+
         return redirect()->back()->with('success', 'Product deleted successfully.');
     }
+
 
     public function delete_category($id)
     {
@@ -375,7 +400,7 @@ class HomeController extends Controller
 
                 // Check if color_name is provided
                 if (!$colorName) {
-                   return redirect()->back()->with('error', 'Color name is required.');
+                    return redirect()->back()->with('error', 'Color name is required.');
                 }
 
                 // Check for duplicates in the request
@@ -479,7 +504,7 @@ class HomeController extends Controller
         $cart = new Cart();
         $cart->cart_id = $cartId; // Use the cart ID from the session
         $cart->image = $product->image; // Store the product image
-        $cart->product_id =  $product->id; // Store the product ID as a string
+        $cart->product_id = $product->id; // Store the product ID as a string
         $cart->p_name = $product->p_name; // Store the product name
         $cart->category_name = $product->category_name; // Store the category name
         $cart->save(); // Save the cart entry
@@ -619,6 +644,7 @@ class HomeController extends Controller
                 'status' => $product->status,
                 'thumb' => $product->thumb,
                 'stock_status' => $product->stock_status,
+                'qty' => $product->qty,
                 'price' => $product->price,
                 'category_id' => $product->category_id,
                 'created_at' => $product->created_at->format('Y-m-d H:i:s'),
@@ -632,7 +658,7 @@ class HomeController extends Controller
 
     public function save_cart(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $productIds = $request->input('product_ids', []);
 
         if (empty($productIds)) {

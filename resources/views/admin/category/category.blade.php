@@ -79,10 +79,11 @@
                         <tr>
                             <th class="sort border-top border-translucent ps-3" data-sort="no">No</th>
                             {{-- <th class="sort border-top" data-sort="image">image</th> --}}
-                            {{-- <th class="sort border-top" data-sort="name">Product Name</th> --}}
                             <th class="sort border-top border-translucent ps-3" data-sort="category_name">Category Name</th>
+                            <th class="sort border-top" data-sort="price">Price</th>
                             {{-- <th class="sort border-top border-translucent ps-3" data-sort="stock_status">Stock Status</th> --}}
-                            <th class="sort border-top border-translucent ps-3" data-sort="status">Status</th>
+                            <th class="sort border-top text-middle align-middle border-translucent ps-3" data-sort="status">
+                                Status</th>
                             {{-- <th class="sort text-middle align-middle pe-0 border-top" scope="col">Edit</th> --}}
                             <th class="sort text-middle align-middle pe-0 border-top" scope="col">Delete</th>
                         </tr>
@@ -95,8 +96,9 @@
                                 <td class="align-middle ps-3 category_name">{{ $item['name'] }}</td>
                                 <td class="align-middle ps-3 price">{{ $item['price'] }}</td>
                                 <!-- Status Dropdown with Colors -->
-                                <td class="align-middle status">
-                                    <form action="{{ route('category_update_status') }}" method="POST">
+                                <td class="align-middle ps-3 status">
+                                    <form class="align-middle" action="{{ route('category_update_status') }}"
+                                        method="POST">
                                         @csrf
                                         <input type="hidden" name="category_id" value="{{ $item['id'] }}">
                                         <select name="status" class="form-select form-select-sm"
@@ -157,7 +159,7 @@
 
 
                             </div>
-                             <div class="col-lg-6">
+                            <div class="col-lg-6">
                                 <div class="mb-4"><label class="text-body-highlight fw-bold mb-2">Category
                                         Price</label><input class="form-control" type="text" name='price'
                                         placeholder="Enter Category Price" />
@@ -171,9 +173,10 @@
 
                         </div>
                     </div>
-                    <div class="modal-footer border-0 pt-6 px-0 pb-0" style="justify-content: normal;"><button type="reset"
-                            class="btn btn-link text-danger float-start px-3 my-0" data-bs-dismiss="modal"
-                            aria-label="Close">Cancel</button><button type="submit" class="btn btn-primary float-start my-0">Create
+                    <div class="modal-footer border-0 pt-6 px-0 pb-0" style="justify-content: normal;"><button
+                            type="reset" class="btn btn-link text-danger float-start px-3 my-0" data-bs-dismiss="modal"
+                            aria-label="Close">Cancel</button><button type="submit"
+                            class="btn btn-primary float-start my-0">Create
                             Category</button></div>
                 </div>
     </form>

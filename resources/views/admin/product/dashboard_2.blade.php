@@ -12,29 +12,98 @@
 
 
     <style>
-        /* Darken the hover effect for dropdown options */
-        .choices__list--dropdown .choices__item--selectable.is-highlighted {
-            background-color: #343a40 !important;
-            /* Dark gray background */
-            color: #ffffff !important;
-            /* White text */
+        :root {
+            --primary-color: #007bff;
+            /* Primary color */
+            --secondary-color: #6c757d;
+            /* Secondary color */
+            --success-color: #28a745;
+            /* Success color */
+            --warning-color: #ffc107;
+            /* Warning color */
+            --danger-color: #dc3545;
+            /* Danger color */
+            --light-color: #f8f9fa;
+            /* Light gray */
+            --dark-color: #343a40;
+            /* Dark gray */
+            --hover-color: #e9ecef;
+            /* Light gray for hover effects */
+            --focus-color: #fff3cd;
+            /* Light yellow for focus */
         }
 
-        /* Apply on hover */
-        select.form-select-sm:hover {
-            background-color: #e2e6ea !important;
-            /* Light grey hover effect */
+        /* General Table Styles */
+        .table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1rem;
+            color: #212529;
         }
 
-        /* Apply on focus */
-        select.form-select-sm:focus {
-            background-color: #fff3cd !important;
-            /* Light yellow when focused */
-            border-color: #ffeeba !important;
-            color: #856404;
+        .table-hover tbody tr:hover {
+            background-color: var(--hover-color);
+            /* Light gray hover */
+            transition: background-color 0.3s ease;
+            /* Smooth transition */
         }
 
+        .table th,
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+            text-align: center;
+            /* Center-align all content */
+        }
 
+        .table-light {
+            background-color: var(--light-color);
+        }
+
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Pagination Styles */
+        .pagination {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination li a,
+        .pagination li span {
+            display: block;
+            padding: 8px 12px;
+            text-decoration: none;
+            background-color: var(--light-color);
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .pagination li.active span {
+            background-color: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+
+        .pagination li a:hover {
+            background-color: var(--hover-color);
+            color: #0056b3;
+        }
+
+        /* Button Styles */
         button.btn {
             height: 40px;
             line-height: 1.5;
@@ -43,6 +112,10 @@
             align-items: center;
             justify-content: center;
             min-width: 80px;
+            font-size: 0.875rem;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
 
         button i {
@@ -51,59 +124,94 @@
             display: inline-block;
         }
 
-        .pagination {
-            margin: 0;
-            /* Remove default margin */
-            padding: 0;
-            /* Remove default padding */
-            list-style: none;
-            /* Remove bullet points */
-            display: flex;
-            /* Align pagination links inline */
-            justify-content: center;
-            /* Center the links */
+        button.btn:hover {
+            background-color: var(--hover-color);
+            border-color: var(--secondary-color);
+            color: var(--dark-color);
         }
 
-        .pagination li {
-            margin: 0 5px;
-            /* Add spacing between links */
+        button.btn-success {
+            background-color: var(--success-color);
+            color: #fff;
         }
 
-        .pagination li a,
-        .pagination li span {
-            display: block;
-            padding: 8px 12px;
-            /* Adjust padding for better click area */
-            text-decoration: none;
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
+        button.btn-success:hover {
+            background-color: #218838;
+            /* Slightly darker green */
+        }
+
+        button.btn-warning {
+            background-color: var(--warning-color);
+            color: #212529;
+        }
+
+        button.btn-warning:hover {
+            background-color: #e0a800;
+            /* Slightly darker yellow */
+        }
+
+        button.btn-danger {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+
+        button.btn-danger:hover {
+            background-color: #c82333;
+            /* Slightly darker red */
+        }
+
+        /* Dropdown Styling */
+        select.form-select-sm {
+            height: calc(2.25rem + 2px);
+            background-color: var(--light-color);
+            color: #495057;
+            /* Dark text for readability */
+            border: 1px solid var(--secondary-color);
             border-radius: 4px;
-            color: #007bff;
+            transition: all 0.3s ease;
         }
 
-        .pagination li a:hover {
-            background-color: #e9ecef;
-            color: #0056b3;
+        select.form-select-sm:hover {
+            background-color: var(--hover-color);
         }
 
-        .table-hover tbody tr:hover {
-            background-color: #f1f1f1;
+        select.form-select-sm:focus {
+            background-color: var(--focus-color);
+            border-color: var(--warning-color);
+            color: #856404;
+            /* Match yellow theme for focus */
+            box-shadow: 0 0 0 0.2rem rgba(255, 235, 186, 0.5);
         }
 
-        .table th,
-        .table td {
-            padding: 12px;
-            vertical-align: middle;
+        /* Customize Dropdown Items (Choices.js) */
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: var(--dark-color) !important;
+            /* Dark gray for hover */
+            color: #ffffff !important;
+            /* White text */
         }
 
-        .table-light {
-            background-color: #f8f9fa;
-        }
-
+        /* Icons in Buttons */
         .content-icon i {
             font-size: 18px;
         }
 
+        /* Row Interaction */
+        .table-hover tbody tr {
+            cursor: pointer;
+        }
+
+        /* Add-to-cart Button Styling */
+        .add-to-cart-btn {
+            background-color: var(--success-color);
+            color: #fff;
+        }
+
+        .add-to-cart-btn:hover {
+            background-color: #218838;
+        }
+
+        /* Enhanced Inputs (Optional) */
         .color-item {
             align-items: center;
             /* Vertically align fields */
@@ -112,7 +220,7 @@
         .color-item .form-control,
         .color-item .form-select {
             height: calc(2.25rem + 2px);
-            /* Match height of input and select */
+            /* Match input and select height */
         }
 
         .color-item .remove-color {
@@ -156,7 +264,11 @@
                 <input type="hidden" id="cart-product-ids" name="product_ids">
             </form>
 
-            <button id="add-to-cart-btn" class="btn btn-primary me-4" onclick="saveCartToDatabase()">Save Cart</button>
+
+            <button id="saveOrderBtn" class="btn btn-primary" style="display:none;">Save Order</button>
+
+
+            {{-- <button id="add-to-cart-btn" class="btn btn-primary me-4" onclick="saveCartToDatabase()">Save Cart</button> --}}
 
             <button class="btn btn-primary me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal">
                 <i class="fas fa-plus me-2"></i> Add New Product
@@ -232,7 +344,7 @@
                             <th class="text-center">Price</th>
                             <th class="text-center">Date</th>
                             <th class="text-center">Stock Status</th>
-                            <th class="text-center">Status</th>
+                            {{-- <th class="text-center">Status</th> --}}
                             <th class="text-center">Edit</th>
                             <th class="text-center">Delete</th>
                             <th class="text-center">Add to Cart</th>
@@ -276,7 +388,7 @@
                                         </select>
                                     </form>
                                 </td>
-                                <td class="status text-center">
+                                {{-- <td class="status text-center">
                                     <form action="{{ route('update_status') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $item['id'] }}">
@@ -292,7 +404,7 @@
                                             </option>
                                         </select>
                                     </form>
-                                </td>
+                                </td> --}}
                                 <td class="text-center">
                                     <form action="{{ route('edit_product') }}" method="GET" style="display:inline;">
                                         <input type="hidden" name="product_id" value="{{ $item['id'] }}">
@@ -369,10 +481,14 @@
                                             id="categorySelect">
                                             <option value="">Select</option>
                                             @foreach ($categories as $item)
-                                                <option value="{{ $item->id }}" data-price="{{ $item->price }}">
-                                                    {{ $item->name }}</option>
+                                                <option value="{{ $item->id }}" data-price="{{ $item->price }}"
+                                                    {{ isset($lastProduct) && $lastProduct->category_id == $item->id ? 'selected' : '' }}>
+                                                    {{ $item->name }}
+                                                </option>
                                             @endforeach
                                         </select>
+
+
                                         @error('category_id')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -411,7 +527,7 @@
                                     <div class="mb-4">
                                         <label class="text-body-highlight fw-bold mb-2">Total Stock</label>
                                         <input class="form-control" type="number" id="totalStockInput" name='qty'
-                                            placeholder="Enter Total Stock" min="0" required />
+                                            placeholder="Enter Total Stock" min="0" />
                                         @error('total_stock')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -451,7 +567,7 @@
         </form>
 
     </div>
-    
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -828,6 +944,86 @@
                     });
                 }
             }
+        });
+    </script>
+
+
+    <script>
+        $('#createOrderBtn').on('click', function() {
+            // Show customer details form
+            $('#orderForm').show();
+            // Show product select buttons
+            $('.add-to-cart-btn').show();
+        });
+
+        let cart = []; // To store selected product IDs
+
+        $('.add-to-cart-btn').on('click', function() {
+            let productId = $(this).data('product-id');
+            cart.push(productId); // Add product ID to the cart array
+
+            // Change button text to "Save Order" after product is added
+            $(this).text("Save Order");
+            $(this).attr('id', 'saveOrderBtn'); // Change the button ID
+        });
+
+        $('#saveOrderBtn').on('click', function() {
+            let orderData = {
+                customer_name: $('#customerName').val(),
+                customer_email: $('#customerEmail').val(),
+                product_ids: cart
+            };
+
+            $.ajax({
+                url: '/save-order', // Your API route for saving the order
+                method: 'POST',
+                data: orderData,
+                success: function(response) {
+                    alert('Order Saved Successfully!');
+                    // Optionally, reset the form and cart
+                    $('#orderForm').hide();
+                    cart = []; // Clear cart
+                },
+                error: function(error) {
+                    alert('There was an error saving the order');
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('categorySelect');
+            const priceInput = document.getElementById('priceInput');
+
+            // Add event listener to detect changes in the dropdown
+            categorySelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const categoryPrice = selectedOption.getAttribute(
+                    'data-price'); // Get the price from data attribute
+
+                // Set the price input value
+                priceInput.value = categoryPrice || '';
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const categorySelect = document.getElementById('categorySelect');
+            const priceInput = document.getElementById('priceInput');
+
+            // Set initial price if a category is already selected
+            const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+            const initialPrice = selectedOption.getAttribute('data-price');
+            priceInput.value = initialPrice || '';
+
+            // Add event listener for changes in the dropdown
+            categorySelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                const categoryPrice = selectedOption.getAttribute('data-price');
+                priceInput.value = categoryPrice || '';
+            });
         });
     </script>
 @endsection

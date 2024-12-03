@@ -30,3 +30,8 @@ Options -Indexes
     Order allow,deny
     Deny from all
 </Files>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/png "access plus 1 year"
+</IfModule>
