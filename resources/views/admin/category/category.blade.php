@@ -84,7 +84,7 @@
                             {{-- <th class="sort border-top border-translucent ps-3" data-sort="stock_status">Stock Status</th> --}}
                             <th class="sort border-top text-middle align-middle border-translucent ps-3" data-sort="status">
                                 Status</th>
-                            {{-- <th class="sort text-middle align-middle pe-0 border-top" scope="col">Edit</th> --}}
+                            <th class="sort text-center align-middle pe-0 border-top " scope="col">Edit</th>
                             <th class="sort text-middle align-middle pe-0 border-top" scope="col">Delete</th>
                         </tr>
                     </thead>
@@ -109,6 +109,14 @@
                                             <option value="Inactive" {{ $item['status'] == 'Inactive' ? 'selected' : '' }}>
                                                 INACTIVE</option>
                                         </select>
+                                    </form>
+                                </td>
+                                <td class="text-center">
+                                    <form action="{{ route('edit_category') }}" method="GET" style="display:inline;">
+                                        <input type="hidden" name="category_id" value="{{ $item['id'] }}">
+                                        <button type="submit" class="btn btn-warning btn-sm content-icon">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
                                     </form>
                                 </td>
                                 <td class="align-middle text-middle pe-0">

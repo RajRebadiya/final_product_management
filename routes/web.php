@@ -62,7 +62,8 @@ Route::controller(HomeController::class)->middleware('auth:staff')->group(functi
 
 
 
-    // Route::get('edit_category/{id}', 'edit')->name('edit_category');
+    Route::get('edit_category', 'edit_category')->name('edit_category');
+    Route::post('update_category', 'update_category')->name('update_category');
 });
 
 Route::controller(AuthController::class)->group(function () {

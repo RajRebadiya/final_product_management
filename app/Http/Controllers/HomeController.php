@@ -95,7 +95,7 @@ class HomeController extends Controller
         // Validate the incoming request data
         $request->validate([
             'category_id' => 'required|exists:categories,id',
-            'p_name' => 'required|string|max:255|unique:products,p_name',
+            'p_name' => 'required|string|max:255',
             'stock_status' => 'required|string|max:255',
             'image' => 'required|image',
             'price' => 'required|numeric|min:0',
@@ -105,6 +105,12 @@ class HomeController extends Controller
         // Find the category
         $category = Category::findOrFail($request->input('category_id'));
         $category_name = $category->name;
+        $product_name = $request->input('p_name');
+        $Alredy_product_name = Product::where('p_name', $request->input('p_name'))->where('category_name', $category_name)->first();
+        if ($Alredy_product_name) {
+            // dd($Alredy_product_name);
+            return redirect()->back()->with('error', 'Product name already exists for the selected category.');
+        }
 
         // Handle the image upload
         if ($request->hasFile('image')) {
@@ -294,13 +300,35 @@ class HomeController extends Controller
         return view('admin.product.edit_product', compact('product', 'colors'));
     }
 
-    // public function edit_category(Request $request){
-    //     $categoryId = $request->input('category_id');
-    //     $category = Category::find($categoryId);
+    public function edit_category(Request $request)
+    {
+        // dd($request->all());
+        $categoryId = $request->input('category_id');
+        $category = Category::find($categoryId);
 
-    //     // Your code to handle the edit view, passing the product data to the view
-    //     return view('admin.category.edit_category', compact('category'));
-    // }
+        // Your code to handle the edit view, passing the product data to the view
+        return view('admin.category.edit_category', compact('category'));
+    }
+
+    public function update_category(Request $request)
+    {
+        // dd($request->all());
+        $request->validate([
+            'id' => 'required|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $category = Category::find($request->input('id'));
+        $category->price = $request->input('price');
+        $category->save();
+        $product = Product::where('category_name', $category->name)->get();
+        foreach ($product as $item) {
+            $item->price = $request->input('price');
+            $item->save();
+        }
+        return redirect()->route('category')->with('success', 'Category updated successfully.');
+        // dd($product);
+    }
 
     public function update(Request $request)
     {
@@ -633,7 +661,7 @@ class HomeController extends Controller
         }
 
         // Execute the query and fetch filtered products
-        $products = $query->paginate(10); // You can change the pagination value here
+        $products = $query->where('status', "Active")->paginate(10); // You can change the pagination value here
 
         $products->transform(function ($product) {
             return [
