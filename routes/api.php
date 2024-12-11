@@ -66,5 +66,7 @@ Route::controller(OrderController::class)->group(function () {
     Route::post('/create_offer_order', 'create_offer_order')->name('create_offer_order');
     Route::post('/order_form_list', 'order_form_list')->name('order_form_list');
     Route::post('/delete-temp-order', 'delete_temp_order')->name('delete-temp-order');
+    Route::post('/search_temp_order', 'search_temp_order')->name('search_temp_order');
+    Route::post('edit_temp_order', 'edit_temp_order')->name('edit_temp_order');
 
 });

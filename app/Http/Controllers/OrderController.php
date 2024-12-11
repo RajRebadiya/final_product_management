@@ -55,21 +55,32 @@ class OrderController extends Controller
 
     public function offer_form_list(Request $request)
     {
+        // Fetch search parameters from the request
+        $orderNumber = $request->input('order_number');
+        $orderDate = $request->input('order_date');
+
         // Use Query Builder to join TempOrder with the Party table and filter by temp_order_details
-        $orders = DB::table('temp_orders') // Start from the 'temp_orders' table
+        $orders = DB::table('temp_orders')
             ->join('party', 'temp_orders.party_id', '=', 'party.id') // Join 'party' table
-            ->join('temp_order_details', 'temp_orders.order_number', '=', 'temp_order_details.temp_order_number') // Join 'temp_order_details' table based on order_number
+            ->join('temp_order_details', 'temp_orders.order_number', '=', 'temp_order_details.temp_order_number') // Join 'temp_order_details' table
             ->select(
                 'temp_orders.*', // Select all columns from temp_orders table
                 'party.name as party_name', // Select 'name' from party table and alias it as party_name
                 'party.email as party_email', // Add party-related columns
                 'party.mobile_no as party_mobile_no'
             )
+            ->when($orderNumber, function ($query, $orderNumber) {
+                return $query->where('temp_orders.order_number', 'like', "%{$orderNumber}%");
+            }) // Apply filter for order_number if provided
+            ->when($orderDate, function ($query, $orderDate) {
+                return $query->whereDate('temp_orders.order_date', $orderDate);
+            }) // Apply filter for order_date if provided
             ->distinct('temp_orders.order_number') // Ensure only distinct order_numbers
-            ->get(); // Retrieve the results
+            ->paginate(5); // Paginate the results
 
         return view('admin.order.offer_form_list', compact('orders'));
     }
+
 
 
 
@@ -129,9 +140,8 @@ class OrderController extends Controller
             'product_ids' => 'required|array|min:1',
             'name' => 'required|string|max:255',
             'mobile_no' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
+            'pin_code' => 'required|string|max:255',
             'gst_no' => 'required|string|max:255',
             'order_date' => 'required|date',
             'buyqty' => 'required|array', // Validate buyqty array
@@ -141,17 +151,18 @@ class OrderController extends Controller
         // Find or create the party record
         $party = Party::updateOrCreate(
             [
-                'email' => $request->email,
+                'mobile_no' => $request->mobile_no,
+
             ],
             [
+                'email' => $request->email,
                 'name' => $request->name,
-                'mobile_no' => $request->mobile_no,
                 'address' => $request->address,
                 'city' => $request->city,
+                'pin_code' => $request->pin_code,
                 'gst_no' => $request->gst_no,
-                'booking' => $request->booking,
-                'pincode' => $request->pincode,
                 'haste' => $request->haste,
+                'booking' => $request->booking,
                 'export' => $request->export,
             ]
         );
@@ -160,7 +171,9 @@ class OrderController extends Controller
         $tempOrder = new TempOrder();
         $tempOrder->party_id = $party->id; // Store the associated party ID
         $tempOrder->order_date = $request->order_date;
-        $tempOrder->packing_bag = '';
+        $tempOrder->packing_bag = $request->packing_bag;
+        $tempOrder->created_by = auth('staff')->user()->id;
+        $tempOrder->party_data = $party;
         $tempOrder->save();
 
         $productDetails = [];

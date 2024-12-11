@@ -1,0 +1,7 @@
+{
+    "montserrat": {
+        "normal": "C:\\xampp\\htdocs\\final_product_management\\vendor\\dompdf\\dompdf\/lib\/fonts\/montserrat_normal_8b39ce6f1e92b671adb8930c94175e08",
+        "600": "C:\\xampp\\htdocs\\final_product_management\\vendor\\dompdf\\dompdf\/lib\/fonts\/montserrat_600_4a32dc2378b50649c05087a84ee6c5f6",
+        "bold": "montserrat_bold_d6f7b66b1ae15f51f1e1cecb60246712"
+    }
+}

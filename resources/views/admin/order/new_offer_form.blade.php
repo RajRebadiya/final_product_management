@@ -379,7 +379,9 @@
                                         data-email="{{ $party->email }}" data-mobile_no="{{ $party->mobile_no }}"
                                         data-address="{{ $party->address }}" data-city="{{ $party->city }}"
                                         data-gst_no="{{ $party->gst_no }}" data-agent="{{ $party->agent }}"
-                                        data-transport="{{ $party->transport }}">
+                                        data-transport="{{ $party->transport }}" data-booking="{{ $party->booking }}"
+                                        data-export="{{ $party->export }}" data-haste="{{ $party->haste }}"
+                                        data-pin_code="{{ $party->pin_code }}">
                                         {{ $party->name }}
                                     </option>
                                 @endforeach
@@ -389,46 +391,141 @@
                             <label class="text-body-highlight fw-bold">Customer Name</label>
                             <input class="form-control" id="customerName" type="text" name="name"
                                 placeholder="Enter Customer Name" />
+                            @error('name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">Email</label>
                             <input class="form-control" id="email" type="email" name="email"
                                 placeholder="Email" />
+                            @error('email')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">Mobile No</label>
                             <input class="form-control" id="mobileNo" type="text" name="mobile_no"
                                 placeholder="Mobile No" />
+                            @error('mobile_no')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">City</label>
                             <input class="form-control" id="city" type="text" name="city"
                                 placeholder="City" />
+                            @error('city')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-body-highlight fw-bold">Pin Code</label>
+                            <input class="form-control" id="pin_code" type="text" name="pin_code"
+                                placeholder="pin_code" />
+                            @error('pin_code')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">GST NO</label>
                             <input class="form-control" id="gstNo" type="text" name="gst_no"
                                 placeholder="GST No" />
+                            @error('gst_no')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">Address</label>
                             <textarea class="form-control" id="address" name="address" placeholder="Address"></textarea>
+                            @error('address')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-body-highlight fw-bold">Haste</label>
+                            <input class="form-control" id="haste" type="text" name="haste"
+                                placeholder="Haste" />
+                            @error('haste')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">Agent</label>
                             <input class="form-control" id="agent" type="text" name="agent"
                                 placeholder="Agent No" />
+                            @error('agent')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">Transport</label>
                             <input class="form-control" id="transport" type="text" name="transport"
                                 placeholder="Transport" />
+                            @error('transport')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
                         </div>
+                        <div class="mb-3">
+                            <label class="text-body-highlight fw-bold">Booking</label>
+                            <input class="form-control" id="booking" type="text" name="booking"
+                                placeholder="booking" />
+                            @error('booking')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-body-highlight fw-bold">Export</label>
+                            <input class="form-control" id="export" type="text" name="export"
+                                placeholder="export" />
+                            @error('export')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-body-highlight fw-bold"
+                                style="
+                            margin-right: 23px;
+                        ">Packing
+                                Bag</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="bag" name="packing_bag"
+                                    value="BAG"
+                                    style="
+                                    margin-top: 0px;
+                                ">
+                                <label class="form-check-label" for="bag">BAG</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="zip_bag" name="packing_bag"
+                                    value="ZIP BAG" style="
+    margin-top: 0px;
+">
+                                <label class="form-check-label" for="zip_bag">ZIP BAG</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="pp_bag" name="packing_bag"
+                                    value="P.P BAG" style="
+    margin-top: 0px;
+">
+                                <label class="form-check-label" for="pp_bag">P.P BAG</label>
+                            </div>
+                            @error('packing_bag')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+
+
+
                         <div class="mb-3">
                             <label class="text-body-highlight fw-bold">Order Date</label>
                             <input class="form-control" id="orderDate" type="date" name="order_date"
                                 style="cursor: pointer;" />
                         </div>
+
+
+
                         <div class="border-0 pt-3">
                             <button type="reset" class="btn btn-link text-danger px-3 my-0"
                                 aria-label="Close">Cancel</button>
@@ -442,6 +539,12 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+        // Set it as the default value for the input field
+        document.getElementById('orderDate').value = today;
+    </script>
 
     <script>
         function showImage(imageUrl) {
@@ -562,12 +665,20 @@
                 order_date: document.querySelector('input[name="order_date"]').value,
                 agent: document.querySelector('input[name="agent"]').value,
                 transport: document.querySelector('input[name="transport"]').value,
-                buyqty: globalBuyqty, // Use the accumulated buyqty data
-                remark: globalRemark, // Use the accumulated remark data
+                booking: document.querySelector('input[name="booking"]').value,
+                export: document.querySelector('input[name="export"]').value,
+                haste: document.querySelector('input[name="haste"]').value,
+                pin_code: document.querySelector('input[name="pin_code"]').value,
+                buyqty: globalBuyqty, // Use the accumulated buyq  remark: globalRemark, // Use the accumulated remark datty data
+                remark: globalRemark,
+                packing_bag: document.querySelector('input[name="packing_bag"]:checked').value,
+                // const packingBag = document.querySelector('input[name="packing_bag"]:checked').value;
+
             };
+            // console.log(packingBag);
 
             // Validate required fields
-            if (!formData.name || !formData.email || !formData.mobile_no || !formData.city || !formData.order_date) {
+            if (!formData.name || !formData.mobile_no || !formData.city || !formData.order_date) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Missing Required Fields',
@@ -628,20 +739,30 @@
                 document.getElementById('email').value = selectedOption.getAttribute('data-email');
                 document.getElementById('mobileNo').value = selectedOption.getAttribute('data-mobile_no');
                 document.getElementById('city').value = selectedOption.getAttribute('data-city');
+                document.getElementById('pin_code').value = selectedOption.getAttribute('data-pin_code');
                 document.getElementById('gstNo').value = selectedOption.getAttribute('data-gst_no');
                 document.getElementById('address').value = selectedOption.getAttribute('data-address');
                 document.getElementById('agent').value = selectedOption.getAttribute('data-agent');
                 document.getElementById('transport').value = selectedOption.getAttribute('data-transport');
+                document.getElementById('booking').value = selectedOption.getAttribute('data-booking');
+                document.getElementById('export').value = selectedOption.getAttribute('data-export');
+                document.getElementById('haste').value = selectedOption.getAttribute('data-haste');
+
             } else {
                 // Clear form fields if no party is selected
                 document.getElementById('customerName').value = '';
                 document.getElementById('email').value = '';
                 document.getElementById('mobileNo').value = '';
                 document.getElementById('city').value = '';
+                document.getElementById('pin_code').value = '';
                 document.getElementById('gstNo').value = '';
                 document.getElementById('address').value = '';
                 document.getElementById('agent').value = '';
                 document.getElementById('transport').value = '';
+                document.getElementById('booking').value = '';
+                document.getElementById('export').value = '';
+                document.getElementById('haste').value = '';
+
             }
         });
 

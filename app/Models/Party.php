@@ -18,9 +18,9 @@ class Party extends Model
         'address',
         'city',
         'gst_no',
-        'booking',
-        'pincode',
+        'pin_code',
         'haste',
+        'booking',
         'export',
     ];
 

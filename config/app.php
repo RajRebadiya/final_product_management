@@ -166,6 +166,7 @@ return [
          * Application Service Providers...
          */
         Barryvdh\DomPDF\ServiceProvider::class,
+        Barryvdh\Snappy\ServiceProvider::class,
 
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
@@ -188,6 +189,7 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Pdf' => Barryvdh\DomPDF\Facade\Pdf::class,
+        // 'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
 
         // 'Image' => Intervention\Image\Facades\Image::class,

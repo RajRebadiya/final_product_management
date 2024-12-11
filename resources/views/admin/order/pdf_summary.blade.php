@@ -148,16 +148,17 @@
             @endphp
 
             {{-- Group products by category --}}
+            {{-- @dd($products); --}}
             @foreach ($products as $item)
                 @php
                     // Collect products and remarks
                     $categories[$item['category_name']]['products'][] = [
                         'name' => $item['p_name'],
-                        'qty' => $item['buyqty'],
+                        'qty' => $item['buyQty'],
                         'remark' => $item['remark'],
                     ];
                     $categories[$item['category_name']]['total_qty'] =
-                        ($categories[$item['category_name']]['total_qty'] ?? 0) + $item['buyqty'];
+                        ($categories[$item['category_name']]['total_qty'] ?? 0) + $item['buyQty'];
                     $categories[$item['category_name']]['price'] = $item['price']; // Assuming all items in a category have the same price
                 @endphp
             @endforeach
