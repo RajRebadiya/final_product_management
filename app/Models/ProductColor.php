@@ -14,11 +14,13 @@ class ProductColor extends Model
         'color_name',
         'quantity'
 
-      
+
     ];
 
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
+
+
 }

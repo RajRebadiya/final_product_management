@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\ApiController;
@@ -67,6 +68,14 @@ Route::controller(OrderController::class)->group(function () {
     Route::post('/order_form_list', 'order_form_list')->name('order_form_list');
     Route::post('/delete-temp-order', 'delete_temp_order')->name('delete-temp-order');
     Route::post('/search_temp_order', 'search_temp_order')->name('search_temp_order');
+    Route::post('edit_temp_order_detail', 'edit_temp_order_detail')->name('edit_temp_order_detail');
+    Route::post('edit_party', 'edit_party')->name('edit_party');
     Route::post('edit_temp_order', 'edit_temp_order')->name('edit_temp_order');
+    Route::post('/delete_temp_order_detail', 'delete_temp_order_detail')->name('delete_temp_order_detail');
 
+});
+
+Route::controller(RoleController::class)->group(function () {
+    Route::get('/getRolesDetails', 'getRolesDetails')->name('getRolesDetails');
+    Route::post('/getRolePermissionsDetails', 'getRolePermissionsDetails')->name('getRolePermissionsDetails');
 });

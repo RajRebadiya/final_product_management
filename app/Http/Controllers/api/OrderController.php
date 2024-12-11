@@ -513,7 +513,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function edit_temp_order(Request $request)
+    public function edit_temp_order_detail(Request $request)
     {
         // dd($request->all());
         $rules = [
@@ -553,15 +553,109 @@ class OrderController extends Controller
         }
 
     }
+    public function edit_party(Request $request)
+    {
+        $rules = [
+            'id' => 'required|integer',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode(' ', $errors);
+            return response()->json([
+                'status_code' => 400,
+                'message' => $errorMessage,
+                'data' => []
+            ]);
+        }
+        $party = Party::find($request->id);
+        if (!$party) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'Party not found.',
+                'data' => []
+            ]);
+        }
+        $party->name = $request->name ?? $party->name;
+        $party->email = $request->email ?? $party->email;
+        $party->mobile_no = $request->mobile_no ?? $party->mobile_no;
+        $party->address = $request->address ?? $party->address;
+        $party->city = $request->city ?? $party->city;
+        $party->gst_no = $request->gst_no ?? $party->gst_no;
+        $party->agent = $request->agent ?? $party->agent;
+        $party->transport = $request->transport ?? $party->transport;
+        $party->haste = $request->haste ?? $party->haste;
+        $party->pin_code = $request->pin_code ?? $party->pin_code;
+        $party->booking = $request->booking ?? $party->booking;
+        $party->export = $request->export ?? $party->export;
+        $party->save();
 
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Party updated successfully.',
+            'data' => $party
+        ]);
+    }
 
+    public function edit_temp_order(Request $request)
+    {
+        $rules = [
+            'id' => 'required|integer'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode(' ', $errors);
+            return response()->json([
+                'status_code' => 400,
+                'message' => $errorMessage,
+                'data' => []
+            ]);
+        }
+        $tempOrder = TempOrder::find($request->id);
+        if (!$tempOrder) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'Temp order not found.',
+                'data' => []
+            ]);
+        }
+        $tempOrder->party_id = $request->party_id ?? $tempOrder->party_id;
+        $tempOrder->order_date = $request->order_date ?? $tempOrder->order_date;
+        $tempOrder->packing_bag = $request->packing_bag ?? $tempOrder->packing_bag;
+        $tempOrder->party_data = $request->party_data ?? $tempOrder->party_data;
+        $tempOrder->save();
 
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Temp order updated successfully.',
 
+        ]);
+    }
 
+    public function delete_temp_order_detail(Request $request)
+    {
+        $rules = [
+            'id' => 'required|integer|exists:temp_order_details,id',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode(' ', $errors);
+            return response()->json([
+                'status_code' => 400,
+                'message' => $errorMessage,
+                'data' => []
+            ]);
+        }
+        $tempOrder = TempOrderDetail::find($request->id);
+        $tempOrder->delete();
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Temp order deleted successfully.',
 
-
-
-
+        ]);
+    }
 
 
 

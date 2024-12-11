@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Party;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
@@ -67,9 +68,11 @@ class ApiController extends Controller
     public function product_data()
     {
         // Load products with only the required fields from category
-        $products = Product::with(['category' => function ($query) {
-            $query->select('id', 'name'); // Only load 'id' and 'name' from categories
-        }])->get();
+        $products = Product::with([
+            'category' => function ($query) {
+                $query->select('id', 'name'); // Only load 'id' and 'name' from categories
+            }
+        ])->get();
 
         // Add category name directly to each product
         $products = $products->map(function ($product) {
@@ -687,7 +690,7 @@ class ApiController extends Controller
                 $c_id = $colorData['c_id'] ?? null;
 
                 // Ensure the color exists in the Color table
-                $existingColor = Color::firstOrCreate(['color_name' => $colorName]); 
+                $existingColor = Color::firstOrCreate(['color_name' => $colorName]);
 
                 if ($c_id) {
                     // Update existing product color by c_id
@@ -1006,7 +1009,7 @@ class ApiController extends Controller
         // Apply sorting based on the filter value
         if ($filter) {
             switch ($filter) {
-                    // Product filters
+                // Product filters
                 case 'p_new_to_old':
                     $productQuery->orderBy('created_at', 'desc');
                     break;
@@ -1014,7 +1017,7 @@ class ApiController extends Controller
                     $productQuery->orderBy('created_at', 'asc');
                     break;
 
-                    // Price filters
+                // Price filters
                 case 'price_low_to_high':
                     $productQuery->orderBy('price', 'asc');
                     break;
@@ -1022,7 +1025,7 @@ class ApiController extends Controller
                     $productQuery->orderBy('price', 'desc');
                     break;
 
-                    // Category filters
+                // Category filters
                 case 'c_new_to_old':
                     $productQuery->orderBy('category_id', 'desc');
                     break;
@@ -1035,7 +1038,7 @@ class ApiController extends Controller
                 case 'c_z_to_a':
                     $productQuery->orderBy('category_name', 'desc');
                     break;
-                    // Latest updated product
+                // Latest updated product
                 case 'latest_updated':
                     $productQuery->orderBy('updated_at', 'desc');
                     break;
@@ -1276,9 +1279,10 @@ class ApiController extends Controller
         } else {
             return redirect()->back()->with('error', 'Product thumb image is required.');
         }
-        // Mark product as synced
+        $product->timestamps = false; // Disable automatic timestamp update
         $product->sync = 1;
-        $product->save();
+        $product->save(); // Save the product without modifying 'updated_at'
+        $product->timestamps = true; // Re-enable automatic timestamp update
 
         // Prepare success message
         $message = 'Product updated successfully.';
@@ -1303,4 +1307,6 @@ class ApiController extends Controller
 
         ]);
     }
+
+
 }

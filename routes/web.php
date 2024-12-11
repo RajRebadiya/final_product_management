@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -86,6 +87,17 @@ Route::controller(OrderController::class)->middleware('auth:staff')->group(funct
     Route::post('/save-temp-order', 'save_temp_order')->name('save-temp-order');
     Route::get('/download_summary/{id}', 'downloadSummaryPDF')->name('download_summary');
     Route::get('/download_full/{id}', 'downloadFullPDF')->name('download_full');
+
+
+});
+
+Route::controller(RoleController::class)->middleware('auth:staff')->group(function () {
+    Route::resource('roles', RoleController::class);
+    Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
+    Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+    Route::get('/permissions/create/{id}', 'permission_create')->name('permissions.create');
+    Route::post('/permissions', 'permission_store')->name('permissions.store');
 
 
 });
