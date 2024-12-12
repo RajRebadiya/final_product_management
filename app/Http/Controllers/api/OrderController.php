@@ -283,6 +283,7 @@ class OrderController extends Controller
                 'temp_orders.packing_bag',
                 'temp_orders.created_by',
                 'temp_orders.created_at',
+                'temp_orders.party_data',
                 'party.name',
                 'party.mobile_no',
                 'party.*'
@@ -310,6 +311,7 @@ class OrderController extends Controller
 
             // Group order details by category_name
             $groupedOrderDetails = $orderDetails->groupBy('category_name')->map(function ($group, $categoryName) {
+                // dd($group, $categoryName);
                 return [
                     'category_name' => $categoryName,
                     'products' => $group->map(function ($orderDetail) {
@@ -325,23 +327,26 @@ class OrderController extends Controller
             })->values(); // Reset the index for the grouped data
 
             $user = Staff::where('id', $order->created_by)->first();
+            $party_data = json_decode($order->party_data, true);
+            // dd($party_data);
+
 
             return [
                 'party_detail' => [
-                    'party_id' => $order->id,
-                    'party_name' => $order->name,
-                    'mobile_no' => $order->mobile_no,
-                    'city' => $order->city,
+                    'party_id' => $party_data['id'],
+                    'party_name' => $party_data['name'],
+                    'mobile_no' => $party_data['mobile_no'],
+                    'city' => $party_data['city'],
 
-                    'address' => $order->address, // Include other party details if needed
-                    'email' => $order->email,
-                    'gst_no' => $order->gst_no,
-                    'agent' => $order->agent,
-                    'transport' => $order->transport,
-                    'haste' => $order->haste,
-                    'pin_code' => $order->pin_code,
-                    'booking' => $order->booking,
-                    'export' => $order->export,
+                    'address' => $party_data['address'], // Include other party details if needed
+                    'email' => $party_data['email'],
+                    'gst_no' => $party_data['gst_no'],
+                    'agent' => $party_data['agent'],
+                    'transport' => $party_data['transport'],
+                    'haste' => $party_data['haste'],
+                    'pin_code' => $party_data['pin_code'],
+                    'booking' => $party_data['booking'],
+                    'export' => $party_data['export'],
                 ],
                 'order_id' => $order->order_id, // Correctly map the alias 'order_id' for temp_orders.id
                 'order_number' => $order->order_number,
@@ -517,46 +522,66 @@ class OrderController extends Controller
     {
         // dd($request->all());
         $rules = [
-            'order_number' => 'required|string|exists:temp_order_details,temp_order_number',
-            'id' => 'required|exists:temp_order_details,id'
+            'id' => 'required|exists:temp_order_details,id',
+            'product_data' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
+
         if ($validator->fails()) {
             return response()->json([
                 'status_code' => 400,
                 'message' => $validator->errors()->first(),
-
             ]);
         }
-        $tempOrderUpdate = TempOrderDetail::where('id', $request->id)->where('temp_order_number', $request->order_number)->first();
+
+        $tempOrderUpdate = TempOrderDetail::where('id', $request->id)
+            ->first();
+
         // dd($tempOrderUpdate);
+
         if ($tempOrderUpdate) {
-            $tempOrderUpdate->product_id = $request->product_id ?? $tempOrderUpdate->product_id;
-            $tempOrderUpdate->p_name = $request->p_name ?? $tempOrderUpdate->p_name;
-            $tempOrderUpdate->category_name = $request->category_name ?? $tempOrderUpdate->category_name;
-            $tempOrderUpdate->buyqty = $request->buyqty ?? $tempOrderUpdate->buyqty;
-            $tempOrderUpdate->remark = $request->remark ?? null;
-            $tempOrderUpdate->product_data = $request->product_data ?? $tempOrderUpdate->product_data;
+            // dd($request->product_data);
+            // Decode the product_data JSON
+            $productData = json_decode($request->product_data, true);
+            // dd($productData);
+
+            // Update buyqty and remark in product_data
+            if (is_array($productData)) {
+                $productData['buyQty'] = $request->buyqty ?? $productData['buyQty'];
+                $productData['remark'] = $request->remark ?? $productData['remark'];
+            }
+            // dd($tempOrderUpdate);
+            // dd($productData);
+
+            // Update database fields
+            // $tempOrderUpdate->product_id = $request->product_id ?? $productData['product_id'];
+            // $tempOrderUpdate->p_name = $request->p_name ?? $productData['p_name'];
+            // $tempOrderUpdate->category_name = $request->category_name ?? $productData['category_name'];
+            $tempOrderUpdate->buyqty = $request->buyqty ?? $productData['buyQty'];
+            $tempOrderUpdate->remark = $request->remark ?? $productData['remark'];
+            $tempOrderUpdate->product_data = json_encode($productData); // Save updated JSON
             $tempOrderUpdate->save();
+
+            // dd($tempOrderUpdate);
 
             return response()->json([
                 'status_code' => 200,
                 'message' => 'Order updated successfully.',
-
             ]);
         } else {
             return response()->json([
                 'status_code' => 404,
                 'message' => 'Order not found.',
-
             ]);
         }
-
     }
-    public function edit_party(Request $request)
+
+    public function edit_temp_order_party(Request $request)
     {
+        // dd($request->all());
         $rules = [
-            'id' => 'required|integer',
+            'temp_order_id' => 'required|integer',
+            'party_data' => 'required',
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -568,7 +593,10 @@ class OrderController extends Controller
                 'data' => []
             ]);
         }
-        $party = Party::find($request->id);
+        $party_data = json_decode($request->party_data, true);
+
+        // dd($party_data);
+        $party = Party::find($party_data['id']);
         if (!$party) {
             return response()->json([
                 'status_code' => 400,
@@ -576,19 +604,27 @@ class OrderController extends Controller
                 'data' => []
             ]);
         }
-        $party->name = $request->name ?? $party->name;
-        $party->email = $request->email ?? $party->email;
-        $party->mobile_no = $request->mobile_no ?? $party->mobile_no;
-        $party->address = $request->address ?? $party->address;
-        $party->city = $request->city ?? $party->city;
-        $party->gst_no = $request->gst_no ?? $party->gst_no;
-        $party->agent = $request->agent ?? $party->agent;
-        $party->transport = $request->transport ?? $party->transport;
-        $party->haste = $request->haste ?? $party->haste;
-        $party->pin_code = $request->pin_code ?? $party->pin_code;
-        $party->booking = $request->booking ?? $party->booking;
-        $party->export = $request->export ?? $party->export;
+        $party->name = $party_data['name'];
+        $party->email = $party_data['email'];
+        $party->mobile_no = $party_data['mobile_no'];
+        $party->address = $party_data['address'];
+        $party->city = $party_data['city'];
+        $party->gst_no = $party_data['gst_no'];
+        $party->agent = $party_data['agent'];
+        $party->transport = $party_data['transport'];
+        $party->haste = $party_data['haste'];
+        $party->pin_code = $party_data['pin_code'];
+        $party->booking = $party_data['booking'];
+        $party->export = $party_data['export'];
         $party->save();
+
+        $temp_party_data_field = $request->party_data;
+        // dd($all);
+
+        $temp_party_data = TempOrder::find($request->temp_order_id);
+        $temp_party_data->party_id = $party_data['id'];
+        $temp_party_data->party_data = $temp_party_data_field;
+        $temp_party_data->save();
 
         return response()->json([
             'status_code' => 200,
@@ -656,6 +692,9 @@ class OrderController extends Controller
 
         ]);
     }
+
+    // Show the form to edit a specific product
+
 
 
 

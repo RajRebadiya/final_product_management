@@ -86,7 +86,14 @@ Route::controller(OrderController::class)->middleware('auth:staff')->group(funct
     Route::get('/offer_form_detail/{id}', 'offer_form_detail')->name('offer_form_detail');
     Route::post('/save-temp-order', 'save_temp_order')->name('save-temp-order');
     Route::get('/download_summary/{id}', 'downloadSummaryPDF')->name('download_summary');
+    Route::get('/download_summary_with_images/{id}', 'downloadSummaryPDFIMages')->name('download_summary_with_images');
     Route::get('/download_full/{id}', 'downloadFullPDF')->name('download_full');
+
+    Route::get('offer_form_detail/{order_number}', [OrderController::class, 'showOfferFormDetail'])->name('order.offer_form_detail');
+    Route::get('product/edit/{order_number}/{product_id}', [OrderController::class, 'editProduct'])->name('product.edit');
+    Route::put('product/update/{order_number}/{product_id}', [OrderController::class, 'updateProduct'])->name('product.update');
+    Route::delete('/product/delete/{order_number}/{product_id}', [OrderController::class, 'deleteProduct'])->name('product.delete');
+
 
 
 });

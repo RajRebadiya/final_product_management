@@ -192,7 +192,7 @@ class OrderController extends Controller
                     'price' => (float) $product->price,
                     'thumb' => url('storage/thumbnail/' . $product->category_name . '/' . $product->thumb),
                     'stock' => (int) $product->stock,
-                    'buyqty' => $request->buyqty[$productId] ?? 0,  // Get buyqty for each product
+                    'buyQty' => $request->buyqty[$productId] ?? 0,  // Get buyqty for each product
                     'remark' => $request->remark[$productId] ?? '', // Get remark for each product
                 ];
 
@@ -282,15 +282,10 @@ class OrderController extends Controller
             ->select(
                 'temp_order_details.product_data', // JSON product details
                 'temp_orders.order_number', // Order number
+                'temp_orders.packing_bag',
+
                 'temp_orders.order_date', // Order date
-                'party.name as party_name', // Party name
-                'party.email as party_email', // Party email
-                'party.mobile_no as party_mobile_no', // Party mobile number
-                'party.address as party_address', // Party address
-                'party.city as party_city', // Party city
-                'party.gst_no as party_gst_no', // Party GST number
-                'party.agent as party_agent', // Party agent
-                'party.transport as party_transport'
+                'party.*'
             )
             ->get();
 
@@ -316,6 +311,9 @@ class OrderController extends Controller
         // dd($products);
 
 
+        $orderArray = json_decode(json_encode($order), true);
+
+        // dd($orderArray);
 
 
         // Prepare data for the PDF (summary version without images)
@@ -324,16 +322,60 @@ class OrderController extends Controller
             'products' => $products  // Merged product data
         ];
 
-        // Load the view for the summary PDF and generate
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.order.pdf_summary', $pdfData)
-            ->setOptions([
-                'defaultFont' => 'Arial',
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => true
-            ]);
+        return view('admin.order.pdf_summary', compact('orderArray', 'products'));
 
-        // Return the generated PDF as a download
-        return $pdf->download('order_summary_' . $order->order_number . '.pdf');
+    }
+    public function downloadSummaryPDFIMages(Request $request, $orderNumber)
+    {
+        // Fetch all products belonging to the given order number
+        $orderDetails = DB::table('temp_order_details')
+            ->join('temp_orders', 'temp_order_details.temp_order_id', '=', 'temp_orders.id')
+            ->join('party', 'temp_orders.party_id', '=', 'party.id')
+            ->where('temp_orders.order_number', $orderNumber)
+            ->select(
+                'temp_order_details.product_data', // JSON product details
+                'temp_orders.order_number', // Order number
+                'temp_orders.packing_bag',
+
+                'temp_orders.order_date', // Order date
+                'party.*'
+            )
+            ->get();
+
+        // If no orders are found, return a 404 error
+        if ($orderDetails->isEmpty()) {
+            abort(404, 'No orders found for the given order number.');
+        }
+
+        // Extract product details and group them into an array
+        $products = [];
+        foreach ($orderDetails as $detail) {
+            if (!empty($detail->product_data)) {
+                $productData = json_decode($detail->product_data, true); // Decode JSON product_data into an array
+                if (is_array($productData)) {
+                    $products[] = $productData; // Add product details to the array
+                }
+            }
+        }
+
+        // Get order-level details (e.g., party details) from the first record
+        $order = $orderDetails->first();
+        $order->products = $products; // Add all products to the order object
+        // dd($products);
+
+
+        $orderArray = json_decode(json_encode($order), true);
+
+        // dd($orderArray);
+
+
+        // Prepare data for the PDF (summary version without images)
+        $pdfData = [
+            'order' => $order,       // Order details
+            'products' => $products  // Merged product data
+        ];
+
+        return view('admin.order.pdf_summary_image', compact('orderArray', 'products'));
 
     }
 
@@ -389,6 +431,106 @@ class OrderController extends Controller
         // Return the generated Full PDF as a download
         return $pdf->download('order_full_' . $order->order_number . '.pdf');
     }
+
+    public function editProduct($orderNumber, $productId)
+    {
+        // dd($productId);
+        // Retrieve the order with the specific product
+        $order = TempOrderDetail::where('temp_order_number', $orderNumber)->where('product_id', $productId)->firstOrFail();
+        // dd($order);
+
+        // Retrieve the specific product
+        $product = Product::find($productId);
+        // dd($product);
+
+        // Check if the product exists
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found in this order.');
+        }
+
+        // Pass both order and product to the view
+        return view('admin.order.edit_product', compact('order', 'product'));
+    }
+
+
+    // Update the product details
+    public function updateProduct(Request $request, $orderNumber, $productId)
+    {
+        // dd($productId);
+        // Validate the input
+        $request->validate([
+            'quantity' => 'required|numeric|min:1',
+            'remark' => 'nullable|string',
+        ]);
+        // convert qty into integer
+        // dd($request->all());
+        $qty = (int) $request->quantity;
+        // dd($qty);
+
+
+        // Find the TempOrderDetail by order number
+        $tempOrder = TempOrderDetail::where('temp_order_number', $orderNumber)->where('product_id', $productId)->firstOrFail();
+
+        // Decode the product_data JSON
+        $productData = json_decode($tempOrder->product_data, true);
+        // dd($productData);
+
+        // Ensure that product_data is an array and check if it has the expected structure
+        if (!is_array($productData)) {
+            return redirect()->back()->with('error', 'Invalid product data format.');
+        }
+        // dd($productData);
+
+        // // Check if the product_id exists in the product data
+        // if ($productData['product_id'] != $productId) {
+        //     return redirect()->back()->with('error', 'Product not found in this order.');
+        // }
+        // Update the necessary fields: buyqty, price, remark
+        $productData['buyQty'] = $qty;
+        $productData['remark'] = $request->input('remark');
+
+        // dd($productData);
+
+        // Update the TempOrderDetail's product_data with the modified product data
+        $tempOrder->product_data = json_encode($productData);
+
+        // Optionally update other fields like buyqty or remark in TempOrderDetail
+        $tempOrder->buyqty = $request->input('quantity');
+        $tempOrder->remark = $request->input('remark');
+
+        // Save the changes
+        $tempOrder->save();
+
+        return redirect()->route('order.offer_form_detail', $orderNumber)
+            ->with('success', 'Product updated successfully.');
+    }
+
+    public function deleteProduct($orderNumber, $productId)
+    {
+        // Find the TempOrderDetail by order number
+        $tempOrder = TempOrderDetail::where('temp_order_number', $orderNumber)->where('product_id', $productId)->firstOrFail();
+
+        // Decode the product_data JSON
+        $productData = json_decode($tempOrder->product_data, true);
+
+        // Ensure that product_data is an array
+        if (!is_array($productData)) {
+            return redirect()->back()->with('error', 'Invalid product data format.');
+        }
+
+        // Check if the product_id matches and remove the product
+        if ($productData['product_id'] == $productId) {
+            $tempOrder->delete(); // Optional: Adjust this logic to remove the product correctly
+        } else {
+            return redirect()->back()->with('error', 'Product not found in this order.');
+        }
+
+        // Redirect with success message
+        return redirect()->route('order.offer_form_detail', $orderNumber)
+            ->with('success', 'Product deleted successfully.');
+    }
+
+
 
 
 }

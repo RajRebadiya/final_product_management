@@ -10,7 +10,7 @@ use App\Models\Category;
 use App\Models\Color;
 use Illuminate\Support\Facades\Validator;
 use App\Models\ProductColor;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
@@ -1279,12 +1279,19 @@ class ApiController extends Controller
         } else {
             return redirect()->back()->with('error', 'Product thumb image is required.');
         }
-        $product->timestamps = false; // Disable automatic timestamp update
-        $product->sync = 1;
-        $product->save(); // Save the product without modifying 'updated_at'
-        $product->timestamps = true; // Re-enable automatic timestamp update
 
-        // Prepare success message
+
+        // Retain the original `updated_at` value
+        $originalUpdatedAt = $product->updated_at;
+
+        // Update the `sync` field and explicitly retain the `updated_at` value
+        DB::table('products')
+            ->where('id', $request->product_id)
+            ->update([
+                'sync' => 1,
+                'updated_at' => $originalUpdatedAt, // Explicitly set `updated_at` to its original value
+            ]);
+
         $message = 'Product updated successfully.';
 
         // // Add information about deleted files if applicable

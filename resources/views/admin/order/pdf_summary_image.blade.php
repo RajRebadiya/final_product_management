@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Form</title>
+    <title>Order Form with Product Images</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -77,33 +77,44 @@
             font-weight: bold;
         }
 
-        .product-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
         }
 
-        .product-table th,
-        .product-table td {
+        .product-card {
             border: 1px solid #d00;
-            padding: 5px;
+            padding: 10px;
             text-align: center;
-
+            background-color: #f8f8f8;
+            height: 350px;
+            /* Fixed height for the product card */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .product-table th {
-            background-color: #f8d5d9;
+        .product-card img {
+            width: 100%;
+            /* Fixed width */
+            height: 150px;
+            /* Fixed height */
+            object-fit: cover;
+            /* Ensures the image fits within the box */
+            border: 1px solid #d00;
+            margin-bottom: 10px;
         }
 
-        .product-table td {
-            text-align: left;
-
+        .product-card .product-details {
+            font-size: 14px;
         }
 
-        .product-table td:nth-child(1),
-        .product-table td:nth-child(4),
-        .product-table td:nth-child(5) {
-            text-align: center;
+        .product-card .product-details strong {
+            display: block;
+            margin-top: 5px;
         }
 
         .print-button-container {
@@ -130,13 +141,53 @@
 
         .print-button::before {
             content: "🖨️ ";
-            /* Add a print emoji */
         }
 
-        /* Hide the print button when printing */
+        /* Print styles */
         @media print {
+            .product-grid {
+                display: block;
+                margin-top: 0px;
+                /* Products will be displayed one by one */
+            }
+
+            .product-card {
+                display: block;
+                width: auto;
+                /* Full width for each product */
+                height: auto;
+                margin-top: 0px;
+                /* Allow cards to adjust height based on content */
+                /* page-break-before: always; */
+                /* Ensure each product starts on a new page */
+                /* margin-bottom: 20px; */
+                /* Space between products */
+            }
+
+            /* Ensure the product image is shown in its full size */
+            .product-card img {
+                width: 100%;
+                /* Image will take full width of the card */
+                height: 800px;
+                /* Maintain original image height */
+                border: none;
+                margin-top: 0px;
+                /* Remove border */
+                /* margin-bottom: 10px; */
+            }
+
+            .product-details {
+                font-size: 14px;
+            }
+
             .print-button-container {
                 display: none;
+                /* Hide the print button in the printed version */
+            }
+
+            /* Optional: Add page breaks between product cards */
+            .product-card {
+                /* page-break-after: always; */
             }
         }
     </style>
@@ -158,7 +209,7 @@
         <div style="clear: both;"></div>
     </div>
 
-    <div class="order-title">ORDER FORM</div>
+    <div class="order-title">ORDER FORM WITH IMAGES</div>
 
     <div class="details-section">
         <div class="left" style="margin-left: 5%">
@@ -178,67 +229,19 @@
         </div>
     </div>
 
-    <table class="product-table">
-        <thead>
-            <tr>
-                <th>Sr.</th>
-                <th>Product</th>
-                <th>Design No</th>
-                <th>QTY</th>
-                <th>Rate</th>
-            </tr>
-        </thead>
-        <tbody>
-            @php
-                $categories = [];
-            @endphp
-
-            {{-- Group products by category --}}
-            @foreach ($orderArray['products'] as $item)
-                @php
-                    // Group by category and aggregate data
-                    $categories[$item['category_name']]['products'][] = [
-                        'name' => $item['p_name'],
-                        'qty' => $item['buyQty'],
-                        'remark' => $item['remark'],
-                    ];
-                    $categories[$item['category_name']]['total_qty'] =
-                        ($categories[$item['category_name']]['total_qty'] ?? 0) + $item['buyQty'];
-                    $categories[$item['category_name']]['price'] = $item['price']; // Assuming uniform price per category
-                @endphp
-            @endforeach
-
-            {{-- Render grouped data --}}
-            @php $counter = 1; @endphp
-            @foreach ($categories as $categoryName => $data)
-                <tr>
-                    <td>{{ $counter }}</td>
-                    <td class="category_name font-weight-bold" style='font-weight: bold'>{{ $categoryName }}</td>
-                    <td>
-                        {{-- List products without remarks --}}
-                        @foreach ($data['products'] as $product)
-                            @if (!$product['remark'])
-                                {{ $product['name'] }} - {{ $product['qty'] }},
-                            @endif
-                        @endforeach
-                        <br>
-                        {{-- List products with remarks --}}
-                        @foreach ($data['products'] as $product)
-                            @if ($product['remark'])
-                                {{ $product['name'] }} ({{ $product['remark'] }}) - {{ $product['qty'] }},
-                            @endif
-                        @endforeach
-                    </td>
-                    <td>{{ $data['total_qty'] }}</td>
-                    <td>{{ $data['price'] }}/-</td>
-                </tr>
-                @php $counter++; @endphp
-            @endforeach
-        </tbody>
-
-
-
-    </table>
+    <div class="product-grid">
+        @foreach ($orderArray['products'] as $product)
+            <div class="product-card">
+                <img src="{{ asset($product['image']) }}" alt="{{ $product['p_name'] }}">
+                <div class="product-details d-flex">
+                    <strong class='badge bg-dark text-light'>Design No: {{ $product['p_name'] }}</strong>
+                    <p class='badge bg-dark text-light'>Quantity: {{ $product['buyQty'] }}</p>
+                    <p class='badge bg-dark text-light'>Remark: {{ $product['remark'] }}</p>
+                    <p class='badge bg-dark text-light'>Price: ₹{{ $product['price'] }}</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
 
     <div class="print-button-container">
         <button class="print-button" onclick="window.print()">Print Order</button>

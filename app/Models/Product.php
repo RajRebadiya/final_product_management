@@ -10,6 +10,7 @@ class Product extends Model
 {
     use HasFactory;
 
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -18,5 +19,9 @@ class Product extends Model
     public function colors()
     {
         return $this->hasMany(ProductColor::class);
+    }
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }

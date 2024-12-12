@@ -1,5 +1,7 @@
 <!-- resources/views/admin/order/offer_form_detail.blade.php -->
 @extends('admin.layout.template')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <style>
     /* Card Styling */
     .card {
@@ -117,6 +119,19 @@
 
 
 @section('content')
+    @if (session('success'))
+        <div class="alert alert-secondary alert-dismissible fade show " role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show " role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
 
     <div class="container mt-4">
@@ -147,6 +162,7 @@
                 <h5>Product Details</h5>
             </div>
             {{-- @dd($order); --}}
+            <!-- Updated Product Grid Section -->
             <div class="card-body">
                 @if (!empty($order->products))
                     @php
@@ -154,6 +170,7 @@
                         $groupedProducts = collect($order->products)->groupBy('category_name');
                     @endphp
 
+                    {{-- @dd($groupedProducts); --}}
                     @foreach ($groupedProducts as $category => $products)
                         <div class="category-group">
                             <h6 class="category-title">{{ $category }}</h6>
@@ -165,10 +182,15 @@
                                         <img src="{{ $product['image'] ?? '' }}" alt="{{ $product['p_name'] ?? '' }}"
                                             class="img-fluid product-image">
                                         <ul>
-                                            <li>Quantity: {{ $product['buyqty'] ?? 'N/A' }}</li>
+                                            <li>Quantity: {{ $product['buyQty'] ?? 'N/A' }}</li>
                                             <li>Remark: {{ $product['remark'] ?? 'N/A' }}</li>
                                             <li>Price: {{ $product['price'] ?? 'N/A' }}</li>
                                         </ul>
+                                        <a href="{{ route('product.edit', ['order_number' => $order->order_number, 'product_id' => $product['product_id']]) }}"
+                                            class="btn btn-warning btn-sm mt-2">Edit Product</a>
+                                        <button class="btn btn-danger btn-sm mt-2"
+                                            onclick="deleteProduct('{{ $order->order_number }}', '{{ $product['product_id'] }}')">Delete
+                                            Product</button>
                                     </div>
                                 @endforeach
                             </div>
@@ -178,12 +200,56 @@
                     <p>No products found for this order.</p>
                 @endif
             </div>
+
         </div>
         <!-- PDF Download Buttons -->
         <div class="d-flex justify-content-between mt-4">
-            <a href="{{ route('download_summary', $order->order_number) }}" class="btn btn-primary">Download Summary
+            <a href="{{ route('download_summary', $order->order_number) }}" class="btn btn-primary mb-3">Summary
                 PDF</a>
+            <a href="{{ route('download_summary_with_images', $order->order_number) }}"
+                class="btn btn-primary mb-3">Summary
+                PDF with Images</a>
             {{-- <a href="#" onclick="window.print()" class="btn btn-secondary">Download Full PDF</a> --}}
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function deleteProduct(orderNumber, productId) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the delete request
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/product/delete/${orderNumber}/${productId}`;
+
+                    // Add CSRF token
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = csrfToken;
+                    form.appendChild(csrfInput);
+
+                    // Add DELETE method
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+                    form.appendChild(methodInput);
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
+
 @endsection
