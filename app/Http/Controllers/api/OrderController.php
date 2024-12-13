@@ -246,6 +246,83 @@ class OrderController extends Controller
             'data' => $storedProducts
         ]);
     }
+    public function add_product_temp_order(Request $request)
+    {
+        $rules = [
+            'order_number' => 'required|string',
+            'product_data' => 'required|json',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => implode(' ', $validator->errors()->all()),
+                'data' => []
+            ]);
+        }
+
+        $tempOrder = TempOrderDetail::where('temp_order_number', $request->order_number)->first();
+
+        if (!$tempOrder) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'Order not found.',
+                'data' => []
+            ]);
+        }
+
+        $productData = json_decode($request->product_data, true);
+
+        if (!$productData) {
+            return response()->json([
+                'status_code' => 400,
+                'message' => 'Invalid product data.',
+                'data' => []
+            ]);
+        }
+
+        // Normalize product data to always be an array
+        $productData = isset($productData[0]) ? $productData : [$productData];
+
+        $storedProducts = [];
+
+        foreach ($productData as $product) {
+            if (!is_array($product)) {
+                return response()->json([
+                    'status_code' => 400,
+                    'message' => 'Invalid product format.',
+                    'data' => []
+                ]);
+            }
+
+            $tempOrderDetail = new TempOrderDetail();
+            $tempOrderDetail->temp_order_id = $tempOrder->temp_order_id;
+            $tempOrderDetail->temp_order_number = $tempOrder->temp_order_number;
+            $tempOrderDetail->product_id = $product['product_id'] ?? null;
+            $tempOrderDetail->category_name = $product['category_name'] ?? null;
+            $tempOrderDetail->p_name = $product['p_name'] ?? null;
+            $tempOrderDetail->buyqty = $product['buyQty'] ?? 0;
+            $tempOrderDetail->remark = $product['remark'] ?? null;
+
+            // Store JSON of the single product
+            $tempOrderDetail->product_data = json_encode($product);
+
+            // Save the individual record
+            $tempOrderDetail->save();
+
+            $storedProducts[] = $tempOrderDetail;
+        }
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Product added successfully.',
+            'data' => $storedProducts
+        ]);
+    }
+
+
 
 
     public function order_form_list(Request $request)
@@ -305,13 +382,13 @@ class OrderController extends Controller
         $tempOrders = $tempOrderQuery->paginate($limit, ['*'], 'page', $page);
 
         // Format the data for response
+        // Format the data for response
         $formattedData = $tempOrders->map(function ($order) {
             // Fetch all the details from the temp_order_details table for the given temp_order_id
             $orderDetails = TempOrderDetail::where('temp_order_id', $order->order_id)->get();
 
             // Group order details by category_name
             $groupedOrderDetails = $orderDetails->groupBy('category_name')->map(function ($group, $categoryName) {
-                // dd($group, $categoryName);
                 return [
                     'category_name' => $categoryName,
                     'products' => $group->map(function ($orderDetail) {
@@ -324,12 +401,13 @@ class OrderController extends Controller
                         ];
                     })->values(), // Reset the index for the array
                 ];
-            })->values(); // Reset the index for the grouped data
+            });
+
+            // Sort groupedOrderDetails alphabetically by category_name
+            $sortedGroupedOrderDetails = $groupedOrderDetails->sortBy('category_name')->values(); // Reset the index for sorted data
 
             $user = Staff::where('id', $order->created_by)->first();
             $party_data = json_decode($order->party_data, true);
-            // dd($party_data);
-
 
             return [
                 'party_detail' => [
@@ -353,10 +431,11 @@ class OrderController extends Controller
                 'order_date' => $order->order_date,
                 'packing_bag' => $order->packing_bag,
                 'created_by' => $user->name,
-                'order_details' => $groupedOrderDetails, // Include grouped order details by category
+                'order_details' => $sortedGroupedOrderDetails, // Include sorted grouped order details by category_name
                 'created_at' => $order->created_at->format('Y-m-d H:i:s'),
             ];
         });
+
 
         // Return paginated data with order details and party details
         return response()->json([
@@ -424,7 +503,7 @@ class OrderController extends Controller
     public function search_temp_order(Request $request)
     {
         $rules = [
-            'order_number' => 'required|string', // Order number is required
+            'order_number' => 'required', // Order number is required
         ];
 
         // Validate the incoming request
@@ -449,6 +528,8 @@ class OrderController extends Controller
                 'temp_orders.order_number',
                 'temp_orders.order_date',
                 'temp_orders.created_at',
+                'temp_orders.packing_bag',
+                'temp_orders.created_by',
                 'party.name',
                 'party.mobile_no',
                 'party.*'
@@ -468,7 +549,10 @@ class OrderController extends Controller
         $orderDetails = TempOrderDetail::where('temp_order_id', $tempOrder->order_id)->get();
 
         // Group order details by category_name
-        $groupedOrderDetails = $orderDetails->groupBy('category_name')->map(function ($group, $categoryName) {
+        $groupedOrderDetails = $orderDetails->groupBy('category_name');
+
+        // Sort the grouped data by category_name in ascending order
+        $sortedGroupedOrderDetails = $groupedOrderDetails->sortKeys()->map(function ($group, $categoryName) {
             return [
                 'category_name' => $categoryName,
                 'products' => $group->map(function ($orderDetail) {
@@ -481,7 +565,8 @@ class OrderController extends Controller
                     ];
                 })->values(), // Reset the index for the array
             ];
-        })->values(); // Reset the index for the grouped data
+        })->values(); // Reset the index for sorted data
+        $user = Staff::where('id', $tempOrder->created_by)->first();
 
         // Format the response data
         $formattedData = [
@@ -499,14 +584,13 @@ class OrderController extends Controller
                 'pin_code' => $tempOrder->pin_code,
                 'booking' => $tempOrder->booking,
                 'export' => $tempOrder->export,
-
             ],
             'order_id' => $tempOrder->order_id,
             'order_number' => $tempOrder->order_number,
             'order_date' => $tempOrder->order_date,
             'packing_bag' => $tempOrder->packing_bag,
-            'created_by' => $tempOrder->created_by,
-            'order_details' => $groupedOrderDetails,
+            'created_by' => $user->name,
+            'order_details' => $sortedGroupedOrderDetails, // Include sorted grouped order details by category_name
             'created_at' => $tempOrder->created_at->format('Y-m-d H:i:s'),
         ];
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StaffController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -105,6 +106,14 @@ Route::controller(RoleController::class)->middleware('auth:staff')->group(functi
     Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
     Route::get('/permissions/create/{id}', 'permission_create')->name('permissions.create');
     Route::post('/permissions', 'permission_store')->name('permissions.store');
+    Route::get('/permissions/delete/{module}', 'permission_delete')->name('permissions.delete');
+    Route::get('/add_new_permission', 'add_new_permission')->name('add_new_permission');
+    Route::post('permissions_add', 'permissions_add')->name('permissions_add');
+    Route::get('/permission_list', 'permission_list')->name('permission_list');
 
 
+});
+
+Route::controller(StaffController::class)->middleware('auth:staff')->group(function () {
+    Route::resource('staff', StaffController::class);
 });

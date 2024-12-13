@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Form with Product Images</title>
+    <title>Order Form with Images</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,44 +14,29 @@
             padding: 0;
         }
 
-        .header,
-        .footer {
+        .header {
+            border-bottom: 2px solid #000;
             padding: 10px;
         }
 
-        .header {
-            border-bottom: 2px solid #000;
-            margin-bottom: 10px;
-        }
-
         .header .company-info {
-            width: 65%;
+            width: 70%;
             float: left;
         }
 
-        .header .company-info p {
-            margin: 2px 0;
-            line-height: 1.3;
-        }
-
         .header .logo {
-            float: right;
             width: 30%;
             text-align: right;
+            float: right;
         }
 
         .header .logo img {
             max-width: 150px;
         }
 
-        .header .gst-info {
-            font-weight: bold;
-            color: #d00;
-        }
-
         .order-title {
-            background-color: #f8d5d9;
             text-align: center;
+            background-color: #f8d5d9;
             padding: 5px;
             font-weight: bold;
             margin: 10px 0;
@@ -63,67 +48,41 @@
             margin: 10px 0;
         }
 
-        .details-section .left,
-        .details-section .right {
-            width: 48%;
-        }
-
         .details-section p {
             margin: 3px 0;
-            line-height: 1.4;
         }
 
-        .details-section .title {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #d00;
+            padding: 8px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #f8d5d9;
             font-weight: bold;
         }
 
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .product-card {
-            border: 1px solid #d00;
-            padding: 10px;
-            text-align: center;
-            background-color: #f8f8f8;
-            height: 350px;
-            /* Fixed height for the product card */
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .product-card img {
-            width: 100%;
-            /* Fixed width */
-            height: 150px;
-            /* Fixed height */
-            object-fit: cover;
-            /* Ensures the image fits within the box */
-            border: 1px solid #d00;
-            margin-bottom: 10px;
-        }
-
-        .product-card .product-details {
-            font-size: 14px;
-        }
-
-        .product-card .product-details strong {
-            display: block;
-            margin-top: 5px;
+        table img {
+            max-width: 100px;
+            height: auto;
+            object-fit: contain;
+            /* border: 1px solid #d00; */
         }
 
         .print-button-container {
             text-align: center;
-            margin-top: 20px;
+            margin: 20px 0;
         }
 
         .print-button {
-            display: inline-block;
             background-color: #d00;
             color: #fff;
             padding: 10px 20px;
@@ -132,63 +91,49 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            text-decoration: none;
         }
 
         .print-button:hover {
             background-color: #a00;
         }
 
-        .print-button::before {
-            content: "🖨️ ";
-        }
-
-        /* Print styles */
         @media print {
-            .product-grid {
-                display: block;
-                margin-top: 0px;
-                /* Products will be displayed one by one */
-            }
-
-            .product-card {
-                display: block;
-                width: auto;
-                /* Full width for each product */
-                height: auto;
-                margin-top: 0px;
-                /* Allow cards to adjust height based on content */
-                /* page-break-before: always; */
-                /* Ensure each product starts on a new page */
-                /* margin-bottom: 20px; */
-                /* Space between products */
-            }
-
-            /* Ensure the product image is shown in its full size */
-            .product-card img {
-                width: 100%;
-                /* Image will take full width of the card */
-                height: 800px;
-                /* Maintain original image height */
-                border: none;
-                margin-top: 0px;
-                /* Remove border */
-                /* margin-bottom: 10px; */
-            }
-
-            .product-details {
-                font-size: 14px;
-            }
-
             .print-button-container {
                 display: none;
-                /* Hide the print button in the printed version */
             }
+        }
 
-            /* Optional: Add page breaks between product cards */
-            .product-card {
-                /* page-break-after: always; */
-            }
+        .footer {
+            margin-top: 20px;
+            padding: 10px;
+            /* background-color: #d00; */
+            color: black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .footer .contact-info p {
+            margin: 5px 0;
+            color: black;
+        }
+
+        .footer .footer-notes {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .footer-notes span {
+            padding: 5px 10px;
+            background-color: #d00;
+            color: #fff;
+            /* border: 1px solid #fff; */
+        }
+
+        .footer-notes span:not(:last-child) {
+            border-right: none;
         }
     </style>
 </head>
@@ -209,11 +154,12 @@
         <div style="clear: both;"></div>
     </div>
 
+
     <div class="order-title">ORDER FORM WITH IMAGES</div>
 
     <div class="details-section">
         <div class="left" style="margin-left: 5%">
-            <p class="title">M/s: {{ $orderArray['name'] }}</p>
+            <p class="title"><strong>M/s:</strong> {{ $orderArray['name'] }}</p>
             <p><strong>Add:</strong> {{ $orderArray['address'] }}</p>
             <p><strong>GSTIN:</strong> {{ $orderArray['gst_no'] }}</p>
             <p><strong>Agent:</strong> {{ $orderArray['agent'] }}</p>
@@ -228,25 +174,61 @@
             <p><strong>Packing:</strong> {{ $orderArray['packing_bag'] }}</p>
         </div>
     </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Sr.</th>
+                <th>Product</th>
+                <th>Design No</th>
+                <th>QTY</th>
+                <th>Rate</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($orderArray['products'] as $index => $product)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $product['category_name'] }}</td>
+                    <td>{{ $product['p_name'] }}</td>
+                    <td>{{ $product['buyQty'] }}</td>
+                    <td>₹{{ $product['price'] }}</td>
+                    <td><img src="{{ asset($product['image']) }}" alt="{{ $product['p_name'] }}" width="100px"
+                            height="100px"
+                            style="
+                            height: 150px;
+                            width: 150px;
+                        ">
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 
-    <div class="product-grid">
-        @foreach ($orderArray['products'] as $product)
-            <div class="product-card">
-                <img src="{{ asset($product['image']) }}" alt="{{ $product['p_name'] }}">
-                <div class="product-details d-flex">
-                    <strong class='badge bg-dark text-light'>Design No: {{ $product['p_name'] }}</strong>
-                    <p class='badge bg-dark text-light'>Quantity: {{ $product['buyQty'] }}</p>
-                    <p class='badge bg-dark text-light'>Remark: {{ $product['remark'] }}</p>
-                    <p class='badge bg-dark text-light'>Price: ₹{{ $product['price'] }}</p>
-                </div>
-            </div>
-        @endforeach
-    </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="contact-info" style='float: left'>
+            <p style="
+            margin-left: -19px;
+        ">Email: order.veercreation@gmail.com | <a
+                    href="http://www.veercreation.com" target="_blank">www.veercreation.com</a></p>
+            <p>Order Booking 📞 74055 29000 | Customer Care 📞 72848 80000</p>
+        </div>
+        <br><br>
+        <div class="footer-notes" style="
+        background-color: #dd0000;
+        width: 100%;
+    ">
+            <span>NO LESS DHARA</span>
+            <span>NO GOODS RETURN</span>
+            <span>GST AS APPLICABLE</span>
+        </div>
+    </footer>
 
     <div class="print-button-container">
         <button class="print-button" onclick="window.print()">Print Order</button>
     </div>
-
 </body>
 
 </html>

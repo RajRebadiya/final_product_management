@@ -686,7 +686,7 @@ class HomeController extends Controller
 
     public function save_cart(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $productIds = $request->input('product_ids', []);
 
         if (empty($productIds)) {

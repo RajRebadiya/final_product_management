@@ -144,6 +144,44 @@ class RoleController extends Controller
         return redirect()->route('roles.index')->with('success', 'New permission added successfully!');
     }
 
+    public function permission_delete($module)
+    {
+        // dd($module);
+        $permission = Permission::where('module', $module)->first();
+        if (!$permission) {
+            return redirect()->route('roles.index')->with('error', 'Permission not found');
+        }
+        $permission->delete();
+        return redirect()->route('roles.index')->with('success', 'Permission Delete Succesfullt');
+
+    }
+
+    public function add_new_permission(Request $request)
+    {
+        return view('admin.roles.add_new_permission');
+    }
+
+    public function permissions_add(Request $request)
+    {
+        // dd($request->all());
+        $permissions = Permission::where('module', $request->module)->first();
+        if (!$permissions) {
+            $permissions = new Permission();
+            $permissions->module = $request->module;
+            $permissions->save();
+
+            return redirect()->route('permission_list')->with('success', 'New permission added successfully!');
+        } else {
+            return redirect()->route('permission_list')->with('error', 'Module already exist');
+        }
+    }
+
+    public function permission_list()
+    {
+        $permissions = Permission::all();
+        return view('admin.roles.permission_list', compact('permissions'));
+    }
+
 
 
 

@@ -139,6 +139,39 @@
                 display: none;
             }
         }
+
+        .footer {
+            margin-top: 20px;
+            padding: 10px;
+            /* background-color: #d00; */
+            color: black;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .footer .contact-info p {
+            margin: 5px 0;
+            color: black;
+        }
+
+        .footer .footer-notes {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .footer-notes span {
+            padding: 5px 10px;
+            background-color: #d00;
+            color: #fff;
+            /* border: 1px solid #fff; */
+        }
+
+        .footer-notes span:not(:last-child) {
+            border-right: none;
+        }
     </style>
 </head>
 
@@ -243,6 +276,26 @@
     <div class="print-button-container">
         <button class="print-button" onclick="window.print()">Print Order</button>
     </div>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="contact-info" style='float: left'>
+            <p style="
+            margin-left: -19px;
+        ">Email: order.veercreation@gmail.com | <a
+                    href="http://www.veercreation.com" target="_blank">www.veercreation.com</a></p>
+            <p>Order Booking 📞 74055 29000 | Customer Care 📞 72848 80000</p>
+        </div>
+        <br><br>
+        <div class="footer-notes" style="
+        background-color: #dd0000;
+        width: 100%;
+    ">
+            <span>NO LESS DHARA</span>
+            <span>NO GOODS RETURN</span>
+            <span>GST AS APPLICABLE</span>
+        </div>
+    </footer>
 
 </body>
 

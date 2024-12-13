@@ -238,7 +238,7 @@
                             </div>
 
                             <!-- Cart -->
-                            <div class="nav-item-wrapper">
+                            {{-- <div class="nav-item-wrapper">
                                 <a class="nav-link dropdown-indicator label-1 theme-text"
                                     href="{{ route('cart_detail') }}">
                                     <div class="d-flex align-items-center">
@@ -246,7 +246,8 @@
                                         <span style='margin-left: 10px;'>Cart</span>
                                     </div>
                                 </a>
-                            </div>
+                            </div> --}}
+
                             <div class="nav-item-wrapper">
                                 <!-- Main Offer Form Link -->
                                 <a class="nav-link dropdown-indicator label-1 theme-text" href="#"
@@ -272,6 +273,77 @@
                                     </ul>
                                 </div>
                             </div>
+                            @php
+                                $user = Auth::guard('staff')->user();
+
+                            @endphp
+                            
+                            @if ($user->role_id == 5)
+                                
+                            <div class="nav-item-wrapper">
+                                <!-- Main Offer Form Link -->
+                                <a class="nav-link dropdown-indicator label-1 theme-text" href="#"
+                                    data-bs-toggle="collapse" data-bs-target="#offer-form-dropdownn">
+                                    <div class="d-flex align-items-center">
+                                        <span data-feather="users"></span>
+                                        <span style="margin-left: 10px;">User</span>
+                                    </div>
+                                </a>
+                                <!-- Dropdown Menu for Offer Form -->
+                                <div class="collapse" id="offer-form-dropdownn">
+                                    <ul class="nav flex-column ms-3">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('staff.create') }}">
+                                                Add New User
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('staff.index') }}">
+                                                User List
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="nav-item-wrapper">
+                                <!-- Main Offer Form Link -->
+                                <a class="nav-link dropdown-indicator label-1 theme-text" href="#"
+                                    data-bs-toggle="collapse" data-bs-target="#offer-form-dropdownxn">
+                                    <div class="d-flex align-items-center">
+                                        <span data-feather="shield"></span>
+                                        <span style="margin-left: 10px;">Privillage</span>
+                                    </div>
+                                </a>
+                                <!-- Dropdown Menu for Offer Form -->
+                                <div class="collapse" id="offer-form-dropdownxn">
+                                    <ul class="nav flex-column ms-3">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('roles.create') }}">
+                                                Add New Role
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('roles.index') }}">
+                                                Role List
+                                            </a>
+                                        </li>
+                                        @php
+                                            $user = Auth::guard('staff')->user();
+                                        @endphp
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('add_new_permission') }}">
+                                                Add New Permission
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('permission_list') }}">
+                                                Permission List
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            @endif
                         </li>
                     </ul>
 
@@ -367,7 +439,7 @@
                                                     <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
                                                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                                                 </svg>Dashboard</a></li>
-                                      
+
                                         <li class="nav-item"><a class="nav-link px-3 d-block"
                                                 href="{{ route('roles.index') }}"><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
@@ -378,9 +450,10 @@
                                                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                                                 </svg>Roles</a></li>
                                     </ul>
-                                <hr>
+                                    <hr>
                                 </div>
-                                <div class="card-footer p-0 border-top border-translucent pt-3" style='margin-top: 30px;'>
+                                <div class="card-footer p-0 border-top border-translucent pt-3"
+                                    style='margin-top: 30px;'>
                                     <div class="px-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100"
                                             href={{ route('logout') }}> <svg xmlns="http://www.w3.org/2000/svg"
                                                 width="16px" height="16px" viewBox="0 0 24 24" fill="none"
@@ -1104,7 +1177,8 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a class="dropdown-item" href="demo/vertical-sidenav.html">
-                                            <div class="dropdown-item-wrapper"><span class="me-2 uil"></span>Vertical
+                                            <div class="dropdown-item-wrapper"><span
+                                                    class="me-2 uil"></span>Vertical
                                                 sidenav</div>
                                         </a></li>
                                     <li><a class="dropdown-item" href="demo/dark-mode.html">

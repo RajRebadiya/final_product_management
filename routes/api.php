@@ -72,6 +72,7 @@ Route::controller(OrderController::class)->group(function () {
     Route::post('edit_temp_order_party', 'edit_temp_order_party')->name('edit_temp_order_party');
     Route::post('edit_temp_order', 'edit_temp_order')->name('edit_temp_order');
     Route::post('/delete_temp_order_detail', 'delete_temp_order_detail')->name('delete_temp_order_detail');
+    Route::post('add_product_temp_order', 'add_product_temp_order')->name('add_product_temp_order');
 
 });
 

@@ -1,6 +1,11 @@
 @extends('admin.layout.template')
 
 @section('content')
+    <style>
+        .form-check-label {
+            font-size: 0.9rem;
+        }
+    </style>
     <div class="container mt-4">
         <h1 class="mb-4 text-center">Edit Permissions for Role: <strong>{{ $role->name }}</strong></h1>
 
@@ -19,13 +24,21 @@
                 @foreach ($permissions as $module => $permission)
                     <div class="col-md-6 mb-4">
                         <div class="card">
-                            <div class="card-header bg-primary text-white">
+                            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">{{ ucfirst($module) }}</h5>
+
+                                <div>
+                                    <input type="checkbox" id="select-all-{{ $module }}" class="form-check-input"
+                                        onclick="toggleModule('{{ $module }}', this)">
+                                    <label for="select-all-{{ $module }}" class="form-check-label text-white">
+                                        Select All
+                                    </label>
+                                </div>
                             </div>
                             <div class="card-body">
                                 @foreach (['read', 'create', 'update', 'delete'] as $action)
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox"
+                                        <input class="form-check-input module-checkbox-{{ $module }}" type="checkbox"
                                             name="permissions[{{ $module }}][{{ $action }}]" value="true"
                                             {{-- Check if this permission is already assigned to the role --}}
                                             {{ isset($rolePermissions[$module][$action]) && $rolePermissions[$module][$action] ? 'checked' : '' }}>
@@ -45,4 +58,10 @@
             </div>
         </form>
     </div>
+    <script>
+        function toggleModule(module, checkbox) {
+            const moduleCheckboxes = document.querySelectorAll(`.module-checkbox-${module}`);
+            moduleCheckboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+    </script>
 @endsection
