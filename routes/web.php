@@ -62,6 +62,8 @@ Route::controller(HomeController::class)->middleware('auth:staff')->group(functi
 
     Route::get('/print-product/{id}', 'printProduct')->name('print.product');
 
+    Route::get('barcode', 'barcode')->name('barcode');
+
 });
 
 Route::controller(AuthController::class)->group(function () {

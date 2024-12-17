@@ -77,6 +77,53 @@ class HomeController extends Controller
         // Pass paginated products and categories to the view
         return view('admin.product.dashboard_2', compact('products', 'categories', 'colors', 'lastProduct'));
     }
+    public function barcode(Request $request)
+    {
+        // Get search term from the request (default to empty if not present)
+        $search = $request->input('search', '');
+        $colors = Color::all();
+
+        // Paginate categories with 10 items per page
+        $categories = Category::orderBy('name', 'asc')->get();
+
+        // Load and paginate products with the required fields, applying search filter if present
+        $products = Product::with([
+            'category' => function ($query) {
+                $query->select('id', 'name'); // Only load 'id' and 'name' from categories
+            }
+        ])
+            ->where(function ($query) use ($search) {
+                // Apply search condition for product name and category name
+                $query->where('p_name', 'like', "%$search")
+                    ->orWhereHas('category', function ($query) use ($search) {
+                    $query->where('name', 'like', "%$search%");
+                });
+            })
+            ->where('status', "Active")
+            ->paginate(10); // Paginate products with 10 items per page
+
+        // Transform the products to include the category name directly
+        $products->transform(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->p_name,
+                'category_name' => $product->category ? $product->category->name : null,
+                'image' => $product->image,
+                'status' => $product->status,
+                'thumb' => $product->thumb,
+                'stock_status' => $product->stock_status,
+                'price' => $product->price,
+                'qty' => $product->qty,
+                'category_id' => $product->category_id,
+                'created_at' => $product->created_at->format('Y-m-d H:i:s'),
+                'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
+            ];
+        });
+        $lastProduct = Product::latest('id')->first(); // Fetch the last product
+
+        // Pass paginated products and categories to the view
+        return view('admin.barcode.dashboard_2', compact('products', 'categories', 'colors', 'lastProduct'));
+    }
 
 
     public function category(Request $request)

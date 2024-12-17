@@ -343,6 +343,17 @@
                                 </a>
                             </li>
                         @endif
+                        <!-- Product -->
+                        @if (!empty($permissions['Barcode']['read']) && $permissions['Barcode']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('barcode') ? 'active' : '' }}" href="{{ route('barcode') }}">
+                                    <div class="d-flex align-items-center">
+                                        <span data-feather="shopping-bag"></span>
+                                        <span style='margin-left: 10px;'>Barcode</span>
+                                    </div>
+                                </a>
+                            </li>
+                        @endif
         
                         <!-- Offer Form (Dropdown) -->
                         @if (!empty($permissions['Offer_Form']['read']) && $permissions['Offer_Form']['read'])
