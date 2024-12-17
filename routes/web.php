@@ -55,17 +55,13 @@ Route::controller(HomeController::class)->middleware('auth:staff')->group(functi
     Route::get('/generate_pdf', 'generatePdf')->name('generate_pdf');
     Route::get('/cart-detail', 'cart_detail')->name('cart_detail');
     Route::get('/filter', 'filter')->name('products.filter');
-
     Route::post('/save-cart', 'save_cart')->name('save-cart');
-
-
-
-
-
-
 
     Route::get('edit_category', 'edit_category')->name('edit_category');
     Route::post('update_category', 'update_category')->name('update_category');
+
+    Route::get('/print-product/{id}', 'printProduct')->name('print.product');
+
 });
 
 Route::controller(AuthController::class)->group(function () {

@@ -173,6 +173,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Milon\Barcode\BarcodeServiceProvider::class,
         // Intervention\Image\ImageServiceProvider::class,
     ])->toArray(),
 
@@ -191,6 +192,7 @@ return [
         // 'Pdf' => Barryvdh\DomPDF\Facade\Pdf::class,
         // 'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
+        'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
 
         // 'Image' => Intervention\Image\Facades\Image::class,
         // 'Example' => App\Facades\Example::class,

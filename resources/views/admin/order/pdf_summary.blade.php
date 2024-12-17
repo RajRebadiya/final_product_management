@@ -141,7 +141,7 @@
         }
 
         .footer {
-            margin-top: 20px;
+            margin-top: 375px;
             padding: 10px;
             /* background-color: #d00; */
             color: black;
@@ -186,7 +186,7 @@
             <p class="gst-info">GSTIN: 24AATPR2907G1ZH</p>
         </div>
         <div class="logo">
-            <img src="{{ asset('assets/img/favicons/veer_logo_1.png') }}" alt="Veer Creation Logo">
+            <img src="{{ asset('assets/img/favicons/veer_white.png') }}" alt="Veer Creation Logo">
         </div>
         <div style="clear: both;"></div>
     </div>

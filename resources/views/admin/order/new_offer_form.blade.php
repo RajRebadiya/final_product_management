@@ -483,34 +483,86 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label class="text-body-highlight fw-bold"
+                            <label class="text-body-highlight fw-bold d-block"
                                 style="
                             margin-right: 23px;
-                        ">Packing
+                            ">Packing
                                 Bag</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="bag" name="packing_bag"
-                                    value="BAG"
+                                    value="WITH BOX"
                                     style="
                                     margin-top: 0px;
                                 ">
-                                <label class="form-check-label" for="bag">BAG</label>
+                                <label class="form-check-label" for="bag">WITH BOX</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="zip_bag" name="packing_bag"
-                                    value="ZIP BAG" style="
-    margin-top: 0px;
-">
+                                    value="ZIP BAG"
+                                    style="
+                                                            margin-top: 0px;
+                                                        ">
                                 <label class="form-check-label" for="zip_bag">ZIP BAG</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="pp_bag" name="packing_bag"
-                                    value="P.P BAG" style="
-    margin-top: 0px;
-">
+                                    value="P.P BAG"
+                                    style="
+                                                            margin-top: 0px;
+                                                        ">
                                 <label class="form-check-label" for="pp_bag">P.P BAG</label>
                             </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="WITH BOX JHOLA" name="packing_bag"
+                                    value="WITH BOX JHOLA"
+                                    style="
+                                                                margin-top: 0px;
+                                                            ">
+                                <label class="form-check-label" for="pp_bag">WITH BOX JHOLA</label>
+                            </div>
                             @error('packing_bag')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-body-highlight fw-bold d-block"
+                                style="
+                            margin-right: 23px;
+                            ">Packing
+                                Box</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="Veer" name="packing_box"
+                                    value="Veer"
+                                    style="
+                                    margin-top: 0px;
+                                ">
+                                <label class="form-check-label" for="Veer">Veer</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="Tiya" name="packing_box"
+                                    value="Tiya"
+                                    style="
+                                                            margin-top: 0px;
+                                                        ">
+                                <label class="form-check-label" for="Tiya">Tiya</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="Taanshi" name="packing_box"
+                                    value="Taanshi"
+                                    style="
+                                                            margin-top: 0px;
+                                                        ">
+                                <label class="form-check-label" for="Taanshi">Taanshi</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="Vittrish" name="packing_box"
+                                    value="Vittrish"
+                                    style="
+                                                                margin-top: 0px;
+                                                            ">
+                                <label class="form-check-label" for="Vittrish">Vittrish</label>
+                            </div>
+                            @error('packing_box')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -672,6 +724,7 @@
                 buyqty: globalBuyqty, // Use the accumulated buyq  remark: globalRemark, // Use the accumulated remark datty data
                 remark: globalRemark,
                 packing_bag: document.querySelector('input[name="packing_bag"]:checked').value,
+                packing_box: document.querySelector('input[name="packing_box"]:checked').value,
                 // const packingBag = document.querySelector('input[name="packing_bag"]:checked').value;
 
             };

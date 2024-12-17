@@ -156,6 +156,98 @@
                 opacity: 1;
             }
         }
+
+        /* Navbar overall styling */
+        .navbar-vertical {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            /* height: 100vh; */
+            overflow-y: auto;
+            /* padding: 15px 10px; */
+        }
+
+        /* Styling for nav links */
+        .nav-link {
+            color: #4a4a4a;
+            font-weight: 500;
+            transition: all 0.3s ease-in-out;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            padding: 10px 0px;
+        }
+
+        /* Hover effect */
+        .navbar_link:hover {
+            background-color: #dd2b1c !important;
+            color: white !important;
+            transform: translateX(5px);
+        }
+
+        /* Active link styling */
+        .nav-link.active {
+            background-color: #dd2b1c;
+            color: white !important;
+
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Dropdown styling */
+        .collapse .nav-item {
+            padding-left: 20px;
+        }
+
+        .collapse .nav-link {
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+
+        /* Icons styling */
+        .nav-link .feather {
+            margin-right: 8px;
+            color: #bb2034;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .nav-link.active svg {
+            margin-right: 8px;
+            color: white !important;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* On hover, change the icon color */
+        .nav-link:hover .feather {
+            color: #fff;
+        }
+
+        /* Navbar Footer Styling */
+        .navbar-vertical-footer {
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .navbar-vertical-footer button {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        /* Scrollbar customization */
+        .navbar-vertical-content {
+            scrollbar-width: thin;
+            scrollbar-color: #007bff #f0f0f0;
+        }
+
+        .navbar-vertical-content::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .navbar-vertical-content::-webkit-scrollbar-thumb {
+            background-color: #007bff;
+            border-radius: 5px;
+        }
+
     </style>
     <script>
         var phoenixIsRTL = window.config.config.phoenixIsRTL;
@@ -172,9 +264,11 @@
             userLinkRTL.setAttribute('disabled', true);
         }
     </script>
+    
     <link href="{{ asset('assets/vendors/leaflet/leaflet.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendors/leaflet.markercluster/MarkerCluster.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendors/leaflet.markercluster/MarkerCluster.Default.css') }}" rel="stylesheet">
+   
 </head>
 
 <body>
@@ -199,162 +293,149 @@
     <!-- ===============================================-->
     <main class="main" id="top">
         <nav class="navbar navbar-vertical navbar-expand-lg" style="display:none;">
+            <!-- Hamburger Menu for Mobile -->
+            {{-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+         --}}
             <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
-                <!-- scrollbar removed-->
+                <!-- Vertical Navbar Content -->
                 <div class="navbar-vertical-content">
                     <ul class="navbar-nav flex-column" id="navbarVerticalNav">
-                        <li class="nav-item">
-                            <!-- Dashboard -->
-                            <div class="nav-item-wrapper">
-                                <a class="nav-link dropdown-indicator label-1 theme-text"
-                                    href="{{ route('dashboard') }}">
+                        @php
+                            $user = Auth::guard('staff')->user();
+                            $role = \App\Models\Role::where('id', $user->role_id)->first();
+                            $permissions = $role->permissions;
+                        @endphp
+        
+                        <!-- Dashboard -->
+                        @if (!empty($permissions['Dashboard']['read']) && $permissions['Dashboard']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                                     <div class="d-flex align-items-center">
                                         <span data-feather="home"></span>
                                         <span style='margin-left: 10px;'>Dashboard</span>
                                     </div>
                                 </a>
-                            </div>
-
-                            <!-- Category -->
-                            <div class="nav-item-wrapper">
-                                <a class="nav-link dropdown-indicator label-1 theme-text"
-                                    href="{{ route('category') }}">
+                            </li>
+                        @endif
+        
+                        <!-- Category -->
+                        @if (!empty($permissions['Category']['read']) && $permissions['Category']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('category') ? 'active' : '' }}" href="{{ route('category') }}">
                                     <div class="d-flex align-items-center">
                                         <span data-feather="grid"></span>
                                         <span style='margin-left: 10px;'>Category</span>
                                     </div>
                                 </a>
-                            </div>
-
-                            <!-- Product -->
-                            <div class="nav-item-wrapper">
-                                <a class="nav-link dropdown-indicator label-1 theme-text"
-                                    href="{{ route('product') }}">
+                            </li>
+                        @endif
+        
+                        <!-- Product -->
+                        @if (!empty($permissions['Product']['read']) && $permissions['Product']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('product') ? 'active' : '' }}" href="{{ route('product') }}">
                                     <div class="d-flex align-items-center">
                                         <span data-feather="shopping-bag"></span>
                                         <span style='margin-left: 10px;'>Product</span>
                                     </div>
                                 </a>
-                            </div>
-
-                            <!-- Cart -->
-                            {{-- <div class="nav-item-wrapper">
-                                <a class="nav-link dropdown-indicator label-1 theme-text"
-                                    href="{{ route('cart_detail') }}">
-                                    <div class="d-flex align-items-center">
-                                        <span data-feather="shopping-cart"></span>
-                                        <span style='margin-left: 10px;'>Cart</span>
-                                    </div>
-                                </a>
-                            </div> --}}
-
-                            <div class="nav-item-wrapper">
-                                <!-- Main Offer Form Link -->
-                                <a class="nav-link dropdown-indicator label-1 theme-text" href="#"
-                                    data-bs-toggle="collapse" data-bs-target="#offer-form-dropdown">
+                            </li>
+                        @endif
+        
+                        <!-- Offer Form (Dropdown) -->
+                        @if (!empty($permissions['Offer_Form']['read']) && $permissions['Offer_Form']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('new_offer_form') || request()->routeIs('offer_form_list') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#offer-form-dropdown">
                                     <div class="d-flex align-items-center">
                                         <span data-feather="clipboard"></span>
                                         <span style="margin-left: 10px;">Offer Form</span>
                                     </div>
                                 </a>
-                                <!-- Dropdown Menu for Offer Form -->
                                 <div class="collapse" id="offer-form-dropdown">
                                     <ul class="nav flex-column ms-3">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('new_offer_form') }}">
-                                                New Offer Form
-                                            </a>
+                                            <a class="nav-link" href="{{ route('new_offer_form') }}">New Offer Form</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('offer_form_list') }}">
-                                                Offer Form List
-                                            </a>
+                                            <a class="nav-link" href="{{ route('offer_form_list') }}">Offer Form List</a>
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            @php
-                                $user = Auth::guard('staff')->user();
-
-                            @endphp
-                            
-                            @if ($user->role_id == 5)
-                                
-                            <div class="nav-item-wrapper">
-                                <!-- Main Offer Form Link -->
-                                <a class="nav-link dropdown-indicator label-1 theme-text" href="#"
-                                    data-bs-toggle="collapse" data-bs-target="#offer-form-dropdownn">
+                            </li>
+                        @endif
+        
+                        <!-- User (Dropdown) -->
+                        @if (!empty($permissions['User']['read']) && $permissions['User']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('staff.create') || request()->routeIs('staff.index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#offer-form-dropdownn">
                                     <div class="d-flex align-items-center">
                                         <span data-feather="users"></span>
                                         <span style="margin-left: 10px;">User</span>
                                     </div>
                                 </a>
-                                <!-- Dropdown Menu for Offer Form -->
                                 <div class="collapse" id="offer-form-dropdownn">
                                     <ul class="nav flex-column ms-3">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('staff.create') }}">
-                                                Add New User
-                                            </a>
+                                            <a class="nav-link" href="{{ route('staff.create') }}">Add New User</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('staff.index') }}">
-                                                User List
-                                            </a>
+                                            <a class="nav-link" href="{{ route('staff.index') }}">User List</a>
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="nav-item-wrapper">
-                                <!-- Main Offer Form Link -->
-                                <a class="nav-link dropdown-indicator label-1 theme-text" href="#"
-                                    data-bs-toggle="collapse" data-bs-target="#offer-form-dropdownxn">
+                            </li>
+                        @endif
+        
+                        <!-- Role (Dropdown) -->
+                        @if (!empty($permissions['Roles']['read']) && $permissions['Roles']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('roles.create') || request()->routeIs('roles.index') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#offer-form-role">
                                     <div class="d-flex align-items-center">
-                                        <span data-feather="shield"></span>
-                                        <span style="margin-left: 10px;">Privillage</span>
+                                        <span data-feather="settings"></span>
+                                        <span style="margin-left: 10px;">Role</span>
                                     </div>
                                 </a>
-                                <!-- Dropdown Menu for Offer Form -->
-                                <div class="collapse" id="offer-form-dropdownxn">
+                                <div class="collapse" id="offer-form-role">
                                     <ul class="nav flex-column ms-3">
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('roles.create') }}">
-                                                Add New Role
-                                            </a>
+                                            <a class="nav-link" href="{{ route('roles.create') }}">Add New Role</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('roles.index') }}">
-                                                Role List
-                                            </a>
-                                        </li>
-                                        @php
-                                            $user = Auth::guard('staff')->user();
-                                        @endphp
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('add_new_permission') }}">
-                                                Add New Permission
-                                            </a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" href="{{ route('permission_list') }}">
-                                                Permission List
-                                            </a>
+                                            <a class="nav-link" href="{{ route('roles.index') }}">Role List</a>
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            @endif
-                        </li>
+                            </li>
+                        @endif
+        
+                        <!-- Permission (Dropdown) -->
+                        @if (!empty($permissions['Permissions']['read']) && $permissions['Permissions']['read'])
+                            <li class="nav-item">
+                                <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('add_new_permission') || request()->routeIs('permission_list') ? 'active' : '' }}" href="#" data-bs-toggle="collapse" data-bs-target="#offer-form-permission">
+                                    <div class="d-flex align-items-center">
+                                        <span data-feather="lock"></span>
+                                        <span style="margin-left: 10px;">Permission</span>
+                                    </div>
+                                </a>
+                                <div class="collapse" id="offer-form-permission">
+                                    <ul class="nav flex-column ms-3">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('add_new_permission') }}">Add New Permission</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('permission_list') }}">Permission List</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @endif
                     </ul>
-
                 </div>
             </div>
-            {{-- <div class="navbar-vertical-footer"><button
-                    class="btn navbar-vertical-toggle border-0 fw-semibold w-100 white-space-nowrap d-flex align-items-center"><span
-                        class="uil uil-left-arrow-to-left fs-8"></span><span
-                        class="uil uil-arrow-from-right fs-8"></span><span
-                        class="navbar-vertical-footer-text ms-2">Collapsed View</span></button></div> --}}
         </nav>
+        
         <nav class="navbar navbar-top fixed-top navbar-expand" id="navbarDefault" style="display:none;">
             <div class="collapse navbar-collapse justify-content-between">
                 <div class="navbar-logo">
@@ -4721,8 +4802,8 @@
                                     <div class="col-4"><a
                                             class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
                                             href="#!"><img
-                                                src="{{ asset('assets/img/nav-icons/figma.webp') }}" alt=""
-                                                width="20" />
+                                                src="{{ asset('assets/img/nav-icons/figma.webp') }}"
+                                                alt="" width="20" />
                                             <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Figma</p>
                                         </a></div>
                                     <div class="col-4"><a

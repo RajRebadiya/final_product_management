@@ -14,7 +14,9 @@
         "intervention/image-symfony": "^1.1",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "milon/barcode": "^11.0",
+        "picqer/php-barcode-generator": "^2.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

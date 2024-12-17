@@ -119,6 +119,7 @@ class OrderController extends Controller
                 $tempOrder->party_id = $party->id;
                 $tempOrder->order_date = $request->order_date;
                 $tempOrder->packing_bag = $request->packing_bag;
+                $tempOrder->packing_box = $request->packing_box;
                 $tempOrder->party_data = $party;// add by ROHIT
                 $tempOrder->created_by = $request->created_by ?? ' ';
                 $tempOrder->save();
@@ -158,6 +159,7 @@ class OrderController extends Controller
             $tempOrder->party_id = $party->id;
             $tempOrder->order_date = $request->order_date;
             $tempOrder->packing_bag = $request->packing_bag;
+            $tempOrder->packing_box = $request->packing_box;
             $tempOrder->party_data = $party;// add by ROHIT
             $tempOrder->created_by = $request->created_by;
             $tempOrder->save();
@@ -358,6 +360,7 @@ class OrderController extends Controller
                 'temp_orders.order_number',
                 'temp_orders.order_date',
                 'temp_orders.packing_bag',
+                'temp_orders.packing_box',
                 'temp_orders.created_by',
                 'temp_orders.created_at',
                 'temp_orders.party_data',
@@ -430,6 +433,7 @@ class OrderController extends Controller
                 'order_number' => $order->order_number,
                 'order_date' => $order->order_date,
                 'packing_bag' => $order->packing_bag,
+                'packing_box' => $order->packing_box,
                 'created_by' => $user->name,
                 'order_details' => $sortedGroupedOrderDetails, // Include sorted grouped order details by category_name
                 'created_at' => $order->created_at->format('Y-m-d H:i:s'),
@@ -529,6 +533,7 @@ class OrderController extends Controller
                 'temp_orders.order_date',
                 'temp_orders.created_at',
                 'temp_orders.packing_bag',
+                'temp_orders.packing_box',
                 'temp_orders.created_by',
                 'party.name',
                 'party.mobile_no',
@@ -589,6 +594,7 @@ class OrderController extends Controller
             'order_number' => $tempOrder->order_number,
             'order_date' => $tempOrder->order_date,
             'packing_bag' => $tempOrder->packing_bag,
+            'packing_box' => $tempOrder->packing_box,
             'created_by' => $user->name,
             'order_details' => $sortedGroupedOrderDetails, // Include sorted grouped order details by category_name
             'created_at' => $tempOrder->created_at->format('Y-m-d H:i:s'),
@@ -743,6 +749,7 @@ class OrderController extends Controller
         $tempOrder->party_id = $request->party_id ?? $tempOrder->party_id;
         $tempOrder->order_date = $request->order_date ?? $tempOrder->order_date;
         $tempOrder->packing_bag = $request->packing_bag ?? $tempOrder->packing_bag;
+        $tempOrder->packing_box = $request->packing_box ?? $tempOrder->packing_box;
         $tempOrder->party_data = $request->party_data ?? $tempOrder->party_data;
         $tempOrder->save();
 

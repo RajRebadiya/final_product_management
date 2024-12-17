@@ -47,7 +47,7 @@ class HomeController extends Controller
         ])
             ->where(function ($query) use ($search) {
                 // Apply search condition for product name and category name
-                $query->where('p_name', 'like', "%$search%")
+                $query->where('p_name', 'like', "%$search")
                     ->orWhereHas('category', function ($query) use ($search) {
                     $query->where('name', 'like', "%$search%");
                 });
@@ -79,10 +79,12 @@ class HomeController extends Controller
     }
 
 
-    public function category()
+    public function category(Request $request)
     {
         // Paginate categories with 10 items per page
-        $categories = Category::all();
+        $search = $request->input('search', '');
+        $categories = Category::where('name', 'LIKE', "{$search}%")->where('status', 'Active')->orderBy('name', 'asc')->get();
+
         // dd($categories);
 
         // Pass paginated products and categories to the view
@@ -631,9 +633,7 @@ class HomeController extends Controller
     public function filter(Request $request)
     {
         $colors = Color::all();
-        // Paginate categories with 10 items per page
         $categories = Category::orderBy('name', 'asc')->get();
-        // Retrieve the filter parameter from the query string
         $filter = $request->input('filter');
 
         // Start building the query
@@ -658,11 +658,18 @@ class HomeController extends Controller
             $query->orderBy('category_name', 'desc');
         } elseif ($filter === 'latest_updated') {
             $query->orderBy('updated_at', 'desc');
+        } elseif ($filter === 'inactive_product') {
+            // For inactive products
+            $query->where('status', 'inactive');
+        } else {
+            // Default condition: Only active products
+            $query->where('status', 'Active');
         }
 
-        // Execute the query and fetch filtered products
-        $products = $query->where('status', "Active")->paginate(10); // You can change the pagination value here
+        // Execute the query and paginate results
+        $products = $query->paginate(10);
 
+        // Transform the products (optional)
         $products->transform(function ($product) {
             return [
                 'id' => $product->id,
@@ -679,10 +686,10 @@ class HomeController extends Controller
                 'updated_at' => $product->updated_at->format('Y-m-d H:i:s'),
             ];
         });
-        // dd($products);
 
         return view('admin.product.dashboard_2', compact('products', 'categories', 'colors'));
     }
+
 
     public function save_cart(Request $request)
     {
@@ -715,4 +722,13 @@ class HomeController extends Controller
             'message' => 'Products added to the cart successfully!'
         ]);
     }
+
+    public function printProduct($id)
+    {
+        $product = Product::findOrFail($id);
+        // dd($product);
+
+        return view('admin.product.print', compact('product'));
+    }
+
 }

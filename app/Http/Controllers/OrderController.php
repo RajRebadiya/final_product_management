@@ -172,6 +172,7 @@ class OrderController extends Controller
         $tempOrder->party_id = $party->id; // Store the associated party ID
         $tempOrder->order_date = $request->order_date;
         $tempOrder->packing_bag = $request->packing_bag;
+        $tempOrder->packing_box = $request->packing_box;
         $tempOrder->created_by = auth('staff')->user()->id;
         $tempOrder->party_data = $party;
         $tempOrder->save();

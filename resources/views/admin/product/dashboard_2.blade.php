@@ -270,9 +270,20 @@
 
             {{-- <button id="add-to-cart-btn" class="btn btn-primary me-4" onclick="saveCartToDatabase()">Save Cart</button> --}}
 
-            <button class="btn btn-primary me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal">
-                <i class="fas fa-plus me-2"></i> Add New Product
-            </button>
+            @php
+                $user = Auth::guard('staff')->user();
+                $role = \App\Models\Role::where('id', $user->role_id)->first();
+                $permissions = $role->permissions;
+            @endphp
+
+            <!-- Dashboard -->
+            @if (!empty($permissions['Product']['create']) && $permissions['Product']['create'])
+                <button class="btn btn-primary me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal">
+                    <i class="fas fa-plus me-2"></i> Add New Product
+                </button>
+            @endif
+
+
             <div class="d-flex justify-content-between mb-3">
                 <div class="btn-group">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="filterDropdown"
@@ -281,10 +292,12 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                         <li><a class="dropdown-item filter-option"
-                                href="{{ route('products.filter', ['filter' => 'p_new_to_old']) }}">Product: New to Old</a>
+                                href="{{ route('products.filter', ['filter' => 'p_new_to_old']) }}">Product: New to
+                                Old</a>
                         </li>
                         <li><a class="dropdown-item filter-option"
-                                href="{{ route('products.filter', ['filter' => 'p_old_to_new']) }}">Product: Old to New</a>
+                                href="{{ route('products.filter', ['filter' => 'p_old_to_new']) }}">Product: Old to
+                                New</a>
                         </li>
                         <li><a class="dropdown-item filter-option"
                                 href="{{ route('products.filter', ['filter' => 'price_low_to_high']) }}">Price: Low to
@@ -293,18 +306,24 @@
                                 href="{{ route('products.filter', ['filter' => 'price_high_to_low']) }}">Price: High to
                                 Low</a></li>
                         <li><a class="dropdown-item filter-option"
-                                href="{{ route('products.filter', ['filter' => 'c_new_to_old']) }}">Category: New to Old</a>
+                                href="{{ route('products.filter', ['filter' => 'c_new_to_old']) }}">Category: New to
+                                Old</a>
                         </li>
                         <li><a class="dropdown-item filter-option"
                                 href="{{ route('products.filter', ['filter' => 'c_old_to_new']) }}">Category: Old to
                                 New</a>
                         </li>
                         <li><a class="dropdown-item filter-option"
-                                href="{{ route('products.filter', ['filter' => 'c_a_to_z']) }}">Category: A to Z</a></li>
+                                href="{{ route('products.filter', ['filter' => 'c_a_to_z']) }}">Category: A to Z</a>
+                        </li>
                         <li><a class="dropdown-item filter-option"
-                                href="{{ route('products.filter', ['filter' => 'c_z_to_a']) }}">Category: Z to A</a></li>
+                                href="{{ route('products.filter', ['filter' => 'c_z_to_a']) }}">Category: Z to A</a>
+                        </li>
                         <li><a class="dropdown-item filter-option"
                                 href="{{ route('products.filter', ['filter' => 'latest_updated']) }}">Latest Updated
+                                Product</a></li>
+                        <li><a class="dropdown-item filter-option"
+                                href="{{ route('products.filter', ['filter' => 'inactive_product']) }}">Inactive
                                 Product</a></li>
                     </ul>
                 </div>
@@ -344,10 +363,16 @@
                             <th class="text-center">Price</th>
                             <th class="text-center">Date</th>
                             <th class="text-center">Stock Status</th>
+                            {{-- <th class="text-center">Bar Code</th> --}}
                             {{-- <th class="text-center">Status</th> --}}
-                            <th class="text-center">Edit</th>
-                            <th class="text-center">Delete</th>
+                            @if (!empty($permissions['Product']['update']) && $permissions['Product']['update'])
+                                <th class="text-center">Edit</th>
+                            @endif
+                            @if (!empty($permissions['Product']['delete']) && $permissions['Product']['delete'])
+                                <th class="text-center">Delete</th>
+                            @endif
                             <th class="text-center">Add to Cart</th>
+                            <th class="text-center">Bar Code</th>
                         </tr>
                     </thead>
                     <tbody class="list">
@@ -405,26 +430,45 @@
                                         </select>
                                     </form>
                                 </td> --}}
-                                <td class="text-center">
-                                    <form action="{{ route('edit_product') }}" method="GET" style="display:inline;">
-                                        <input type="hidden" name="product_id" value="{{ $item['id'] }}">
-                                        <button type="submit" class="btn btn-warning btn-sm content-icon">
-                                            <i class="fa-solid fa-pen-to-square"></i>
+
+
+                                <!-- Dynamic Barcode Display -->
+                                {{-- <td class="barcode text-center">
+                                    {!! DNS1D::getBarcodeHTML($item['name'], 'C128') !!}
+                                    <small>{{ $item['name'] }}</small>
+                                </td> --}}
+                                @if (!empty($permissions['Product']['update']) && $permissions['Product']['update'])
+                                    <td class="text-center">
+                                        <form action="{{ route('edit_product') }}" method="GET"
+                                            style="display:inline;">
+                                            <input type="hidden" name="product_id" value="{{ $item['id'] }}">
+                                            <button type="submit" class="btn btn-warning btn-sm content-icon">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['Product']['delete']) && $permissions['Product']['delete'])
+                                    <td class="text-center">
+                                        <button class="btn btn-danger btn-sm content-icon"
+                                            onclick="confirmDeletion('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
-                                    </form>
-                                </td>
-                                <td class="text-center">
-                                    <button class="btn btn-danger btn-sm content-icon"
-                                        onclick="confirmDeletion('{{ $item['id'] }}')">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
+                                    </td>
+                                @endif
                                 <td class="text-center">
                                     <button type="button" class="btn btn-success btn-sm content-icon add-to-cart-btn"
                                         data-product-id="{{ $item['id'] }}">
                                         <i class="fa-solid fa-cart-plus"></i>
                                     </button>
                                 </td>
+                                <td class="text-center">
+                                    <button class="btn btn-primary btn-sm content-icon"
+                                        onclick="openPrintPage('{{ $item['id'] }}')">
+                                        <i class="fa-solid fa-print"></i> Print
+                                    </button>
+                                </td>
+
 
                             </tr>
                         @endforeach
@@ -581,6 +625,11 @@
                 searchPlaceholderValue: 'Search categories...' // Search input placeholder
             });
         });
+    </script>
+    <script>
+        function openPrintPage(productId) {
+            window.open(`/print-product/${productId}`, '_blank');
+        }
     </script>
 
     <script>
@@ -748,7 +797,7 @@
         }
     </script>
 
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const colorContainer = document.getElementById('color-container');
             const addColorButton = document.getElementById('add-new-color');
@@ -785,7 +834,7 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 
     <script>
         document.getElementById('add-color').addEventListener('click', function() {
@@ -861,7 +910,7 @@
         var colors = @json($colors); // Assuming $colors is an array of color data (objects)
         // dd(colors);
     </script>
-    <script>
+    {{-- <script>
         document.getElementById('totalColorInput').addEventListener('input', function() {
             let totalColor = parseInt(this.value);
             let totalStock = parseInt(document.getElementById('totalStockInput')?.value || 0);
@@ -945,7 +994,7 @@
                 }
             }
         });
-    </script>
+    </script> --}}
 
 
     <script>

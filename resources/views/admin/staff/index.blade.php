@@ -177,8 +177,8 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Email</th>
                             <th>Role</th>
+                            <th>Email</th>
                             <th>Password</th>
                             <th>Actions</th>
                         </tr>
@@ -187,8 +187,8 @@
                         @foreach ($staffs as $staff)
                             <tr>
                                 <td>{{ $staff->name }}</td>
-                                <td>{{ $staff->email ?? 'N/A' }}</td>
                                 <td>{{ $staff->role->name ?? 'N/A' }}</td>
+                                <td>{{ $staff->email ?? 'N/A' }}</td>
                                 <td>{{ $staff->password ?? 'N/A' }}</td>
                                 <td>
                                     <a href="{{ route('staff.edit', $staff->id) }}"

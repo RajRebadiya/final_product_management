@@ -36,7 +36,7 @@
 
     <div class="mb-6">
         <div class="d-flex flex-between-center mb-3">
-            <h3>Products List</h3>
+            <h3>Category List</h3>
             {{-- <div class="d-flex flex-between-center mb-3 search-box navbar-top-search-box d-none d-lg-block"
                 style="width:25rem;">
                 <form class="position-relative" id="searchForm" data-bs-toggle="search" data-bs-display="static">
@@ -63,15 +63,19 @@
                     </path>
                 </svg><!-- <span class="fas fa-plus me-2"></span> Font Awesome fontawesome.com -->Add New Category</button>
         </div>
+
+        <form method="GET" action="{{ route('category') }}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                    placeholder="Search by Design No or Category" aria-label="Search" />
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
         {{-- @dd($categories); --}}
         <div id="tableExample3"
             data-list='{"valueNames":["no","category_name","name","image" ,"stock_status" , "status"],"page":10,"pagination":true}'>
             <div class="search-box mb-3 mx-auto">
-                <form class="position-relative">
-                    <input class="form-control rounded-pill search-input search form-control-sm" type="search"
-                        placeholder="Search" aria-label="Search" />
-                    <!-- Search icon here -->
-                </form>
+
             </div>
             <div class="table-responsive">
                 <table class="table table-striped table-sm fs-9 mb-0">
