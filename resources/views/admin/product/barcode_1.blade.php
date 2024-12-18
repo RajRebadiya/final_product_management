@@ -7,12 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
+    {{-- <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet"> --}}
     <title>Print QR Code</title>
 
     <style>
         body {
-            font-family: "Quicksand", sans-serif;
+            font-family: "Lexend", serif;
             font-optical-sizing: auto;
             font-weight: 700;
             font-style: normal;
@@ -26,10 +27,6 @@
             justify-content: center;
             gap: 15px;
             margin: 20px 0;
-            font-family: "Quicksand", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: <weight>;
-            font-style: normal;
         }
 
         .barcode-item {
@@ -39,7 +36,7 @@
             page-break-inside: avoid;
             border-radius: 10px;
             width: 168px;
-            height: 188px;
+            height: 82px;
             box-sizing: border-box;
             padding: 10px;
         }
@@ -89,7 +86,10 @@
 
         @media print {
             body {
-                font-family: 'Quicksand';
+                font-family: "Lexend", serif;
+                font-optical-sizing: auto;
+                font-weight: 700;
+                font-style: normal;
                 margin: 0;
                 padding: 0;
             }
@@ -110,8 +110,12 @@
             .barcode-item {
                 page-break-inside: avoid;
                 height: 170px;
-                width: 80%;
-                font-family: 'Quicksand';
+                width: 70%;
+                font-family: "Lexend", serif;
+                font-optical-sizing: auto;
+                font-weight: 700;
+                font-style: normal;
+
             }
         }
     </style>
@@ -172,33 +176,13 @@
         </div>
     </div> --}}
     <div class="barcode-container" id="barcode-container">
-        <div class="barcode-item" style="width: 200px; height: 160px; box-sizing: border-box; padding: 5px;">
-            <!-- Barcode Section -->
-            <div style="text-align: center;">
-                {!! DNS1D::getBarcodeHTML($product->p_name, 'C128', 3, 40) !!}
-            </div>
+        <div class="barcode-item"
+            style="width: 170px;height: 82px;box-sizing: border-box;padding: 12px;margin-top: 10px; border: 2px solid #000;">
 
-            <!-- Top Section: Category and P.No -->
-            <div style="display: flex;">
-                <div style="text-align: center; font-weight: 900; padding: 5px;">
-                    {{ $product->category_name . ' - ' }}
-                </div>
-                <div style="text-align: center; font-weight: 900; padding: 5px;">
-                    {{ $product->p_name }}
-                </div>
+            <div>
+                {!! DNS1D::getBarcodeHTML($product->p_name, 'C128') !!}
             </div>
-
-            <!-- Bottom Section: Veer and MRP -->
-            <div style="display: flex; border: 2px solid #000; width: 123%;">
-                <div
-                    style="width: 50%; text-align: center; border-right: 2px solid #000; font-weight: 900; padding: 5px;">
-                    <img src="{{ asset('assets/img/favicons/veer_red.png') }}" alt="Veer Logo" width="90"
-                        height="50">
-                </div>
-                <div style="text-align: center; font-weight: bold; padding: 5px; margin-top: 7px;">
-                    MRP: ₹{{ number_format($product->price, 2) }}
-                </div>
-            </div>
+            <p style="margin: 0px; font-size: 21px;">D.No - {{ $product->p_name }}</p>
         </div>
     </div>
 

@@ -325,7 +325,16 @@
                             @endif
                             <th class="text-center">Add to Cart</th> --}}
                             @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                <th class="text-center">Bar Code</th>
+                                <th class="text-center">Bar Code 1</th>
+                            @endif
+                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                <th class="text-center">Bar Code 2</th>
+                            @endif
+                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                <th class="text-center">Bar Code 3</th>
+                            @endif
+                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                <th class="text-center">Bar Code 4</th>
                             @endif
                         </tr>
                     </thead>
@@ -417,8 +426,80 @@
                                 </td> --}}
                                 @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
                                     <td class="text-center">
-                                        <button class="btn btn-primary btn-sm content-icon"
-                                            onclick="openPrintPage('{{ $item['id'] }}')">
+                                        <img class=''
+                                            style="
+                                        margin-left: -22px;
+                                        height: 108px;
+                                    "
+                                            src="{{ asset('assets/img/barcode/barcode-1.png') }}" alt="Barcode 4">
+                                        <button
+                                            style="
+                                        display: block;
+                                        margin-left: 75px;
+                                        margin-top: 10px;
+                                    "
+                                            class="btn btn-primary btn-sm content-icon"
+                                            onclick="openPrintPage1('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <td class="text-center">
+                                        <img class=''
+                                            style="
+                                        margin-left: -22px;
+                                        height: 108px;
+                                    "
+                                            src="{{ asset('assets/img/barcode/barcode-2.png') }}" alt="Barcode 4">
+                                        <button
+                                            style="
+                                        display: block;
+                                        margin-left: 75px;
+                                        margin-top: 10px;
+                                    "
+                                            class="btn btn-primary btn-sm content-icon"
+                                            onclick="openPrintPage2('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <td class="text-center">
+                                        <img class=''
+                                            style="
+                                    margin-left: -22px;
+                                    height: 108px;
+                                "
+                                            src="{{ asset('assets/img/barcode/barcode-3.png') }}" alt="Barcode 4">
+                                        <button
+                                            style="
+                                    display: block;
+                                    margin-left: 75px;
+                                    margin-top: 10px;
+                                "
+                                            class="btn btn-primary btn-sm content-icon"
+                                            onclick="openPrintPage3('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <td class="text-center">
+                                        <img class=''
+                                            style="
+                                        margin-left: -22px;
+                                        height: 108px;
+                                    "
+                                            src="{{ asset('assets/img/barcode/barcode-4.png') }}" alt="Barcode 4">
+                                        <button
+                                            style="
+                                        display: block;
+                                        margin-left: 75px;
+                                        margin-top: 10px;
+                                    "
+                                            class="btn btn-primary btn-sm content-icon"
+                                            onclick="openPrintPage4('{{ $item['id'] }}')">
                                             <i class="fa-solid fa-print"></i> Print
                                         </button>
                                     </td>
@@ -456,114 +537,7 @@
 
 
 
-        <form action="{{ route('add-product') }}" method="post" enctype="multipart/form-data">
-            @csrf
-            <div class="modal fade" id="addDealModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                aria-labelledby="addDealModal" aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-centered">
-                    <div class="modal-content bg-body-highlight p-6">
-                        <div class="modal-header justify-content-between border-0 p-0 mb-2">
-                            <h3 class="mb-0">Add Product Detail</h3>
-                            <button type="reset" class="btn btn-sm btn-phoenix-secondary" data-bs-dismiss="modal"
-                                aria-label="Close">
-                                <span class="fas fa-times text-danger"></span>
-                            </button>
-                        </div>
 
-                        <div class="modal-body px-0">
-                            <div class="row g-4">
-                                <div class="col-lg-6">
-                                    <input type="hidden" name="stock_status" value="in_stock">
-                                    <div class="mb-4">
-                                        <label class="text-body-highlight fw-bold mb-2">Select Product Category</label>
-                                        <select class="form-select category-select" name="category_id"
-                                            id="categorySelect">
-                                            <option value="">Select</option>
-                                            @foreach ($categories as $item)
-                                                <option value="{{ $item->id }}" data-price="{{ $item->price }}"
-                                                    {{ isset($lastProduct) && $lastProduct->category_id == $item->id ? 'selected' : '' }}>
-                                                    {{ $item->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-
-
-                                        @error('category_id')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="text-body-highlight fw-bold mb-2">Design No</label>
-                                        <input class="form-control" type="text" name="p_name"
-                                            placeholder="Enter Product name" />
-                                        @error('p_name')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="text-body-highlight fw-bold mb-2">Product Price</label>
-                                        <input class="form-control" id="priceInput" type="text" name="price"
-                                            placeholder="Enter Product price" />
-                                        @error('price')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="text-body-highlight fw-bold mb-2">Image</label>
-                                        <div class="input-group">
-                                            <input class="form-control" type="file" name="image" />
-                                            <span class="input-group-text"><span
-                                                    class="fas fa-image text-body-tertiary"></span></span>
-                                        </div>
-                                        @error('image')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    <div class="mb-4">
-                                        <label class="text-body-highlight fw-bold mb-2">Total Stock</label>
-                                        <input class="form-control" type="number" id="totalStockInput" name='qty'
-                                            placeholder="Enter Total Stock" min="0" />
-                                        @error('total_stock')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-
-                                    {{-- <div class="mb-4">
-                                        <label class="text-body-highlight fw-bold mb-2">Total Color</label>
-                                        <input class="form-control" type="number" name="total_color"
-                                            id="totalColorInput" placeholder="Enter Total Color Options" min="1"
-                                            required />
-                                        @error('total_color')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div> --}}
-
-                                </div>
-
-                                <div class="col-lg-6">
-                                    <div id="color-container" class="mb-3">
-                                        <!-- Dynamically generated color input fields will be inserted here -->
-                                    </div>
-                                    <button type="button" class="btn btn-success mt-3" id="add-color">
-                                        <i class="fas fa-plus-circle"></i> Add Color
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal-footer border-0 pt-6 px-0 pb-0">
-                            <button type="reset" class="btn btn-link text-danger px-3 my-0" data-bs-dismiss="modal"
-                                aria-label="Close">Cancel</button>
-                            <button type="submit" class="btn btn-primary my-0">Create Product</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
 
     </div>
 
@@ -582,9 +556,27 @@
         });
     </script>
     <script>
-        function openPrintPage(productId) {
+        function openPrintPage1(productId) {
             // Redirect to the new route with the productId
-            window.location.href = `/print-product/${productId}`;
+            window.location.href = `/print-product-1/${productId}`;
+        }
+    </script>
+    <script>
+        function openPrintPage2(productId) {
+            // Redirect to the new route with the productId
+            window.location.href = `/print-product-2/${productId}`;
+        }
+    </script>
+    <script>
+        function openPrintPage3(productId) {
+            // Redirect to the new route with the productId
+            window.location.href = `/print-product-3/${productId}`;
+        }
+    </script>
+    <script>
+        function openPrintPage4(productId) {
+            // Redirect to the new route with the productId
+            window.location.href = `/print-product-4/${productId}`;
         }
     </script>
 
@@ -620,101 +612,8 @@
                 }
             });
         });
-
-        // Function to send the cart data to the backend
-        function saveCartToDatabase() {
-            if (cartProductIds.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No products in the cart!',
-                    text: 'Please add some products to your cart before proceeding.',
-                    confirmButtonText: 'Got it!'
-                });
-                return;
-            }
-
-            fetch('{{ route('save-cart') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        product_ids: cartProductIds
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status_code === 200) {
-                        // SweetAlert for success message
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: data.message,
-                            confirmButtonText: 'Ok'
-
-                        });
-                        localStorage.removeItem('cart'); // Clear cart after successful save
-                    } else {
-                        // SweetAlert for error message
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: data.message,
-                        });
-                    }
-                })
-                .catch(error => {
-                    // SweetAlert for error message
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: data.message,
-                    });
-                });
-        }
     </script>
 
-    <script>
-        function confirmDeletion(itemId) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // If confirmed, redirect to delete route
-                    window.location.href = `delete_product/${itemId}`;
-                }
-            });
-        }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-open the modal if there are validation errors
-            @if ($errors->any())
-                var myModal = new bootstrap.Modal(document.getElementById('addDealModal'), {});
-                myModal.show();
-            @endif
-
-            // Clear form fields and error messages when the modal is closed
-            var productModal = document.getElementById('addDealModal');
-            productModal.addEventListener('hide.bs.modal', function() {
-                // Clear all input fields
-                productModal.querySelectorAll('input').forEach(input => input.value = '');
-                productModal.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-
-                // Remove error messages
-                productModal.querySelectorAll('.text-danger').forEach(error => error.textContent = '');
-            });
-        });
-    </script>
 
     <!-- JavaScript to Change Modal Image Source -->
     <script>
@@ -723,29 +622,7 @@
         }
     </script>
 
-    <script>
-        function editCategory(id) {
-            // Redirect to edit page
-            window.location.href = `/categories/${id}/edit`;
-        }
-    </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const categorySelect = document.getElementById('categorySelect');
-            const priceInput = document.getElementById('priceInput');
-
-            categorySelect.addEventListener('change', function() {
-                this.blur();
-                const selectedOption = this.options[this.selectedIndex];
-                const categoryPrice = selectedOption.getAttribute('data-price');
-
-                // Set the price input value to the selected category's price
-                priceInput.value = categoryPrice || '';
-                this.blur();
-            });
-        });
-    </script>
 
     <!-- Script to handle the image display in modal -->
     <script>
@@ -753,284 +630,5 @@
             var modalImage = document.getElementById('modalImage');
             modalImage.src = imageUrl; // Set the full image URL to the modal image
         }
-    </script>
-
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const colorContainer = document.getElementById('color-container');
-            const addColorButton = document.getElementById('add-new-color');
-
-            let colorIndex = 1; // Start index for color inputs
-
-            // Add new color row
-            addColorButton.addEventListener('click', function() {
-                const colorRow = document.createElement('div');
-                colorRow.classList.add('row', 'g-2', 'mb-3', 'color-item');
-                colorRow.innerHTML = `
-            <div class="col-6">
-                <input type="text" name="colors[${colorIndex}][color_name]" class="form-control" placeholder="Color Name" required />
-            </div>
-            <div class="col-4">
-                <input type="number" name="colors[${colorIndex}][quantity]" class="form-control" placeholder="Quantity" min="0" required />
-            </div>
-            <div class="col-2 text-center">
-                <button type="button" class="btn btn-danger remove-color">
-                    <i class="fas fa-minus-circle"></i>
-                </button>
-            </div>
-        `;
-
-                colorContainer.appendChild(colorRow);
-                colorIndex++;
-            });
-
-            // Remove color row
-            colorContainer.addEventListener('click', function(event) {
-                if (event.target.closest('.remove-color')) {
-                    const colorItem = event.target.closest('.color-item');
-                    colorContainer.removeChild(colorItem);
-                }
-            });
-        });
-    </script> --}}
-
-    <script>
-        document.getElementById('add-color').addEventListener('click', function() {
-            const colorCount = document.querySelectorAll('.color-item').length;
-            const colorContainer = document.getElementById('color-container');
-
-            // Create a new color item
-            const newColorItem = document.createElement('div');
-            newColorItem.classList.add('row', 'g-3', 'mb-3', 'color-item');
-
-            newColorItem.innerHTML = `
-                        <div class="col-5">
-                            <label for="color_select_${colorCount}" class="form-label">Select Color</label>
-                            <select name="colors[${colorCount}][color_name]" id="color_select_${colorCount}" class="form-select color-select" required>
-                                <option value="">Select Color</option>
-                                @foreach ($colors as $color)
-                                    <option value="{{ $color->color_name }}">{{ $color->color_name }}</option>
-                                @endforeach
-                                <option value="add_new">Add New Color</option>
-                            </select>
-                        </div>
-                        <div class="col-4">
-                            <label for="quantity_${colorCount}" class="form-label">Quantity</label>
-                            <input type="number" id="quantity_${colorCount}" name="colors[${colorCount}][quantity]" class="form-control"
-                                placeholder="Quantity" min="0" required />
-                        </div>
-                        <div class="col-12 mt-2 new-color-container d-none">
-                            <label for="new_color_${colorCount}" class="form-label">Add New Color</label>
-                            <input type="text" id="new_color_${colorCount}" name="colors[${colorCount}][new_color]" class="form-control new-color-input"
-                                placeholder="Enter New Color" />
-                        </div>
-                        <div class="col-2 d-flex align-items-end">
-                            <button type="button" class="btn btn-danger remove-color mt-4">
-                                <i class="fas fa-minus-circle"></i>
-                            </button>
-                        </div>
-                    `;
-
-            colorContainer.appendChild(newColorItem);
-
-            // Initialize Choices.js for the dropdown
-            const colorSelect = newColorItem.querySelector('.color-select');
-            const choicesInstance = new Choices(colorSelect, {
-                searchEnabled: true,
-                removeItemButton: false,
-                placeholder: true,
-                placeholderValue: 'Select Color',
-            });
-
-            // Add event listener for the dropdown
-            const newColorInputContainer = newColorItem.querySelector('.new-color-container');
-            colorSelect.addEventListener('change', function() {
-                if (colorSelect.value === 'add_new') {
-                    newColorInputContainer.classList.remove('d-none');
-                    // Set color_name to null by clearing the dropdown selection
-                    colorSelect.name = "";
-                } else {
-                    newColorInputContainer.classList.add('d-none');
-                    colorSelect.name = `colors[${colorCount}][color_name]`;
-                }
-            });
-        });
-
-        // Remove color item
-        document.getElementById('color-container').addEventListener('click', function(e) {
-            if (e.target.closest('.remove-color')) {
-                e.target.closest('.color-item').remove();
-            }
-        });
-    </script>
-
-    <script>
-        var colors = @json($colors); // Assuming $colors is an array of color data (objects)
-        // dd(colors);
-    </script>
-    {{-- <script>
-        document.getElementById('totalColorInput').addEventListener('input', function() {
-            let totalColor = parseInt(this.value);
-            let totalStock = parseInt(document.getElementById('totalStockInput')?.value || 0);
-
-            if (totalColor > 0 && totalStock > 0) {
-                let quantityPerColor = Math.floor(totalStock / totalColor); // Calculate the quantity per color
-
-                // Clear any previous color fields
-                let container = document.getElementById('color-fields-container');
-                container.innerHTML = '';
-
-                // Generate the color fields based on totalColor
-                for (let i = 0; i < totalColor; i++) {
-                    let colorField = document.createElement('div');
-                    colorField.classList.add('row', 'g-4', 'mb-4'); // Add row and gap classes
-
-                    // Create the color name dropdown with search functionality
-                    let colorDropdown =
-                        `<select class="form-select color-select" name="colors[${i}][color_name]" >`;
-                    colorDropdown += '<option value="">Select Color</option>';
-
-                    // Loop through each color from the `colors` data (assumed to be available in a JavaScript array)
-                    for (let j = 0; j < colors.length; j++) {
-                        colorDropdown += `<option value="${colors[j].color_name}">${colors[j].color_name}</option>`;
-                    }
-
-                    colorDropdown += '</select>';
-
-                    // Add an input field for adding a new color if it doesn't exist
-                    let newColorField = `
-                <div class="col-12 mt-2 new-color-container" style="display:none;">
-                    <label class="text-body-highlight fw-bold mb-2">Or Add New Color</label>
-                    <input class="form-control new-color-input" type="text" name="colors[${i}][new_color]" placeholder="Enter New Color" />
-                </div>
-            `;
-
-                    // Append the dropdown, quantity input, and the new color field
-                    colorField.innerHTML = `
-                <div class="col-6">
-                    <label class="text-body-highlight fw-bold mb-2">Color ${i + 1} Name</label>
-                    ${colorDropdown}
-                </div>
-
-                <div class="col-6">
-                    <label class="text-body-highlight fw-bold mb-2">Quantity for Color ${i + 1}</label>
-                    <input class="form-control" type="number" name="colors[${i}][quantity]" value="${quantityPerColor}"  />
-                </div>
-
-                ${newColorField}
-            `;
-
-                    // Append the color field to the container
-                    container.appendChild(colorField);
-
-                    // Initialize Choices.js for the dropdown
-                    new Choices(colorField.querySelector('.color-select'), {
-                        searchEnabled: true, // Enable search functionality
-                        removeItemButton: true, // Optionally, show a remove button
-                        placeholderValue: 'Select a color', // Placeholder text
-                        itemSelectText: '', // Text to show when selecting an item
-                    });
-
-                    // Add event listener to detect if the user selects "Add New Color"
-                    let colorSelect = colorField.querySelector('.color-select');
-                    let newColorInputContainer = colorField.querySelector('.new-color-container');
-
-                    // Initially hide the "Add New Color" input if a color is selected
-                    if (colorSelect.value !== "") {
-                        newColorInputContainer.style.display = 'none';
-                    }
-
-                    colorSelect.addEventListener('change', function() {
-                        // If "Select Color" is selected, show the "Add New Color" input
-                        if (colorSelect.value === "") {
-                            newColorInputContainer.style.display =
-                                'block'; // Show the "Add New Color" input
-                        } else {
-                            newColorInputContainer.style.display = 'none'; // Hide the "Add New Color" input
-                        }
-                    });
-                }
-            }
-        });
-    </script> --}}
-
-
-    <script>
-        $('#createOrderBtn').on('click', function() {
-            // Show customer details form
-            $('#orderForm').show();
-            // Show product select buttons
-            $('.add-to-cart-btn').show();
-        });
-
-        let cart = []; // To store selected product IDs
-
-        $('.add-to-cart-btn').on('click', function() {
-            let productId = $(this).data('product-id');
-            cart.push(productId); // Add product ID to the cart array
-
-            // Change button text to "Save Order" after product is added
-            $(this).text("Save Order");
-            $(this).attr('id', 'saveOrderBtn'); // Change the button ID
-        });
-
-        $('#saveOrderBtn').on('click', function() {
-            let orderData = {
-                customer_name: $('#customerName').val(),
-                customer_email: $('#customerEmail').val(),
-                product_ids: cart
-            };
-
-            $.ajax({
-                url: '/save-order', // Your API route for saving the order
-                method: 'POST',
-                data: orderData,
-                success: function(response) {
-                    alert('Order Saved Successfully!');
-                    // Optionally, reset the form and cart
-                    $('#orderForm').hide();
-                    cart = []; // Clear cart
-                },
-                error: function(error) {
-                    alert('There was an error saving the order');
-                }
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const categorySelect = document.getElementById('categorySelect');
-            const priceInput = document.getElementById('priceInput');
-
-            // Add event listener to detect changes in the dropdown
-            categorySelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const categoryPrice = selectedOption.getAttribute(
-                    'data-price'); // Get the price from data attribute
-
-                // Set the price input value
-                priceInput.value = categoryPrice || '';
-            });
-        });
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const categorySelect = document.getElementById('categorySelect');
-            const priceInput = document.getElementById('priceInput');
-
-            // Set initial price if a category is already selected
-            const selectedOption = categorySelect.options[categorySelect.selectedIndex];
-            const initialPrice = selectedOption.getAttribute('data-price');
-            priceInput.value = initialPrice || '';
-
-            // Add event listener for changes in the dropdown
-            categorySelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                const categoryPrice = selectedOption.getAttribute('data-price');
-                priceInput.value = categoryPrice || '';
-            });
-        });
     </script>
 @endsection
