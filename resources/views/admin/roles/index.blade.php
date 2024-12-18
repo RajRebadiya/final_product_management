@@ -46,8 +46,8 @@
         }
 
         /* .table tr td {
-                                                                                                                    padding: 13px 31px;
-                                                                                                                } */
+                                                                                                                                                                        padding: 13px 31px;
+                                                                                                                                                                    } */
 
         /* Styling for badges */
         .badge {
@@ -92,13 +92,21 @@
             <a href="{{ route('roles.create') }}" class="btn btn-primary mb-4 float-end">Create New Role</a>
         </div>
 
+        @php
+            $user = Auth::guard('staff')->user();
+            $role = \App\Models\Role::where('id', $user->role_id)->first();
+            $permissions = $role->permissions;
+        @endphp
+
         <div class="table-responsive shadow-lg rounded-lg border border-muted">
             <table class="table  table-bordered ">
                 <thead>
                     <tr>
                         <th scope="col">Role Name</th>
                         <th scope="col">Permissions</th>
+
                         <th scope="col">Actions</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -107,6 +115,7 @@
                             <td class="align-middle">
                                 <p class="fw-bold" style="margin-left: 38px;">{{ $role->name }}</p>
                             </td>
+                            {{-- @if (!empty($permissions['Permissions']['delete']) && $permissions['Permissions']['delete']) --}}
                             <td>
                                 <div class="row">
                                     @foreach ($role->permissions as $module => $actions)

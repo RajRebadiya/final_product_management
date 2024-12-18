@@ -19,7 +19,10 @@
             <div class="col-md-8">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-primary text-white">
-                        <h3 class="text-center mb-0">Add Staff Member</h3>
+                        <h3 class="text-center mb-0" style="
+                        color: white;
+                    ">Add
+                            Staff Member</h3>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('staff.store') }}" method="POST" class="needs-validation" novalidate>
@@ -88,7 +91,12 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg">Add Staff</button>
+                                <button type="submit"
+                                    style="
+                                color: white;
+                                background-color: #dd2b1c;
+                            "
+                                    class="btn btn-primary btn-lg">Add Staff</button>
                             </div>
                         </form>
                     </div>

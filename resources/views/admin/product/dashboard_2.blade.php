@@ -362,7 +362,9 @@
                             <th class="text-center">Category Name</th>
                             <th class="text-center">Price</th>
                             <th class="text-center">Date</th>
-                            <th class="text-center">Stock Status</th>
+                            @if (!empty($permissions['Product']['update']) && $permissions['Product']['update'])
+                                <th class="text-center">Stock Status</th>
+                            @endif
                             {{-- <th class="text-center">Bar Code</th> --}}
                             {{-- <th class="text-center">Status</th> --}}
                             @if (!empty($permissions['Product']['update']) && $permissions['Product']['update'])
@@ -372,7 +374,7 @@
                                 <th class="text-center">Delete</th>
                             @endif
                             <th class="text-center">Add to Cart</th>
-                            <th class="text-center">Bar Code</th>
+                            {{-- <th class="text-center">Bar Code</th> --}}
                         </tr>
                     </thead>
                     <tbody class="list">
@@ -394,25 +396,26 @@
                                 <td class="price text-center">
                                     {{ \Carbon\Carbon::parse($item['updated_at'])->format('Y-m-d') }}</td>
 
-
-                                <td class="stock_status text-center">
-                                    <form action="{{ route('update_stock_status') }}" method="POST">
-                                        @csrf
-                                        <input type="hidden" name="product_id" value="{{ $item['id'] }}">
-                                        <select name="stock_status" class="form-select form-select-sm"
-                                            style="background-color: {{ $item['stock_status'] == 'in_stock' ? '#d4edda' : '#f8d7da' }}; color: {{ $item['stock_status'] == 'in_stock' ? '#155724' : '#721c24' }};"
-                                            onchange="this.form.submit()">
-                                            <option value="in_stock"
-                                                {{ $item['stock_status'] == 'in_stock' ? 'selected' : '' }}>
-                                                IN STOCK
-                                            </option>
-                                            <option value="out_of_stock"
-                                                {{ $item['stock_status'] == 'out_of_stock' ? 'selected' : '' }}>
-                                                OUT OF STOCK
-                                            </option>
-                                        </select>
-                                    </form>
-                                </td>
+                                @if (!empty($permissions['Product']['update']) && $permissions['Product']['update'])
+                                    <td class="stock_status text-center">
+                                        <form action="{{ route('update_stock_status') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $item['id'] }}">
+                                            <select name="stock_status" class="form-select form-select-sm"
+                                                style="background-color: {{ $item['stock_status'] == 'in_stock' ? '#d4edda' : '#f8d7da' }}; color: {{ $item['stock_status'] == 'in_stock' ? '#155724' : '#721c24' }};"
+                                                onchange="this.form.submit()">
+                                                <option value="in_stock"
+                                                    {{ $item['stock_status'] == 'in_stock' ? 'selected' : '' }}>
+                                                    IN STOCK
+                                                </option>
+                                                <option value="out_of_stock"
+                                                    {{ $item['stock_status'] == 'out_of_stock' ? 'selected' : '' }}>
+                                                    OUT OF STOCK
+                                                </option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                @endif
                                 {{-- <td class="status text-center">
                                     <form action="{{ route('update_status') }}" method="POST">
                                         @csrf
@@ -462,12 +465,12 @@
                                         <i class="fa-solid fa-cart-plus"></i>
                                     </button>
                                 </td>
-                                <td class="text-center">
+                                {{-- <td class="text-center">
                                     <button class="btn btn-primary btn-sm content-icon"
                                         onclick="openPrintPage('{{ $item['id'] }}')">
                                         <i class="fa-solid fa-print"></i> Print
                                     </button>
-                                </td>
+                                </td> --}}
 
 
                             </tr>

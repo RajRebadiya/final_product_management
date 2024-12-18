@@ -5,11 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <title>Print QR Code</title>
 
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: "Quicksand", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 700;
+            font-style: normal;
             margin: 0;
             padding: 0;
         }
@@ -20,6 +26,10 @@
             justify-content: center;
             gap: 15px;
             margin: 20px 0;
+            font-family: "Quicksand", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: <weight>;
+            font-style: normal;
         }
 
         .barcode-item {
@@ -79,6 +89,7 @@
 
         @media print {
             body {
+                font-family: 'Quicksand';
                 margin: 0;
                 padding: 0;
             }
@@ -100,6 +111,7 @@
                 page-break-inside: avoid;
                 height: 170px;
                 width: 80%;
+                font-family: 'Quicksand';
             }
         }
     </style>
@@ -132,14 +144,15 @@
     <!-- Print Button -->
 
     <!-- Barcode Stickers Container -->
-    <div class="barcode-container" id="barcode-container">
+    {{-- <div class="barcode-container" id="barcode-container">
         <!-- Stickers will be dynamically generated here -->
         <div class="barcode-item">
             <div style="text-align: center; padding: 5px;">
                 <!-- Barcode -->
                 {!! DNS1D::getBarcodeHTML($product->p_name, 'C128', 3, 40) !!}
                 <!-- Design Number -->
-                <p style="margin: 5px 0; font-weight: bold;">{{ $product->p_name }}</p>
+                <p style="margin: 5px 0; font-weight: bold;">{{ $product->category_name . ' - ' . $product->p_name }}
+                </p>
             </div>
 
             <div
@@ -157,7 +170,39 @@
                 </div>
             </div>
         </div>
+    </div> --}}
+    <div class="barcode-container" id="barcode-container">
+        <div class="barcode-item" style="width: 200px; height: 160px; box-sizing: border-box; padding: 5px;">
+            <!-- Barcode Section -->
+            <div style="text-align: center;">
+                {!! DNS1D::getBarcodeHTML($product->p_name, 'C128', 3, 40) !!}
+            </div>
+
+            <!-- Top Section: Category and P.No -->
+            <div style="display: flex;">
+                <div style="text-align: center; font-weight: 900; padding: 5px;">
+                    {{ $product->category_name . ' - ' }}
+                </div>
+                <div style="text-align: center; font-weight: 900; padding: 5px;">
+                    {{ $product->p_name }}
+                </div>
+            </div>
+
+            <!-- Bottom Section: Veer and MRP -->
+            <div style="display: flex; border: 2px solid #000; width: 123%;">
+                <div
+                    style="width: 50%; text-align: center; border-right: 2px solid #000; font-weight: 900; padding: 5px;">
+                    <img src="{{ asset('assets/img/favicons/veer_red.png') }}" alt="Veer Logo" width="90"
+                        height="50">
+                </div>
+                <div style="text-align: center; font-weight: bold; padding: 5px; margin-top: 7px;">
+                    MRP: ₹{{ number_format($product->price, 2) }}
+                </div>
+            </div>
+        </div>
     </div>
+
+
     <button class="btn-print" onclick="window.print()">Print</button>
     <a class="btn-print-same" style='text-align: center;' href="{{ route('barcode') }}">Back To Product</a>
 

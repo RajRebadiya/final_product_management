@@ -178,8 +178,8 @@ class RoleController extends Controller
 
     public function permission_list()
     {
-        $permissions = Permission::all();
-        return view('admin.roles.permission_list', compact('permissions'));
+        $permissionsss = Permission::all();
+        return view('admin.roles.permission_list', compact('permissionsss'));
     }
 
 

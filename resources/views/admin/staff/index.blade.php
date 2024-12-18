@@ -172,6 +172,14 @@
                 <p>No staff members available. Add new staff to begin.</p>
             </div>
         @else
+            @php
+                $user = Auth::guard('staff')->user();
+                $role = \App\Models\Role::where('id', $user->role_id)->first();
+                $permissions = $role->permissions;
+            @endphp
+
+            <!-- Dashboard -->
+
             <div class="table-container">
                 <table class="staff-table table table-hover table-bordered table-sm">
                     <thead>
@@ -180,7 +188,12 @@
                             <th>Role</th>
                             <th>Email</th>
                             <th>Password</th>
-                            <th>Actions</th>
+                            @if (!empty($permissions['User']['update']) && $permissions['User']['update'])
+                                <th>Edit</th>
+                            @endif
+                            @if (!empty($permissions['User']['delete']) && $permissions['User']['delete'])
+                                <th>Delete</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -190,22 +203,28 @@
                                 <td>{{ $staff->role->name ?? 'N/A' }}</td>
                                 <td>{{ $staff->email ?? 'N/A' }}</td>
                                 <td>{{ $staff->password ?? 'N/A' }}</td>
-                                <td>
-                                    <a href="{{ route('staff.edit', $staff->id) }}"
-                                        class="action-btn btn-edit btn btn-warning btn-sm content-icon">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <button class="action-btn btn-delete delete-btn btn btn-danger btn-sm content-icon"
-                                        data-id="{{ $staff->id }}" data-name="{{ $staff->name }}">
-                                        <i class="fa-solid fa-trash "></i>
-                                    </button>
-                                    <form id="delete-form-{{ $staff->id }}"
-                                        action="{{ route('staff.destroy', $staff->id) }}" method="POST"
-                                        style="display:none;">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                </td>
+                                @if (!empty($permissions['User']['update']) && $permissions['User']['update'])
+                                    <td>
+                                        <a href="{{ route('staff.edit', $staff->id) }}"
+                                            class="action-btn btn-edit btn btn-warning btn-sm content-icon">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['User']['delete']) && $permissions['User']['delete'])
+                                    <td>
+                                        <button class="action-btn btn-delete delete-btn btn btn-danger btn-sm content-icon"
+                                            data-id="{{ $staff->id }}" data-name="{{ $staff->name }}">
+                                            <i class="fa-solid fa-trash "></i>
+                                        </button>
+                                        <form id="delete-form-{{ $staff->id }}"
+                                            action="{{ route('staff.destroy', $staff->id) }}" method="POST"
+                                            style="display:none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>

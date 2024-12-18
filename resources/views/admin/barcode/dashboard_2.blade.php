@@ -324,7 +324,9 @@
                                 <th class="text-center">Delete</th>
                             @endif
                             <th class="text-center">Add to Cart</th> --}}
-                            <th class="text-center">Bar Code</th>
+                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                <th class="text-center">Bar Code</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="list">
@@ -413,12 +415,14 @@
                                         <i class="fa-solid fa-cart-plus"></i>
                                     </button>
                                 </td> --}}
-                                <td class="text-center">
-                                    <button class="btn btn-primary btn-sm content-icon"
-                                        onclick="openPrintPage('{{ $item['id'] }}')">
-                                        <i class="fa-solid fa-print"></i> Print
-                                    </button>
-                                </td>
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <td class="text-center">
+                                        <button class="btn btn-primary btn-sm content-icon"
+                                            onclick="openPrintPage('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                @endif
 
 
                             </tr>
@@ -579,9 +583,12 @@
     </script>
     <script>
         function openPrintPage(productId) {
-            window.open(`/print-product/${productId}`, '_blank');
+            // Redirect to the new route with the productId
+            window.location.href = `/print-product/${productId}`;
         }
     </script>
+
+
 
     <script>
         // Initialize cart from localStorage if available

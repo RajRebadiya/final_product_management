@@ -14,6 +14,11 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    @php
+        $user = Auth::guard('staff')->user();
+        $role = \App\Models\Role::where('id', $user->role_id)->first();
+        $permissions = $role->permissions;
+    @endphp
 
     <div class="container mt-5">
         <h1 class="text-center mb-4" style="font-size: 2.5rem; font-weight: bold; color: #333;">Permission Management</h1>
@@ -26,22 +31,26 @@
                         <th scope="col" style='color: white;'>Module Name</th>
                         <th scope="col" style='color: white;'>Created At</th>
                         <th scope="col" style='color: white;'>Updated At</th>
-                        <th scope="col" style='color: white;'>Action</th>
+                        @if (!empty($permissions['Permissions']['delete']) && $permissions['Permissions']['delete'])
+                            <th scope="col" style='color: white;'>Delete</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($permissions as $permission)
+                    @foreach ($permissionsss as $permission)
                         <tr class="align-middle">
                             <th scope="row" class="text-center">{{ $loop->iteration }}</th>
                             <td>{{ $permission->module }}</td>
                             <td>{{ $permission->created_at->format('d M Y, h:i A') }}</td>
                             <td>{{ $permission->updated_at->format('d M Y, h:i A') }}</td>
-                            <td class="text-center">
-                                <button class="btn btn-danger btn-sm delete-permission"
-                                    data-module="{{ $permission->module }}">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </button>
-                            </td>
+                            @if (!empty($permissions['Permissions']['delete']) && $permissions['Permissions']['delete'])
+                                <td class="text-center">
+                                    <button class="btn btn-danger btn-sm delete-permission"
+                                        data-module="{{ $permission->module }}">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

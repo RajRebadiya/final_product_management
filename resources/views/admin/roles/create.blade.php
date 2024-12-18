@@ -64,7 +64,11 @@
                                 <div class="card shadow border-0 h-100">
                                     <div
                                         class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">{{ ucfirst($module) }}</h5>
+                                        <h5 class="mb-0"
+                                            style="
+                                        color: white;
+                                    ">
+                                            {{ ucfirst($module) }}</h5>
                                         <!-- Select All Checkbox -->
                                         <div>
                                             <input type="checkbox" id="select-all-{{ $module }}"

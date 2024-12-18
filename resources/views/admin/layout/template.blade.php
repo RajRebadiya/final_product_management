@@ -302,11 +302,17 @@
                 <!-- Vertical Navbar Content -->
                 <div class="navbar-vertical-content">
                     <ul class="navbar-nav flex-column" id="navbarVerticalNav">
+                        @if (Auth::guard('staff')->check())
                         @php
-                            $user = Auth::guard('staff')->user();
-                            $role = \App\Models\Role::where('id', $user->role_id)->first();
-                            $permissions = $role->permissions;
-                        @endphp
+                      
+                            
+                        $user = Auth::guard('staff')->user();
+                        $role = \App\Models\Role::where('id', $user->role_id)->first();
+                        $permissions = $role->permissions;
+                  
+                    @endphp 
+                        @endif
+                       
         
                         <!-- Dashboard -->
                         @if (!empty($permissions['Dashboard']['read']) && $permissions['Dashboard']['read'])
@@ -348,7 +354,7 @@
                             <li class="nav-item">
                                 <a class="nav-link navbar_link dropdown-indicator label-1 theme-text {{ request()->routeIs('barcode') ? 'active' : '' }}" href="{{ route('barcode') }}">
                                     <div class="d-flex align-items-center">
-                                        <span data-feather="shopping-bag"></span>
+                                        <span data-feather="align-justify"></span>
                                         <span style='margin-left: 10px;'>Barcode</span>
                                     </div>
                                 </a>
@@ -366,9 +372,11 @@
                                 </a>
                                 <div class="collapse" id="offer-form-dropdown">
                                     <ul class="nav flex-column ms-3">
+                                        @if (!empty($permissions['Offer_Form']['create']) && $permissions['Offer_Form']['create'])
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('new_offer_form') }}">New Offer Form</a>
                                         </li>
+                                        @endif
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('offer_form_list') }}">Offer Form List</a>
                                         </li>
@@ -388,9 +396,11 @@
                                 </a>
                                 <div class="collapse" id="offer-form-dropdownn">
                                     <ul class="nav flex-column ms-3">
+                                        @if (!empty($permissions['User']['create']) && $permissions['User']['create'])
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('staff.create') }}">Add New User</a>
                                         </li>
+                                        @endif
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('staff.index') }}">User List</a>
                                         </li>
@@ -410,9 +420,11 @@
                                 </a>
                                 <div class="collapse" id="offer-form-role">
                                     <ul class="nav flex-column ms-3">
+                                        @if (!empty($permissions['Roles']['create']) && $permissions['Roles']['create'])
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('roles.create') }}">Add New Role</a>
                                         </li>
+                                        @endif
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('roles.index') }}">Role List</a>
                                         </li>
@@ -432,9 +444,11 @@
                                 </a>
                                 <div class="collapse" id="offer-form-permission">
                                     <ul class="nav flex-column ms-3">
+                                        @if (!empty($permissions['Permissions']['create']) && $permissions['Permissions']['create'])
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('add_new_permission') }}">Add New Permission</a>
                                         </li>
+                                        @endif
                                         <li class="nav-item">
                                             <a class="nav-link" href="{{ route('permission_list') }}">Permission List</a>
                                         </li>
@@ -507,7 +521,7 @@
                                             <img class="rounded-circle " src="{{ asset('assets/img/team/30.webp') }}"
                                                 alt="">
                                         </div>
-                                        <h6 class="mt-2 text-body-emphasis">{{ Auth::guard('staff')->user()->name }}
+                                        <h6 class="mt-2 text-body-emphasis">{{ Auth::guard('staff')->user()->name ?? 'Unknown' }}
                                         </h6>
                                     </div>
                                 </div>
@@ -532,7 +546,7 @@
                                                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                                                 </svg>Dashboard</a></li>
 
-                                        <li class="nav-item"><a class="nav-link px-3 d-block"
+                                        {{-- <li class="nav-item"><a class="nav-link px-3 d-block"
                                                 href="{{ route('roles.index') }}"><svg
                                                     xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -540,7 +554,7 @@
                                                     class="feather feather-pie-chart me-2 text-body align-bottom">
                                                     <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
                                                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-                                                </svg>Roles</a></li>
+                                                </svg>Roles</a></li> --}}
                                     </ul>
                                     <hr>
                                 </div>

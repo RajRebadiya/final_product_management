@@ -27,7 +27,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/products', 'product_detail')->name('product_detail');
 });
 
-Route::controller(HomeController::class)->middleware('auth:staff')->group(function () {
+Route::controller(HomeController::class)->middleware(['auth:staff', 'check.permission'])->group(function () {
 
     // Route::get('/dashboard', 'dashboard')->name('dashboard');
     Route::get('/dashboard', 'dashboard')->name('dashboard');
@@ -62,7 +62,7 @@ Route::controller(HomeController::class)->middleware('auth:staff')->group(functi
 
     Route::get('/print-product/{id}', 'printProduct')->name('print.product');
 
-    Route::get('barcode', 'barcode')->name('barcode');
+    Route::get('barcode', 'barcode')->name('barcode')->middleware('check.permission');
 
 });
 
@@ -73,12 +73,12 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/register', 'register')->name('register');
     Route::post('/register_staff', 'register_staff')->name('register_staff');
     // Route::post('/register-post', 'register_post')->name('register-post');
-    Route::get('/logout', 'logout')->name('logout');
-    Route::get('/profile', 'profile')->name('profile');
-    Route::post('/update_profile', 'update_profile')->name('update_profile');
+    Route::get('/logout', 'logout')->name('logout')->middleware('auth:staff');
+    Route::get('/profile', 'profile')->name('profile')->middleware('auth:staff');
+    Route::post('/update_profile', 'update_profile')->name('update_profile')->middleware('auth:staff');
 });
 
-Route::controller(OrderController::class)->middleware('auth:staff')->group(function () {
+Route::controller(OrderController::class)->middleware(['auth:staff', 'check.permission'])->group(function () {
     Route::get('/offer_form', 'offer_form')->name('offer_form');
     Route::get('/new_offer_form', 'new_offer_form')->name('new_offer_form');
     Route::get('/offer_form_list', 'offer_form_list')->name('offer_form_list');
@@ -97,7 +97,7 @@ Route::controller(OrderController::class)->middleware('auth:staff')->group(funct
 
 });
 
-Route::controller(RoleController::class)->middleware('auth:staff')->group(function () {
+Route::controller(RoleController::class)->middleware(['auth:staff', 'check.permission'])->group(function () {
     Route::resource('roles', RoleController::class);
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
     Route::get('/roles/create', [RoleController::class, 'create'])->name('roles.create');
@@ -112,6 +112,6 @@ Route::controller(RoleController::class)->middleware('auth:staff')->group(functi
 
 });
 
-Route::controller(StaffController::class)->middleware('auth:staff')->group(function () {
+Route::controller(StaffController::class)->middleware(['auth:staff', 'check.permission'])->group(function () {
     Route::resource('staff', StaffController::class);
 });

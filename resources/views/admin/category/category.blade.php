@@ -52,16 +52,26 @@
 
             <!-- Results will be displayed here -->
             {{-- <ul id="products-container"></ul> --}}
+            @php
+                $user = Auth::guard('staff')->user();
+                $role = \App\Models\Role::where('id', $user->role_id)->first();
+                $permissions = $role->permissions;
+            @endphp
 
-            <button class="btn btn-primary me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal"
-                aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><svg
-                    class="svg-inline--fa fa-plus me-2" aria-hidden="true" focusable="false" data-prefix="fas"
-                    data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                    data-fa-i2svg="">
-                    <path fill="currentColor"
-                        d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z">
-                    </path>
-                </svg><!-- <span class="fas fa-plus me-2"></span> Font Awesome fontawesome.com -->Add New Category</button>
+            <!-- Dashboard -->
+            @if (!empty($permissions['Category']['create']) && $permissions['Category']['create'])
+                <button class="btn btn-primary me-4" type="button" data-bs-toggle="modal" data-bs-target="#addDealModal"
+                    aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><svg
+                        class="svg-inline--fa fa-plus me-2" aria-hidden="true" focusable="false" data-prefix="fas"
+                        data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
+                        data-fa-i2svg="">
+                        <path fill="currentColor"
+                            d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z">
+                        </path>
+                    </svg><!-- <span class="fas fa-plus me-2"></span> Font Awesome fontawesome.com -->Add New
+                    Category</button>
+            @endif
+
         </div>
 
         <form method="GET" action="{{ route('category') }}" class="mb-4">
@@ -86,10 +96,17 @@
                             <th class="sort border-top border-translucent ps-3" data-sort="category_name">Category Name</th>
                             <th class="sort border-top" data-sort="price">Price</th>
                             {{-- <th class="sort border-top border-translucent ps-3" data-sort="stock_status">Stock Status</th> --}}
-                            <th class="sort border-top text-middle align-middle border-translucent ps-3" data-sort="status">
-                                Status</th>
-                            <th class="sort text-center align-middle pe-0 border-top " scope="col">Edit</th>
-                            <th class="sort text-middle align-middle pe-0 border-top" scope="col">Delete</th>
+                            @if (!empty($permissions['Category']['update']) && $permissions['Category']['update'])
+                                <th class="sort border-top text-middle align-middle border-translucent ps-3"
+                                    data-sort="status">
+                                    Status</th>
+                            @endif
+                            @if (!empty($permissions['Category']['update']) && $permissions['Category']['update'])
+                                <th class="sort text-center align-middle pe-0 border-top " scope="col">Edit</th>
+                            @endif
+                            @if (!empty($permissions['Category']['delete']) && $permissions['Category']['delete'])
+                                <th class="sort text-middle align-middle pe-0 border-top" scope="col">Delete</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody class="list">
@@ -100,35 +117,42 @@
                                 <td class="align-middle ps-3 category_name">{{ $item['name'] }}</td>
                                 <td class="align-middle ps-3 price">{{ $item['price'] }}</td>
                                 <!-- Status Dropdown with Colors -->
-                                <td class="align-middle ps-3 status">
-                                    <form class="align-middle" action="{{ route('category_update_status') }}"
-                                        method="POST">
-                                        @csrf
-                                        <input type="hidden" name="category_id" value="{{ $item['id'] }}">
-                                        <select name="status" class="form-select form-select-sm"
-                                            style="background-color: {{ $item['status'] == 'Active' ? '#d4edda' : '#f8d7da' }}; color: {{ $item['status'] == 'Active' ? '#155724' : '#721c24' }}; width: 50%;"
-                                            onchange="this.form.submit()">
-                                            <option value="Active" {{ $item['status'] == 'Active' ? 'selected' : '' }}>
-                                                ACTIVE</option>
-                                            <option value="Inactive" {{ $item['status'] == 'Inactive' ? 'selected' : '' }}>
-                                                INACTIVE</option>
-                                        </select>
-                                    </form>
-                                </td>
-                                <td class="text-center">
-                                    <form action="{{ route('edit_category') }}" method="GET" style="display:inline;">
-                                        <input type="hidden" name="category_id" value="{{ $item['id'] }}">
-                                        <button type="submit" class="btn btn-warning btn-sm content-icon">
-                                            <i class="fa-solid fa-pen-to-square"></i>
+                                @if (!empty($permissions['Category']['update']) && $permissions['Category']['update'])
+                                    <td class="align-middle ps-3 status">
+                                        <form class="align-middle" action="{{ route('category_update_status') }}"
+                                            method="POST">
+                                            @csrf
+                                            <input type="hidden" name="category_id" value="{{ $item['id'] }}">
+                                            <select name="status" class="form-select form-select-sm"
+                                                style="background-color: {{ $item['status'] == 'Active' ? '#d4edda' : '#f8d7da' }}; color: {{ $item['status'] == 'Active' ? '#155724' : '#721c24' }}; width: 50%;"
+                                                onchange="this.form.submit()">
+                                                <option value="Active" {{ $item['status'] == 'Active' ? 'selected' : '' }}>
+                                                    ACTIVE</option>
+                                                <option value="Inactive"
+                                                    {{ $item['status'] == 'Inactive' ? 'selected' : '' }}>
+                                                    INACTIVE</option>
+                                            </select>
+                                        </form>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['Category']['update']) && $permissions['Category']['update'])
+                                    <td class="text-center">
+                                        <form action="{{ route('edit_category') }}" method="GET" style="display:inline;">
+                                            <input type="hidden" name="category_id" value="{{ $item['id'] }}">
+                                            <button type="submit" class="btn btn-warning btn-sm content-icon">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                @endif
+                                @if (!empty($permissions['Category']['delete']) && $permissions['Category']['delete'])
+                                    <td class="align-middle text-middle pe-0">
+                                        <button class="btn btn-danger btn-sm content-icon"
+                                            onclick="confirmDeletion('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
-                                    </form>
-                                </td>
-                                <td class="align-middle text-middle pe-0">
-                                    <button class="btn btn-danger btn-sm content-icon"
-                                        onclick="confirmDeletion('{{ $item['id'] }}')">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
+                                    </td>
+                                @endif
 
                             </tr>
                         @endforeach

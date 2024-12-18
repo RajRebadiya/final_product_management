@@ -169,6 +169,11 @@
                         // Group products by category
                         $groupedProducts = collect($order->products)->groupBy('category_name');
                     @endphp
+                    @php
+                        $user = Auth::guard('staff')->user();
+                        $role = \App\Models\Role::where('id', $user->role_id)->first();
+                        $permissions = $role->permissions;
+                    @endphp
 
                     {{-- @dd($groupedProducts); --}}
                     @foreach ($groupedProducts as $category => $products)
@@ -186,11 +191,15 @@
                                             <li>Remark: {{ $product['remark'] ?? 'N/A' }}</li>
                                             <li>Price: {{ $product['price'] ?? 'N/A' }}</li>
                                         </ul>
-                                        <a href="{{ route('product.edit', ['order_number' => $order->order_number, 'product_id' => $product['product_id']]) }}"
-                                            class="btn btn-warning btn-sm mt-2">Edit Product</a>
-                                        <button class="btn btn-danger btn-sm mt-2"
-                                            onclick="deleteProduct('{{ $order->order_number }}', '{{ $product['product_id'] }}')">Delete
-                                            Product</button>
+                                        @if (!empty($permissions['Offer_Form']['update']) && $permissions['Offer_Form']['update'])
+                                            <a href="{{ route('product.edit', ['order_number' => $order->order_number, 'product_id' => $product['product_id']]) }}"
+                                                class="btn btn-warning btn-sm mt-2">Edit Product</a>
+                                        @endif
+                                        @if (!empty($permissions['Offer_Form']['delete']) && $permissions['Offer_Form']['delete'])
+                                            <button class="btn btn-danger btn-sm mt-2"
+                                                onclick="deleteProduct('{{ $order->order_number }}', '{{ $product['product_id'] }}')">Delete
+                                                Product</button>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
