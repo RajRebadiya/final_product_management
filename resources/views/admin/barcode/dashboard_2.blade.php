@@ -333,8 +333,11 @@
                             @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
                                 <th class="text-center">Bar Code 3</th>
                             @endif
-                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                            {{-- @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
                                 <th class="text-center">Bar Code 4</th>
+                            @endif --}}
+                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                <th class="text-center">Bar Code 5</th>
                             @endif
                         </tr>
                     </thead>
@@ -484,7 +487,7 @@
                                         </button>
                                     </td>
                                 @endif
-                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                {{-- @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
                                     <td class="text-center">
                                         <img class=''
                                             style="
@@ -500,6 +503,26 @@
                                     "
                                             class="btn btn-primary btn-sm content-icon"
                                             onclick="openPrintPage4('{{ $item['id'] }}')">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                @endif --}}
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <td class="text-center">
+                                        <img class=''
+                                            style="
+                                        margin-left: -22px;
+                                        height: 108px;
+                                    "
+                                            src="{{ asset('assets/img/barcode/barcode-4.png') }}" alt="Barcode 4">
+                                        <button
+                                            style="
+                                        display: block;
+                                        margin-left: 75px;
+                                        margin-top: 10px;
+                                    "
+                                            class="btn btn-primary btn-sm content-icon"
+                                            onclick="openPrintPage5('{{ $item['id'] }}')">
                                             <i class="fa-solid fa-print"></i> Print
                                         </button>
                                     </td>
@@ -558,25 +581,31 @@
     <script>
         function openPrintPage1(productId) {
             // Redirect to the new route with the productId
-            window.location.href = `/print-product-1/${productId}`;
+            window.location.href = `/barcode1/${productId}`;
         }
     </script>
     <script>
         function openPrintPage2(productId) {
             // Redirect to the new route with the productId
-            window.location.href = `/print-product-2/${productId}`;
+            window.location.href = `/barcode2/${productId}`;
         }
     </script>
     <script>
         function openPrintPage3(productId) {
             // Redirect to the new route with the productId
-            window.location.href = `/print-product-3/${productId}`;
+            window.location.href = `/barcode3/${productId}`;
         }
     </script>
     <script>
         function openPrintPage4(productId) {
             // Redirect to the new route with the productId
-            window.location.href = `/print-product-4/${productId}`;
+            window.location.href = `/barcode4/${productId}`;
+        }
+    </script>
+    <script>
+        function openPrintPage5(productId) {
+            // Redirect to the new route with the productId
+            window.location.href = `/barcode5/${productId}`;
         }
     </script>
 

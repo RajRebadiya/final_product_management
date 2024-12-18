@@ -775,28 +775,35 @@ class HomeController extends Controller
         $product = Product::findOrFail($id);
         // dd($product);
 
-        return view('admin.product.barcode_1', compact('product'));
+        return view('admin.barcode.barcode_1', compact('product'));
     }
     public function printProduct2($id)
     {
         $product = Product::findOrFail($id);
         // dd($product);
 
-        return view('admin.product.barcode_2', compact('product'));
+        return view('admin.barcode.barcode_2', compact('product'));
     }
     public function printProduct3($id)
     {
         $product = Product::findOrFail($id);
         // dd($product);
 
-        return view('admin.product.barcode_3', compact('product'));
+        return view('admin.barcode.barcode_3', compact('product'));
     }
     public function printProduct4($id)
     {
         $product = Product::findOrFail($id);
         // dd($product);
 
-        return view('admin.product.barcode_4', compact('product'));
+        return view('admin.barcode.barcode_4', compact('product'));
+    }
+    public function printProduct5($id)
+    {
+        $product = Product::findOrFail($id);
+        // dd($product);
+
+        return view('admin.barcode.barcode_5', compact('product'));
     }
 
 }

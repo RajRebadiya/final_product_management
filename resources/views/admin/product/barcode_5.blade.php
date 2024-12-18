@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {{-- <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet"> --}}
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
+
     <title>Print QR Code</title>
 
     <style>
@@ -18,8 +18,6 @@
             font-optical-sizing: auto;
             font-weight: 700;
             font-style: normal;
-
-
             margin: 0;
             padding: 0;
         }
@@ -116,9 +114,10 @@
 
             .barcode-item {
                 page-break-inside: avoid;
-                height: 150px;
-                width: 80%;
-
+                font-family: "Lexend", serif;
+                font-optical-sizing: auto;
+                font-weight: 700;
+                font-style: normal;
             }
         }
     </style>
@@ -179,26 +178,37 @@
         </div>
     </div> --}}
     <div class="barcode-container" id="barcode-container">
-        <div class="barcode-item"
-            style="width: 200px;height: 105px;box-sizing: border-box;padding: 0px;margin-top: 15px;">
-
-            <!-- Product Category and Name -->
-            <p style='margin: 0px; font-size: 18px; font-weight: 900;'>{{ $product->category_name }}</p>
-            <p style="margin: 0px;margin-bottom: 3px; font-size: 18px; font-weight: 900;">D.No - {{ $product->p_name }}
-            </p>
-
+        <div class="barcode-item" style="width: 200px;height: 120px;box-sizing: border-box;padding: 5px;">
             <!-- Barcode Section -->
-            <div>
-                {!! DNS1D::getBarcodeHTML($product->p_name, 'C128', '2', '40') !!}
+            <div style="text-align: center;">
+                {!! DNS1D::getBarcodeHTML($product->p_name, 'C128', 2, 40) !!}
             </div>
 
-            <!-- Price Section -->
-            <p style='margin: 0px; font-size: 18px;'> Rate - ₹{{ number_format($product->price, 2) }}</p>
+            <!-- Top Section: Category and P.No -->
+            <div style="display: flex;">
+                <div style="text-align: center; font-weight: 900; padding: 5px;">
+                    {{ $product->category_name . ' - ' }}
+                </div>
+                <div style="text-align: center; font-weight: 900; padding: 5px;">
+                    {{ $product->p_name }}
+                </div>
+            </div>
 
-
+            <!-- Bottom Section: Veer and MRP -->
+            <div style="display: flex;border: 2px solid #000;width: 89%;margin-top: -3px;">
+                <div
+                    style="width: 50%; text-align: center; border-right: 2px solid #000; font-weight: 900; padding: 5px;">
+                    <img src="{{ asset('assets/img/favicons/veer_red.png') }}" alt="Veer Logo"
+                        style="
+                        height: 30px;
+                    ">
+                </div>
+                <div style="text-align: center; font-weight: bold;">
+                    RATE ₹{{ number_format($product->price, 2) }}
+                </div>
+            </div>
         </div>
     </div>
-
 
 
     <button class="btn-print" onclick="window.print()">Print</button>
