@@ -38,8 +38,8 @@ Route::controller(HomeController::class)->middleware(['auth:staff', 'check.permi
     Route::get('/add-category', 'add_category')->name('add-category');
     Route::post('/add-category-post', 'add_category_post')->name('add-category-post');
     Route::get('/search-products', 'search_products')->name('search-products');
-    Route::get('delete_product/{id}', 'delete');
-    Route::get('delete_category/{id}', 'delete_category');
+    Route::get('delete_product/{id}', 'delete')->name('delete_product');
+    Route::get('delete_category/{id}', 'delete_category')->name('delete_category');
     Route::get('/edit_product', 'edit')->name('edit_product');
     // Route::get('/edit_category', 'edit_category')->name('edit_category');
 

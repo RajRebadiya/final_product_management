@@ -205,7 +205,7 @@
                         height="50">
                 </div>
                 <div style="text-align: center; font-weight: bold; padding: 5px; margin-top: 7px;">
-                    RATE ₹{{ number_format($product->price, 2) }}
+                    RATE ₹{{ $product->price }}
                 </div>
             </div>
         </div>

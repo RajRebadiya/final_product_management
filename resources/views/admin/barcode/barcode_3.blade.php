@@ -193,7 +193,7 @@
             </div>
 
             <!-- Price Section -->
-            <p style='margin: 0px; font-size: 18px;'> Rate - ₹{{ number_format($product->price, 2) }}</p>
+            <p style='margin: 0px; font-size: 18px;'> Rate - ₹{{ $product->price }}</p>
 
 
         </div>
