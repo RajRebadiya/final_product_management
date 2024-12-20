@@ -25,6 +25,7 @@ class StaffController extends Controller
         // Validate the request
         $request->validate([
             'name' => 'required|string|max:255',
+            'market_name' => 'required|string|max:255',
             'mobile_no' => 'required|min:10|max:10|unique:tbl_staff,mobile_no',
             'email' => 'required|email|unique:tbl_staff,email',
             'password' => 'required|min:6',
@@ -47,6 +48,7 @@ class StaffController extends Controller
         $staff = new Staff();
         $staff->emp_code = $nextEmpCode;
         $staff->name = $request->name;
+        $staff->market_name = $request->market_name;
         $staff->mobile_no = $request->mobile_no;
         $staff->email = $request->email ?? null;
         $staff->role_id = $request->role;
@@ -69,6 +71,7 @@ class StaffController extends Controller
         // dd($id);
         $request->validate([
             'name' => 'required|string|max:255',
+            'market_name' => 'required|string|max:255',
             'mobile_no' => 'required|min:10|max:10',
             'email' => 'required|email',
             'role' => 'required|exists:roles,id',
@@ -76,6 +79,7 @@ class StaffController extends Controller
 
         $staff = Staff::findOrFail($id);
         $staff->name = $request->name ?? $staff->name;
+        $staff->market_name = $request->market_name ?? $staff->market_name;
         $staff->mobile_no = $request->mobile_no ?? $staff->mobile_no;
         $staff->email = $request->email ?? $staff->email;
         $staff->role_id = $request->role ?? $staff->role_id;

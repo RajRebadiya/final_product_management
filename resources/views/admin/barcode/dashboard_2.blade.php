@@ -486,7 +486,7 @@
                                                 alt="Barcode {{ $barcodeNumber }}">
                                             <button style="display: block; margin-left: 75px; margin-top: 10px;"
                                                 class="btn btn-primary btn-sm content-icon"
-                                                onclick="{{ $barcodes[$barcodeNumber]['printFunction'] }}('{{ $item['id'] }}')">
+                                                onclick="{{ $barcodes[$barcodeNumber]['printFunction'] }}('{{ $item['name'] }}')">
                                                 <i class="fa-solid fa-print"></i> Print
                                             </button>
                                         </td>
@@ -546,6 +546,7 @@
     </script>
     <script>
         function openPrintPage1(productId) {
+            console.log('Product ID:', productId);
             // Redirect to the new route with the productId
             window.location.href = `/barcode1/${productId}`;
         }

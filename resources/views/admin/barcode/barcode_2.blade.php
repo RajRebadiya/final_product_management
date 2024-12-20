@@ -91,6 +91,8 @@
             background-color: #45a049;
         }
 
+
+
         @media print {
             body {
                 font-family: "Lexend", serif;
@@ -114,6 +116,10 @@
                 margin: 0;
             }
 
+            #search-form {
+                display: none;
+            }
+
             .barcode-item {
                 page-break-inside: avoid;
                 height: 170px;
@@ -125,6 +131,19 @@
 </head>
 
 <body>
+    <form method="GET" id='search-form' action="{{ route('barcode2', ['id' => $product->p_name ?? null]) }}"
+        class="mb-4" style="text-align: center; margin-bottom: 20px; margin-top: 2%;">
+        <div class="input-group" style="max-width: 500px; margin: 0 auto; position: relative;">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                placeholder="Search by Design No" aria-label="Search"
+                style="border: 2px solid #4CAF50; border-radius: 25px; padding: 10px 15px; font-size: 16px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: 0.3s;width: 92%;">
+            <button class="btn btn-primary" type="submit"
+                style="position: absolute; right: 0; top: 0; height: 100%; border-radius: 25px; background-color: #4CAF50; color: white; border: none; padding: 0 20px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: 0.3s;">
+                Search
+            </button>
+        </div>
+    </form>
+
     <div class="product-info"
         style="text-align: center; background-color: #f8f9fa; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin: 20px auto; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); width: 60%; max-width: 500px;">
         <!-- Product Image -->

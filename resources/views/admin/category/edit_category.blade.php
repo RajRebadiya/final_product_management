@@ -59,7 +59,7 @@
             <div class="mb-3 col-md-3 mt-5">
                 <label for="name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="name" name="name"
-                    value="{{ old('name', $category->name) }}" readonly>
+                    value="{{ old('name', $category->name) }}" required>
                 @error('name')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror

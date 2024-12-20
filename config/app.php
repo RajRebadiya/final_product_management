@@ -193,6 +193,7 @@ return [
         // 'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
 
         // 'Image' => Intervention\Image\Facades\Image::class,
         // 'Example' => App\Facades\Example::class,

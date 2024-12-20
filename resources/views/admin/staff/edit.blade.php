@@ -34,7 +34,21 @@
                                     value="{{ old('name', $staff->name) }}" required>
                                 <div class="invalid-feedback">Please provide a valid name.</div>
                             </div>
-
+                            <div class="form-group mb-4">
+                                <label for="market_name" class="form-label">Market Name <span
+                                        class="text-danger">*</span></label>
+                                <select name="market_name" class="form-control form-select"
+                                    value="{{ old('market_name') ?? $staff->market_name }}" id="market_name" required>
+                                    <option value="" disabled selected>Select Market Name</option>
+                                    <option value="GTM">GTM</option>
+                                    <option value="MTM">MTM</option>
+                                    <option value="ATM">ATM</option>
+                                </select>
+                                <div class="invalid-feedback">Please select a market name.</div>
+                                @error('market_name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
                             <!-- Mobile No Field -->
                             <div class="form-group mb-4">
                                 <label for="mobile_no" class="form-label">Mobile No <span

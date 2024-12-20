@@ -277,25 +277,32 @@
         <button class="print-button" onclick="window.print()">Print Order</button>
     </div>
 
-    <!-- Footer Section -->
     <footer class="footer">
-        <div class="contact-info" style='float: left'>
-            <p style="
-            margin-left: -19px;
-        ">Email: order.veercreation@gmail.com | <a
-                    href="http://www.veercreation.com" target="_blank">www.veercreation.com</a></p>
-            <p>Order Booking 📞 74055 29000 | Customer Care 📞 72848 80000</p>
+        <div class="contact-info" style="float: left; display: flex; align-items: center;">
+            <!-- QR Code Section -->
+            <div style="margin-right: 15px;">
+                {!! DNS2D::getBarcodeHTML($order_number, 'QRCODE', 2, 2) !!}
+            </div>
+
+            <!-- Contact Information -->
+            <div>
+                <p style="margin: 0px;margin-left: -18px;">
+                    Email: order.veercreation@gmail.com |
+                    <a href="http://www.veercreation.com" target="_blank">www.veercreation.com</a>
+                </p>
+                <p style="margin: 0;">Order Booking 📞 74055 29000 | Customer Care 📞 72848 80000</p>
+            </div>
         </div>
-        <br><br>
-        <div class="footer-notes" style="
-        background-color: #dd0000;
-        width: 100%;
-    ">
-            <span>NO LESS DHARA</span>
-            <span>NO GOODS RETURN</span>
+
+        <!-- Footer Notes -->
+        <div class="footer-notes"
+            style="background-color: #dd0000; width: 100%; text-align: center; color: white; padding: 10px 0; margin-top: 20px;">
+            <span style="margin-right: 20px;">NO LESS DHARA</span>
+            <span style="margin-right: 20px;">NO GOODS RETURN</span>
             <span>GST AS APPLICABLE</span>
         </div>
     </footer>
+
 
 </body>
 

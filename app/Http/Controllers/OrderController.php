@@ -322,8 +322,10 @@ class OrderController extends Controller
             'order' => $order,       // Order details
             'products' => $products  // Merged product data
         ];
+        // dd($orderArray);
+        $order_number = $orderArray['order_number'];
 
-        return view('admin.order.pdf_summary', compact('orderArray', 'products'));
+        return view('admin.order.pdf_summary', compact('orderArray', 'products', 'order_number'));
 
     }
     public function downloadSummaryPDFIMages(Request $request, $orderNumber)
@@ -375,8 +377,8 @@ class OrderController extends Controller
             'order' => $order,       // Order details
             'products' => $products  // Merged product data
         ];
-
-        return view('admin.order.pdf_summary_image', compact('orderArray', 'products'));
+        $order_number = $orderArray['order_number'];
+        return view('admin.order.pdf_summary_image', compact('orderArray', 'products', 'order_number'));
 
     }
 

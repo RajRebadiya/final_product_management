@@ -45,10 +45,6 @@ Route::controller(ApiController::class)->group(function () {
 
     Route::get('/displayAllProducts', 'displayAllProducts')->name('displayAllProducts');
 
-
-
-
-
 });
 
 Route::controller(StaffController::class)->group(function () {
@@ -59,6 +55,8 @@ Route::controller(StaffController::class)->group(function () {
     Route::get('/get_config', 'get_config')->name('get_config')->middleware('auth:sanctum');
     Route::post('/get_colors', 'get_colors')->name('get_colors')->middleware('auth:sanctum');
     Route::post('/add_color', 'add_color')->name('add_color')->middleware('auth:sanctum');
+    Route::post('/forget_password', 'forget_password')->name('forget_password');
+    Route::get('/staff_list', 'staff_list')->name('staff_list');
 });
 
 Route::controller(OrderController::class)->group(function () {

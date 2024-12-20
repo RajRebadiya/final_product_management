@@ -231,4 +231,64 @@ class StaffController extends Controller
             'message' => 'Color added successfully',
         ]);
     }
+
+    public function forget_password(Request $request)
+    {
+        $rules = [
+            'id' => 'required',
+            'password' => 'required|min:6',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $errorMessage = implode(' ', $errors);
+            return response()->json([
+                'status_code' => 400,
+                'message' => $errorMessage,
+                'data' => []
+            ]);
+        }
+        $staff = Staff::where('id', $request->id)->first();
+        if (!$staff) {
+            return response()->json([
+                'status_code' => 404,
+                'message' => 'User not found',
+            ]);
+        }
+
+        if ($staff) {
+            $staff->password = $request->password;
+            $staff->save();
+            return response()->json([
+                'status_code' => 200,
+                'message' => 'Password changed successfully',
+            ]);
+        }
+    }
+    public function staff_list(Request $request)
+    {
+        // Fetch staff with their roles
+        $staff = Staff::with('role')->get();
+
+        // Transform the data to include the role name directly
+        $staffData = $staff->map(function ($staff) {
+            return [
+                'id' => $staff->id,
+                'name' => $staff->name,
+                'email' => $staff->email,
+                'market_name' => $staff->market_name,
+                'mobile_no' => $staff->mobile_no,
+                'password' => $staff->password,
+                'emp_code' => $staff->emp_code,
+                'status' => $staff->status,
+                'role_name' => $staff->role->name ?? 'No Role Assigned', // Include role name
+            ];
+        });
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'Staff list fetched successfully',
+            'data' => $staffData,
+        ]);
+    }
 }

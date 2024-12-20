@@ -363,33 +363,87 @@ class HomeController extends Controller
         return view('admin.category.edit_category', compact('category'));
     }
 
+    // public function update_category(Request $request)
+    // {
+    //     // dd($request->all());
+    //     $request->validate([
+    //         'id' => 'required|exists:categories,id',
+    //         'price' => 'required|numeric|min:0',
+    //         'category_name_2' => 'required|string|max:255',
+    //         'category_name_3' => 'required|string|max:255',
+    //     ]);
+
+    //     $category = Category::find($request->input('id'));
+    //     $category->price = $request->input('price');
+    //     $category->category_name_2 = $request->input('category_name_2');
+    //     $category->category_name_3 = $request->input('category_name_3');
+    //     $category->save();
+    //     $product = Product::where('category_name', $category->name)->get();
+    //     foreach ($product as $item) {
+    //         $item->price = $request->input('price');
+    //         $item->save();
+    //     }
+    //     return redirect()->route('category')->with('success', 'Category updated successfully.');
+    //     // dd($product);
+    // }
+
     public function update_category(Request $request)
     {
-        // dd($request->all());
+        // Validate the request
         $request->validate([
             'id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'category_name_2' => 'required|string|max:255',
             'category_name_3' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255', // Include 'name' as an optional input
         ]);
 
         $category = Category::find($request->input('id'));
+        $oldName = $category->name; // Store the old category name
+        $newName = $request->input('name'); // New category name from the request
+
+        // Update the category details
         $category->price = $request->input('price');
         $category->category_name_2 = $request->input('category_name_2');
         $category->category_name_3 = $request->input('category_name_3');
-        $category->save();
-        $product = Product::where('category_name', $category->name)->get();
-        foreach ($product as $item) {
-            $item->price = $request->input('price');
-            $item->save();
+
+        if ($newName) {
+            $category->name = $newName;
+
+            // Update folder names in public/storage
+            $oldImagePath = public_path("storage/images/{$oldName}");
+            $newImagePath = public_path("storage/images/{$newName}");
+            $oldThumbnailPath = public_path("storage/thumbnail/{$oldName}");
+            $newThumbnailPath = public_path("storage/thumbnail/{$newName}");
+
+            if (file_exists($oldImagePath)) {
+                rename($oldImagePath, $newImagePath);
+            }
+            if (file_exists($oldThumbnailPath)) {
+                rename($oldThumbnailPath, $newThumbnailPath);
+            }
+
+            // Update category_name in all related products
+            Product::where('category_name', $oldName)
+                ->update(['category_name' => $newName]);
         }
+
+        $category->save();
+
+        // Update prices in the product table
+        $products = Product::where('category_name', $category->name)->get();
+        foreach ($products as $product) {
+            $product->price = $request->input('price');
+            $product->save();
+        }
+
         return redirect()->route('category')->with('success', 'Category updated successfully.');
-        // dd($product);
     }
+
 
     public function update(Request $request)
     {
-                // dd($request->all());
+        // dd($request->all());
 
         $request->validate([
             'id' => 'required|exists:products,id',
@@ -781,40 +835,148 @@ class HomeController extends Controller
         ]);
     }
 
-    public function printProduct1($id)
+    public function printProduct1($id = null, Request $request)
     {
-        $product = Product::findOrFail($id);
-        // dd($product);
+        // Fetch all query parameters for debugging
+        $queryParams = $request->all();
+        // dd($queryParams);
+
+        // Fetch the search query
+        $search = $request->input('search');
+
+        if ($search) {
+            // Search products by name or category
+            $product = Product::where('p_name', 'LIKE', "%$search%")
+                ->orWhere('category_name', 'LIKE', "%$search%")
+                ->first();
+        } elseif ($id) {
+            // Fetch the product by ID if no search query
+            $product = Product::where('p_name', $id)->first();
+        } else {
+            $product = null; // No product found
+        }
 
         return view('admin.barcode.barcode_1', compact('product'));
     }
-    public function printProduct2($id)
+    public function printProduct2($id = null, Request $request)
     {
-        $product = Product::findOrFail($id);
-        // dd($product);
+        // Fetch all query parameters for debugging
+        $queryParams = $request->all();
+        // dd($queryParams);
+
+        // Fetch the search query
+        $search = $request->input('search');
+
+        if ($search) {
+            // Search products by name or category
+            $product = Product::where('p_name', 'LIKE', "%$search%")
+                ->orWhere('category_name', 'LIKE', "%$search%")
+                ->first();
+        } elseif ($id) {
+            // Fetch the product by ID if no search query
+            $product = Product::where('p_name', $id)->first();
+        } else {
+            $product = null; // No product found
+        }
 
         return view('admin.barcode.barcode_2', compact('product'));
     }
-    public function printProduct3($id)
+    public function printProduct3($id = null, Request $request)
     {
-        $product = Product::findOrFail($id);
-        // dd($product);
+        // Fetch all query parameters for debugging
+        $queryParams = $request->all();
+        // dd($queryParams);
+
+        // Fetch the search query
+        $search = $request->input('search');
+
+        if ($search) {
+            // Search products by name or category
+            $product = Product::where('p_name', 'LIKE', "%$search%")
+                ->orWhere('category_name', 'LIKE', "%$search%")
+                ->first();
+        } elseif ($id) {
+            // Fetch the product by ID if no search query
+            $product = Product::where('p_name', $id)->first();
+        } else {
+            $product = null; // No product found
+        }
 
         return view('admin.barcode.barcode_3', compact('product'));
     }
-    public function printProduct4($id)
+    public function printProduct4($id = null, Request $request)
     {
-        $product = Product::findOrFail($id);
-        // dd($product);
+        // Fetch all query parameters for debugging
+        $queryParams = $request->all();
+        // dd($queryParams);
+
+        // Fetch the search query
+        $search = $request->input('search');
+
+        if ($search) {
+            // Search products by name or category
+            $product = Product::where('p_name', 'LIKE', "%$search%")
+                ->orWhere('category_name', 'LIKE', "%$search%")
+                ->first();
+        } elseif ($id) {
+            // Fetch the product by ID if no search query
+            $product = Product::where('p_name', $id)->first();
+        } else {
+            $product = null; // No product found
+        }
 
         return view('admin.barcode.barcode_4', compact('product'));
     }
-    public function printProduct5($id)
+    // public function printProduct5($id)
+    // {
+    //     $product = Product::findOrFail($id);
+
+    //     // // Check if a product was found
+    //     // if ($product) {
+    //     //     // Redirect to the barcode5 route with the product's ID
+    //     //     return redirect()->route('barcode5', ['id' => $product->id])->with('product', $product);
+    //     // }
+    //     // dd($product);
+
+    //     return view('admin.barcode.barcode_5', compact('product'));
+    // }
+    // public function printProduct5($id, Request $request)
+    // {
+    //     // dd($id);
+    //     // dd($request->all());
+    //     $search = $request->input('search');
+
+    //     // Fetch product based on ID, applying search if provided
+    //     $product = Product::where('p_name', $id)->first();
+
+
+    //     return view('admin.barcode.barcode_5', compact('product'));
+    // }
+    public function printProduct5($id = null, Request $request)
     {
-        $product = Product::findOrFail($id);
-        // dd($product);
+        // Fetch all query parameters for debugging
+        $queryParams = $request->all();
+        // dd($queryParams);
+
+        // Fetch the search query
+        $search = $request->input('search');
+
+        if ($search) {
+            // Search products by name or category
+            $product = Product::where('p_name', 'LIKE', "%$search%")
+                ->orWhere('category_name', 'LIKE', "%$search%")
+                ->first();
+        } elseif ($id) {
+            // Fetch the product by ID if no search query
+            $product = Product::where('p_name', $id)->first();
+        } else {
+            $product = null; // No product found
+        }
 
         return view('admin.barcode.barcode_5', compact('product'));
     }
+
+
+
 
 }

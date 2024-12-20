@@ -478,6 +478,34 @@
                         </div>
                     </a>
                 </div>
+                <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        width: 91%;
+                        padding: 10px 20px;
+                        background-color: #dd2b1c;
+                        border-radius: 8px;
+                        margin-right: -1%;
+                        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                    ">
+                
+                    <!-- User Info -->
+                    <div style="text-align: center;">
+                        
+                        <p style="margin: 0; font-size: 14px; color: #fff;">{{ $user->name}}</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <h3 style="font-size: 16px; margin: 0; font-weight: bold; color: #fff;">{{ $user->role->name}}</h3>
+                        
+                    </div>
+                
+                    <!-- Email and Profile -->
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <h3 style="font-size: 14px; margin: 0; font-weight: bold; color: #fff;">{{ $user->email}}</h3>
+                        
+                    </div>
+            </div>
                 {{-- <div class="search-box navbar-top-search-box d-none d-lg-block" data-list='{"valueNames":["title"]}'
                     style="width:25rem;">
                     <form class="position-relative" data-bs-toggle="search" data-bs-display="static"><input
@@ -490,7 +518,7 @@
                     </div>
                 </div> --}}
                 <ul class="navbar-nav navbar-nav-icons flex-row">
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <div class="theme-control-toggle fa-icon-wait px-2"><input
                                 class="form-check-input ms-0 theme-control-toggle-input" type="checkbox"
                                 data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" /><label
@@ -502,7 +530,7 @@
                                 for="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left"
                                 data-bs-title="Switch theme" style="height:32px;width:32px;"><span class="icon"
                                     data-feather="sun"></span></label></div>
-                    </li>
+                    </li> --}}
                     <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser"
                             href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside"
                             aria-haspopup="true" aria-expanded="false">

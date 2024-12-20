@@ -60,11 +60,14 @@ Route::controller(HomeController::class)->middleware(['auth:staff', 'check.permi
     Route::get('edit_category', 'edit_category')->name('edit_category');
     Route::post('update_category', 'update_category')->name('update_category');
 
-    Route::get('/barcode1/{id}', 'printProduct1')->name('barcode1');
-    Route::get('/barcode2/{id}', 'printProduct2')->name('barcode2');
-    Route::get('/barcode3/{id}', 'printProduct3')->name('barcode3');
-    Route::get('/barcode4/{id}', 'printProduct4')->name('barcode4');
-    Route::get('/barcode5/{id}', 'printProduct5')->name('barcode5');
+    Route::get('/barcode1/{id?}', 'printProduct1')->name('barcode1');
+    Route::get('/barcode2/{id?}', 'printProduct2')->name('barcode2');
+    Route::get('/barcode3/{id?}', 'printProduct3')->name('barcode3');
+    Route::get('/barcode4/{id?}', 'printProduct4')->name('barcode4');
+    // Route::get('/barcode5/{id}', 'printProduct5')->name('barcode5');
+    Route::get('/barcode5/{id?}', 'printProduct5')->name('barcode5');
+
+
 
     Route::get('barcode', 'barcode')->name('barcode')->middleware('check.permission');
 
