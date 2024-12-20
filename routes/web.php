@@ -88,8 +88,8 @@ Route::controller(OrderController::class)->middleware(['auth:staff', 'check.perm
     Route::get('/offer_form_list', 'offer_form_list')->name('offer_form_list');
     Route::get('/offer_form_detail/{id}', 'offer_form_detail')->name('offer_form_detail');
     Route::post('/save-temp-order', 'save_temp_order')->name('save-temp-order');
-    Route::get('/download_summary/{id}', 'downloadSummaryPDF')->name('download_summary');
-    Route::get('/download_summary_with_images/{id}', 'downloadSummaryPDFIMages')->name('download_summary_with_images');
+    Route::get('/offer_form_download_summary/{id}', 'downloadSummaryPDF')->name('offer_form_download_summary');
+    Route::get('/offer_form_download_summary_with_images/{id}', 'downloadSummaryPDFIMages')->name('offer_form_download_summary_with_images');
     Route::get('/download_full/{id}', 'downloadFullPDF')->name('download_full');
 
     Route::get('offer_form_detail/{order_number}', [OrderController::class, 'showOfferFormDetail'])->name('order.offer_form_detail');

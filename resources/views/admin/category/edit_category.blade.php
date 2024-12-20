@@ -56,6 +56,30 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+            <div class="mb-3 col-md-3 mt-5">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                    value="{{ old('name', $category->name) }}" readonly>
+                @error('name')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3 col-md-3 mt-5">
+                <label for="category_name_2" class="form-label">Tansi</label>
+                <input type="text" class="form-control" id="category_name_2" name="category_name_2"
+                    value="{{ old('category_name_2', $category->category_name_2) }}" required>
+                @error('category_name_2')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="mb-3 col-md-3 mt-5">
+                <label for="category_name_3" class="form-label">Tiya</label>
+                <input type="text" class="form-control" id="category_name_3" name="category_name_3"
+                    value="{{ old('category_name_3', $category->category_name_3) }}" required>
+                @error('category_name_3')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
 
             <!-- Submit and Cancel Buttons -->

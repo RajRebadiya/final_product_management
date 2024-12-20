@@ -87,6 +87,19 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+            <div class="mb-3">
+                <label for="product_status" class="form-label">Product Status</label>
+                <select class="form-select" id="product_status" name="product_status" required>
+                    <option value="Active"
+                        {{ old('status', $product->status) == 'Active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive"
+                        {{ old('status', $product->status) == 'inactive' ? 'selected' : '' }}>Inactive
+                    </option>
+                </select>
+                @error('product_status')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </div>
 
 
             <!-- Product Image -->

@@ -180,11 +180,11 @@
     </div> --}}
     <div class="barcode-container" id="barcode-container">
         <div class="barcode-item"
-            style="width: 200px;height: 105px;box-sizing: border-box;padding: 0px;margin-top: 15px;">
+            style="width: 200px;height: 105px;box-sizing: border-box;padding: 0px;margin-top: 15px; border: 2px solid #000;">
 
             <!-- Product Category and Name -->
-            <p style='margin: 0px; font-size: 18px; font-weight: 900;'>{{ $product->category_name }}</p>
-            <p style="margin: 0px;margin-bottom: 3px; font-size: 18px; font-weight: 900;">D.No - {{ $product->p_name }}
+            <p style='margin: 0px; font-size: 15px; font-weight: 900;'>{{ $product->category_name }}</p>
+            <p style="margin: 0px;margin-bottom: 3px; font-size: 15px; font-weight: 900;">D.No - {{ $product->p_name }}
             </p>
 
             <!-- Barcode Section -->
@@ -193,7 +193,7 @@
             </div>
 
             <!-- Price Section -->
-            <p style='margin: 0px; font-size: 18px;'> Rate - ₹{{ number_format($product->price, 2) }}</p>
+            <p style='margin: 0px;'> Rate - ₹{{ number_format($product->price, 2) }}</p>
 
 
         </div>

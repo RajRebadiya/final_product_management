@@ -180,7 +180,7 @@
     </div> --}}
     <div class="barcode-container" id="barcode-container">
         <div class="barcode-item"
-            style="width: 200px;height: 103px;box-sizing: border-box;padding: 5px;margin-top: 15px; ">
+            style="width: 200px;height: 103px;box-sizing: border-box;padding: 5px;margin-top: 15px; border: 2px solid #000;">
 
             <!-- Product Category and Name -->
             <p style='margin: 0px; font-size: 18px; font-weight: 900;'>{{ $product->category_name }}</p>

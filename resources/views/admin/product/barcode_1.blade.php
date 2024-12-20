@@ -177,7 +177,7 @@
     </div> --}}
     <div class="barcode-container" id="barcode-container">
         <div class="barcode-item"
-            style="width: 170px;height: 82px;box-sizing: border-box;padding: 12px;margin-top: 10px; ">
+            style="width: 170px;height: 82px;box-sizing: border-box;padding: 12px;margin-top: 10px; border: 2px solid #000;">
 
             <div>
                 {!! DNS1D::getBarcodeHTML($product->p_name, 'C128') !!}

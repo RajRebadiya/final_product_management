@@ -281,7 +281,9 @@ class HomeController extends Controller
         // dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
-            'price' => 'required|int|min:0'
+            'price' => 'required|int|min:0',
+            'category_name_2' => 'required|string|max:255',
+            'category_name_3' => 'required|string|max:255',
         ]);
 
 
@@ -295,6 +297,8 @@ class HomeController extends Controller
 
         $category = new Category();
         $category->name = $request->name;
+        $category->category_name_2 = $request->category_name_2;
+        $category->category_name_3 = $request->category_name_3;
         $category->status = 'Active';
         $category->price = $request->price;
         $category->save();
@@ -365,10 +369,14 @@ class HomeController extends Controller
         $request->validate([
             'id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'category_name_2' => 'required|string|max:255',
+            'category_name_3' => 'required|string|max:255',
         ]);
 
         $category = Category::find($request->input('id'));
         $category->price = $request->input('price');
+        $category->category_name_2 = $request->input('category_name_2');
+        $category->category_name_3 = $request->input('category_name_3');
         $category->save();
         $product = Product::where('category_name', $category->name)->get();
         foreach ($product as $item) {
@@ -381,6 +389,8 @@ class HomeController extends Controller
 
     public function update(Request $request)
     {
+                // dd($request->all());
+
         $request->validate([
             'id' => 'required|exists:products,id',
             'p_name' => 'required|string|max:255',
@@ -452,11 +462,12 @@ class HomeController extends Controller
         $product->stock_status = $request->input('stock_status');
         $product->image = $imageName ?? $product->image;
         $product->thumb = $thumbimageName ?? $product->thumb;
-        $product->status = $product->status;
         $product->sync = 0;
         $product->qty = $request->input('qty');
         $product->category_name = $category_name;
         $product->price = $request->input('price');
+        $product->status = $request->input('product_status');
+
         $product->save();
 
         if ($request->colors) {

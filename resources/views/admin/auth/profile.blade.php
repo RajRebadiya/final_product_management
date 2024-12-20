@@ -46,7 +46,7 @@
                             </div><label class="avatar avatar-4xl status-online feed-avatar-profile cursor-pointer"
                                 for="upload-settings-porfile-picture"><img
                                     class="rounded-circle img-thumbnail shadow-sm border-0"
-                                    src="../../assets/img/team/20.webp" width="200" alt="" /></label>
+                                    src="../../assets/img/team/30.webp" width="200" alt="" /></label>
                         </div>
                         <div class="card-body">
                             <div class="row">

@@ -302,7 +302,7 @@
                 <!-- Vertical Navbar Content -->
                 <div class="navbar-vertical-content">
                     <ul class="navbar-nav flex-column" id="navbarVerticalNav">
-                        @if (Auth::guard('staff')->check())
+                       @if (Auth::guard('staff')->check())
                         @php
                       
                             
@@ -312,7 +312,6 @@
                   
                     @endphp 
                         @endif
-                       
         
                         <!-- Dashboard -->
                         @if (!empty($permissions['Dashboard']['read']) && $permissions['Dashboard']['read'])

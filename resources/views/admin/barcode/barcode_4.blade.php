@@ -204,7 +204,7 @@
                     <img src="{{ asset('assets/img/favicons/veer_red.png') }}" alt="Veer Logo" width="90"
                         height="50">
                 </div>
-                <div style="text-align: center; font-weight: bold; padding: 5px; margin-top: 7px;">
+                <div style="text-align: center; font-weight: bold; padding: 5px; margin-top: 16px;">
                     RATE ₹{{ $product->price }}
                 </div>
             </div>

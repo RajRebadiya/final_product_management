@@ -213,9 +213,9 @@
         </div>
         <!-- PDF Download Buttons -->
         <div class="d-flex justify-content-between mt-4">
-            <a href="{{ route('download_summary', $order->order_number) }}" class="btn btn-primary mb-3">Summary
+            <a href="{{ route('offer_form_download_summary', $order->order_number) }}" class="btn btn-primary mb-3">Summary
                 PDF</a>
-            <a href="{{ route('download_summary_with_images', $order->order_number) }}"
+            <a href="{{ route('offer_form_download_summary_with_images', $order->order_number) }}"
                 class="btn btn-primary mb-3">Summary
                 PDF with Images</a>
             {{-- <a href="#" onclick="window.print()" class="btn btn-secondary">Download Full PDF</a> --}}

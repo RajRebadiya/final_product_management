@@ -302,7 +302,10 @@
                 <!--           aria-label="Search"/>-->
                 <!--</form>-->
             </div>
-
+            @php
+                $user = Auth::guard('staff')->user()->email;
+                // dd($user);
+            @endphp
             <div class="table-responsive">
                 <table class="table table-hover table-bordered  table-sm fs-9 mb-0">
                     <thead class="table-light">
@@ -324,21 +327,31 @@
                                 <th class="text-center">Delete</th>
                             @endif
                             <th class="text-center">Add to Cart</th> --}}
-                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                <th class="text-center">Bar Code 1</th>
+                            @if ($user == 'wb1@veer.com')
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <th class="text-center">Bar Code 1</th>
+                                @endif
+                            @elseif ($user == 'wb2@veer.com')
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <th class="text-center">Bar Code 1</th>
+                                    <th class="text-center">Bar Code 2</th>
+                                    <th class="text-center">Bar Code 3</th>
+                                @endif
+                            @elseif ($user == 'sb1@veer.com')
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <th class="text-center">Bar Code 5</th>
+                                @endif
+                            @elseif ($user == 'mb1@veer.com')
+                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                    <th class="text-center">Bar Code 1</th>
+                                    <th class="text-center">Bar Code 2</th>
+                                    <th class="text-center">Bar Code 3</th>
+                                    {{-- Uncomment the line below if Barcode 4 is needed --}}
+                                    {{-- <th class="text-center">Bar Code 4</th> --}}
+                                    <th class="text-center">Bar Code 5</th>
+                                @endif
                             @endif
-                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                <th class="text-center">Bar Code 2</th>
-                            @endif
-                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                <th class="text-center">Bar Code 3</th>
-                            @endif
-                            {{-- @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                <th class="text-center">Bar Code 4</th>
-                            @endif --}}
-                            @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                <th class="text-center">Bar Code 5</th>
-                            @endif
+
                         </tr>
                     </thead>
                     <tbody class="list">
@@ -427,106 +440,59 @@
                                         <i class="fa-solid fa-cart-plus"></i>
                                     </button>
                                 </td> --}}
-                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                    <td class="text-center">
-                                        <img class=''
-                                            style="
-                                        margin-left: -22px;
-                                        height: 108px;
-                                    "
-                                            src="{{ asset('assets/img/barcode/barcode-1.png') }}" alt="Barcode 4">
-                                        <button
-                                            style="
-                                        display: block;
-                                        margin-left: 75px;
-                                        margin-top: 10px;
-                                    "
-                                            class="btn btn-primary btn-sm content-icon"
-                                            onclick="openPrintPage1('{{ $item['id'] }}')">
-                                            <i class="fa-solid fa-print"></i> Print
-                                        </button>
-                                    </td>
-                                @endif
-                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                    <td class="text-center">
-                                        <img class=''
-                                            style="
-                                        margin-left: -22px;
-                                        height: 108px;
-                                    "
-                                            src="{{ asset('assets/img/barcode/barcode-2.png') }}" alt="Barcode 4">
-                                        <button
-                                            style="
-                                        display: block;
-                                        margin-left: 75px;
-                                        margin-top: 10px;
-                                    "
-                                            class="btn btn-primary btn-sm content-icon"
-                                            onclick="openPrintPage2('{{ $item['id'] }}')">
-                                            <i class="fa-solid fa-print"></i> Print
-                                        </button>
-                                    </td>
-                                @endif
-                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                    <td class="text-center">
-                                        <img class=''
-                                            style="
-                                    margin-left: -22px;
-                                    height: 108px;
-                                "
-                                            src="{{ asset('assets/img/barcode/barcode-3.png') }}" alt="Barcode 4">
-                                        <button
-                                            style="
-                                    display: block;
-                                    margin-left: 75px;
-                                    margin-top: 10px;
-                                "
-                                            class="btn btn-primary btn-sm content-icon"
-                                            onclick="openPrintPage3('{{ $item['id'] }}')">
-                                            <i class="fa-solid fa-print"></i> Print
-                                        </button>
-                                    </td>
-                                @endif
-                                {{-- @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                    <td class="text-center">
-                                        <img class=''
-                                            style="
-                                        margin-left: -22px;
-                                        height: 108px;
-                                    "
-                                            src="{{ asset('assets/img/barcode/barcode-4.png') }}" alt="Barcode 4">
-                                        <button
-                                            style="
-                                        display: block;
-                                        margin-left: 75px;
-                                        margin-top: 10px;
-                                    "
-                                            class="btn btn-primary btn-sm content-icon"
-                                            onclick="openPrintPage4('{{ $item['id'] }}')">
-                                            <i class="fa-solid fa-print"></i> Print
-                                        </button>
-                                    </td>
-                                @endif --}}
-                                @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
-                                    <td class="text-center">
-                                        <img class=''
-                                            style="
-                                        margin-left: -22px;
-                                        height: 108px;
-                                    "
-                                            src="{{ asset('assets/img/barcode/barcode-4.png') }}" alt="Barcode 4">
-                                        <button
-                                            style="
-                                        display: block;
-                                        margin-left: 75px;
-                                        margin-top: 10px;
-                                    "
-                                            class="btn btn-primary btn-sm content-icon"
-                                            onclick="openPrintPage5('{{ $item['id'] }}')">
-                                            <i class="fa-solid fa-print"></i> Print
-                                        </button>
-                                    </td>
-                                @endif
+                                @php
+                                    // Define the barcodes and their corresponding print page functions
+                                    $barcodes = [
+                                        1 => [
+                                            'src' => 'assets/img/barcode/barcode-1.png',
+                                            'printFunction' => 'openPrintPage1',
+                                        ],
+                                        2 => [
+                                            'src' => 'assets/img/barcode/barcode-2.png',
+                                            'printFunction' => 'openPrintPage2',
+                                        ],
+                                        3 => [
+                                            'src' => 'assets/img/barcode/barcode-3.png',
+                                            'printFunction' => 'openPrintPage3',
+                                        ],
+                                        4 => [
+                                            'src' => 'assets/img/barcode/barcode-4.png',
+                                            'printFunction' => 'openPrintPage4',
+                                        ],
+                                        5 => [
+                                            'src' => 'assets/img/barcode/barcode-4.png',
+                                            'printFunction' => 'openPrintPage5',
+                                        ],
+                                    ];
+
+                                    // Define user-specific barcode visibility
+                                    $userBarcodeMapping = [
+                                        'wb1@veer.com' => [1],
+                                        'wb2@veer.com' => [1, 2, 3],
+                                        'sb1@veer.com' => [5],
+                                        'mb1@veer.com' => [1, 2, 3, 5],
+                                        'sb2@veer.com' => [5],
+                                    ];
+
+                                    // Get the barcodes visible for the current user, or default to all barcodes
+                                    $visibleBarcodes = $userBarcodeMapping[$user] ?? array_keys($barcodes);
+                                @endphp
+
+                                @foreach ($visibleBarcodes as $barcodeNumber)
+                                    @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
+                                        <td class="text-center">
+                                            <img style="margin-left: -22px; height: 108px;"
+                                                src="{{ asset($barcodes[$barcodeNumber]['src']) }}"
+                                                alt="Barcode {{ $barcodeNumber }}">
+                                            <button style="display: block; margin-left: 75px; margin-top: 10px;"
+                                                class="btn btn-primary btn-sm content-icon"
+                                                onclick="{{ $barcodes[$barcodeNumber]['printFunction'] }}('{{ $item['id'] }}')">
+                                                <i class="fa-solid fa-print"></i> Print
+                                            </button>
+                                        </td>
+                                    @endif
+                                @endforeach
+
 
 
                             </tr>

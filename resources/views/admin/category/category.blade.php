@@ -93,7 +93,11 @@
                         <tr>
                             <th class="sort border-top border-translucent ps-3" data-sort="no">No</th>
                             {{-- <th class="sort border-top" data-sort="image">image</th> --}}
-                            <th class="sort border-top border-translucent ps-3" data-sort="category_name">Category Name</th>
+                            <th class="sort border-top border-translucent ps-3" data-sort="category_name">VEER</th>
+                            <th class="sort border-top border-translucent ps-3" data-sort="category_name">TANSI
+                            </th>
+                            <th class="sort border-top border-translucent ps-3" data-sort="category_name">TIYA
+                            </th>
                             <th class="sort border-top" data-sort="price">Price</th>
                             {{-- <th class="sort border-top border-translucent ps-3" data-sort="stock_status">Stock Status</th> --}}
                             @if (!empty($permissions['Category']['update']) && $permissions['Category']['update'])
@@ -115,6 +119,8 @@
                                 <td class="align-middle ps-3 no">{{ $loop->iteration }}</td>
 
                                 <td class="align-middle ps-3 category_name">{{ $item['name'] }}</td>
+                                <td class="align-middle ps-3 category_name">{{ $item['category_name_2'] }}</td>
+                                <td class="align-middle ps-3 category_name">{{ $item['category_name_3'] }}</td>
                                 <td class="align-middle ps-3 price">{{ $item['price'] }}</td>
                                 <!-- Status Dropdown with Colors -->
                                 @if (!empty($permissions['Category']['update']) && $permissions['Category']['update'])
@@ -189,6 +195,18 @@
                                         Name</label><input class="form-control" type="text" name='name'
                                         placeholder="Enter Category name" />
                                     @error('name')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="mb-4"><label class="text-body-highlight fw-bold mb-2">TANSI</label><input class="form-control" type="text" name='category_name_2'
+                                        placeholder="Enter Category name" />
+                                    @error('category_name_2')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="mb-4"><label class="text-body-highlight fw-bold mb-2">TIYA</label><input class="form-control" type="text" name='category_name_3'
+                                        placeholder="Enter Category name" />
+                                    @error('category_name_3')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>

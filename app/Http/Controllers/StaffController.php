@@ -66,11 +66,11 @@ class StaffController extends Controller
 
     public function update(Request $request, $id)
     {
-        // dd($request->all());
+        // dd($id);
         $request->validate([
             'name' => 'required|string|max:255',
             'mobile_no' => 'required|min:10|max:10',
-            'email' => 'required|email|exists:tbl_staff,email',
+            'email' => 'required|email',
             'role' => 'required|exists:roles,id',
         ]);
 
@@ -82,7 +82,7 @@ class StaffController extends Controller
         $staff->status = 1;
         $staff->password = $request->password ?? $staff->password;
         $staff->save();
-
+        // dd($staff);
         return redirect()->route('staff.index')->with('success', 'Staff updated successfully.');
     }
 
