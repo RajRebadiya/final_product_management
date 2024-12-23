@@ -25,13 +25,13 @@ class OrderController extends Controller
 
         if ($isGstValid) {
             // If it's a valid GST number, search only by gst_no
-            $party = Party::where('gst_no', $search)->first();
+            $party = Party::where('gst_no', $search)->paginate(10);
         } else {
             // If not a valid GST, perform general search
             $party = Party::where('mobile_no', 'LIKE', "$search%")
                 ->orWhere('name', 'LIKE', "$search%")
                 ->orWhere('city', 'LIKE', "$search%")
-                ->first();
+                ->paginate(10);
         }
 
 
@@ -47,7 +47,7 @@ class OrderController extends Controller
         return response()->json([
             'status_code' => 200,
             'message' => 'Party found.',
-            'data' => [$party]
+            'data' => $party->items()
         ]);
     }
 
@@ -59,11 +59,13 @@ class OrderController extends Controller
                 'nullable',
                 'regex:/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1})$/'
             ],
+            'p_mobile_no' => 'required|min:10|max:10',
         ];
 
 
         $messages = [
             'p_gst_no.regex' => 'The GST number format is invalid. Please enter a valid GST number.',
+            'p_mobile_no.unique' => 'The mobile number already exists. Please enter a unique mobile number.',
         ];
 
 
@@ -97,6 +99,7 @@ class OrderController extends Controller
         if ($request->p_id) {
             // If the party exists, fetch and update
             $party = Party::find($request->p_id);
+
 
             if ($party) {
                 // Update the Party details with new values if they are provided
@@ -138,6 +141,14 @@ class OrderController extends Controller
                 ]);
             }
         } else {
+            $existingParty = Party::where('mobile_no', $request->p_mobile_no)->first();
+            if ($existingParty) {
+                return response()->json([
+                    'status_code' => 400,
+                    'message' => 'Mobile number already exists.',
+                    'data' => []
+                ]);
+            }
             // If the party does not exist, create a new one
             $party = new Party();
             $party->haste = $request->p_haste ?? ' ';
@@ -436,8 +447,9 @@ class OrderController extends Controller
                 'packing_box' => $order->packing_box,
                 'created_by' => $user->name,
                 'market_name' => $user->market_name,
+
                 'order_details' => $sortedGroupedOrderDetails, // Include sorted grouped order details by category_name
-                'created_at' => $order->created_at->format('Y-m-d H:i:s'),
+                'created_at' => $order->created_at,
             ];
         });
 

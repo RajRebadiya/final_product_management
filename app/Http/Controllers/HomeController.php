@@ -9,6 +9,7 @@ use App\Models\Cart;
 use Illuminate\Support\Str;
 use App\Models\ProductColor;
 use App\Models\Color;
+use DNS1D;
 use Illuminate\Support\Facades\Log;
 // use Illuminate\Support\Facades\Log;
 use Intervention\Image\Laravel\Facades\Image;
@@ -94,7 +95,7 @@ class HomeController extends Controller
         ])
             ->where(function ($query) use ($search) {
                 // Apply search condition for product name and category name
-                $query->where('p_name', 'like', "%$search")
+                $query->where('p_name', 'like', "$search")
                     ->orWhereHas('category', function ($query) use ($search) {
                     $query->where('name', 'like', "%$search%");
                 });
@@ -773,6 +774,17 @@ class HomeController extends Controller
         } elseif ($filter === 'inactive_product') {
             // For inactive products
             $query->where('status', 'inactive');
+        } elseif ($filter === 'inactive_product') {
+            // For inactive products
+            if (!$request->min_price || !$request->max_price) {
+                return response()->json([
+                    'status_code' => 400,
+                    'message' => 'Please provide min and max price',
+                ], 400);
+            }
+            $query->where('price', '>=', $request->min_price)
+                ->where('price', '<=', $request->max_price);
+            // $query->where('status', 'inactive');
         } else {
             // Default condition: Only active products
             $query->where('status', 'Active');
@@ -845,19 +857,28 @@ class HomeController extends Controller
         $search = $request->input('search');
 
         if ($search) {
-            // Search products by name or category
-            $product = Product::where('p_name', 'LIKE', "%$search%")
-                ->orWhere('category_name', 'LIKE', "%$search%")
+            // Search products by name or category, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where(function ($query) use ($search) {
+                    $query->where('p_name', 'LIKE', "$search")
+                        ->orWhere('category_name', 'LIKE', "$search");
+                })
                 ->first();
+            if (!$product) {
+                return redirect()->back()->with("error", "Product not found");
+            }
         } elseif ($id) {
-            // Fetch the product by ID if no search query
-            $product = Product::where('p_name', $id)->first();
+            // Fetch the product by ID if no search query, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where('p_name', $id)
+                ->first();
         } else {
             $product = null; // No product found
         }
 
         return view('admin.barcode.barcode_1', compact('product'));
     }
+
     public function printProduct2($id = null, Request $request)
     {
         // Fetch all query parameters for debugging
@@ -868,19 +889,28 @@ class HomeController extends Controller
         $search = $request->input('search');
 
         if ($search) {
-            // Search products by name or category
-            $product = Product::where('p_name', 'LIKE', "%$search%")
-                ->orWhere('category_name', 'LIKE', "%$search%")
+            // Search products by name or category, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where(function ($query) use ($search) {
+                    $query->where('p_name', 'LIKE', "$search")
+                        ->orWhere('category_name', 'LIKE', "$search");
+                })
                 ->first();
+            if (!$product) {
+                return redirect()->back()->with("error", "Product not found");
+            }
         } elseif ($id) {
-            // Fetch the product by ID if no search query
-            $product = Product::where('p_name', $id)->first();
+            // Fetch the product by ID if no search query, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where('p_name', $id)
+                ->first();
         } else {
             $product = null; // No product found
         }
 
         return view('admin.barcode.barcode_2', compact('product'));
     }
+
     public function printProduct3($id = null, Request $request)
     {
         // Fetch all query parameters for debugging
@@ -891,19 +921,28 @@ class HomeController extends Controller
         $search = $request->input('search');
 
         if ($search) {
-            // Search products by name or category
-            $product = Product::where('p_name', 'LIKE', "%$search%")
-                ->orWhere('category_name', 'LIKE', "%$search%")
+            // Search products by name or category, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where(function ($query) use ($search) {
+                    $query->where('p_name', 'LIKE', "$search")
+                        ->orWhere('category_name', 'LIKE', "$search");
+                })
                 ->first();
+            if (!$product) {
+                return redirect()->back()->with("error", "Product not found");
+            }
         } elseif ($id) {
-            // Fetch the product by ID if no search query
-            $product = Product::where('p_name', $id)->first();
+            // Fetch the product by ID if no search query, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where('p_name', $id)
+                ->first();
         } else {
             $product = null; // No product found
         }
 
         return view('admin.barcode.barcode_3', compact('product'));
     }
+
     public function printProduct4($id = null, Request $request)
     {
         // Fetch all query parameters for debugging
@@ -914,19 +953,29 @@ class HomeController extends Controller
         $search = $request->input('search');
 
         if ($search) {
-            // Search products by name or category
-            $product = Product::where('p_name', 'LIKE', "%$search%")
-                ->orWhere('category_name', 'LIKE', "%$search%")
+            // Search products by name or category, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where(function ($query) use ($search) {
+                    $query->where('p_name', 'LIKE', "$search")
+                        ->orWhere('category_name', 'LIKE', "$search");
+                })
                 ->first();
+            if (!$product) {
+                return redirect()->back()->with("error", "Product not found");
+            }
         } elseif ($id) {
-            // Fetch the product by ID if no search query
-            $product = Product::where('p_name', $id)->first();
+            // Fetch the product by ID if no search query, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where('p_name', $id)
+                ->first();
         } else {
             $product = null; // No product found
         }
 
         return view('admin.barcode.barcode_4', compact('product'));
     }
+
+
     // public function printProduct5($id)
     // {
     //     $product = Product::findOrFail($id);
@@ -962,13 +1011,22 @@ class HomeController extends Controller
         $search = $request->input('search');
 
         if ($search) {
-            // Search products by name or category
-            $product = Product::where('p_name', 'LIKE', "%$search%")
-                ->orWhere('category_name', 'LIKE', "%$search%")
+            // Search products by name or category, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where(function ($query) use ($search) {
+                    $query->where('p_name', 'LIKE', "$search")
+                        ->orWhere('category_name', 'LIKE', "$search");
+                })
                 ->first();
+
+            if (!$product) {
+                return redirect()->back()->with("error", "Product not found");
+            }
         } elseif ($id) {
-            // Fetch the product by ID if no search query
-            $product = Product::where('p_name', $id)->first();
+            // Fetch the product by ID if no search query, and ensure status is active
+            $product = Product::where('status', 'Active')
+                ->where('p_name', $id)
+                ->first();
         } else {
             $product = null; // No product found
         }
@@ -976,7 +1034,29 @@ class HomeController extends Controller
         return view('admin.barcode.barcode_5', compact('product'));
     }
 
+    public function showCustomBarcodePage()
+    {
+        return view('admin.barcode.custom_barcode');
+    }
 
+    public function generateCustomBarcode(Request $request)
+    {
+        $validated = $request->validate([
+            'barcode_type' => 'required|string',
+            'barcode_value' => 'required|string',
+            'product_name' => 'nullable|string',
+            'price' => 'nullable|numeric',
+        ]);
+
+        $barcodeHtml = DNS1D::getBarcodeHTML($validated['barcode_value'], $validated['barcode_type'], 2, 50);
+
+        return view('admin.barcode.custom_barcode_preview', [
+            'barcodeHtml' => $barcodeHtml,
+            'barcodeValue' => $validated['barcode_value'],
+            'productName' => $validated['product_name'] ?? '',
+            'price' => $validated['price'] ?? '',
+        ]);
+    }
 
 
 }

@@ -1043,6 +1043,17 @@ class ApiController extends Controller
                     $productQuery->orderBy('updated_at', 'desc');
                     break;
 
+                case 'custome_range':
+                    if (!$request->min_price || !$request->max_price) {
+                        return response()->json([
+                            'status_code' => 400,
+                            'message' => 'Please provide min and max price',
+                        ], 400);
+                    }
+                    $productQuery->where('price', '>=', $request->min_price)
+                        ->where('price', '<=', $request->max_price);
+                    break;
+
                 default:
                     return response()->json([
                         'status_code' => 400,

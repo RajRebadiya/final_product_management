@@ -83,7 +83,7 @@
         </form>
         {{-- @dd($categories); --}}
         <div id="tableExample3"
-            data-list='{"valueNames":["no","category_name","name","image" ,"stock_status" , "status"],"page":10,"pagination":true}'>
+            data-list='{"valueNames":["no","category_name","name","image" ,"stock_status" , "status"],"page":250,"pagination":true}'>
             <div class="search-box mb-3 mx-auto">
 
             </div>

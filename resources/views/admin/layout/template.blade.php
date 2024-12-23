@@ -568,10 +568,31 @@
                                                     xmlns="http://www.w3.org/2000/svg" width="16px" height="16px"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="feather feather-pie-chart me-2 text-body align-bottom">
+                                                    class="feather feather-headphones me-2 text-body align-bottom">
                                                     <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
                                                     <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
                                                 </svg>Dashboard</a></li>
+                                                <li class="nav-item dropdown">
+                                                    <a class="nav-link px-3 d-block dropdown-toggle" href="#" id="supportDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <i class="fas fa-headphones me-2 text-body align-bottom"></i> <!-- Font Awesome Headphones Icon -->
+                                                        Support
+                                                    </a>
+                                                    <ul class="dropdown-menu" aria-labelledby="supportDropdown" style="margin-left: 24%; margin-top: -3%;">
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center" href="tel:8320009366">
+                                                                <i class="fas fa-user-circle me-2"></i> <!-- Font Awesome User Circle Icon -->
+                                                                Rohit Baraiya - 8320009366
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item d-flex align-items-center" href="tel:6353272524">
+                                                                <i class="fas fa-user-circle me-2"></i> <!-- Font Awesome User Circle Icon -->
+                                                                Raj Rebadiya - 6353272524
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                
 
                                         {{-- <li class="nav-item"><a class="nav-link px-3 d-block"
                                                 href="{{ route('roles.index') }}"><svg

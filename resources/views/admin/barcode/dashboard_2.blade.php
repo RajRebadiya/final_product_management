@@ -337,7 +337,7 @@
                                     <th class="text-center">Bar Code 2</th>
                                     <th class="text-center">Bar Code 3</th>
                                 @endif
-                            @elseif ($user == 'sb1@veer.com')
+                            @elseif ($user == 'mtm@veer.com')
                                 @if (!empty($permissions['Barcode']['create']) && $permissions['Barcode']['create'])
                                     <th class="text-center">Bar Code 5</th>
                                 @endif
@@ -469,9 +469,9 @@
                                     $userBarcodeMapping = [
                                         'wb1@veer.com' => [1],
                                         'wb2@veer.com' => [1, 2, 3],
-                                        'sb1@veer.com' => [5],
+                                        'mtm@veer.com' => [5],
                                         'mb1@veer.com' => [1, 2, 3, 5],
-                                        'sb2@veer.com' => [5],
+                                        'atm@veer.com' => [5],
                                     ];
 
                                     // Get the barcodes visible for the current user, or default to all barcodes

@@ -10,6 +10,11 @@
     {{-- <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet"> --}}
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&display=swap" rel="stylesheet">
 
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     <title>Print QR Code</title>
 
     <style>
@@ -130,6 +135,21 @@
 </head>
 
 <body>
+    @if (session('success'))
+        <div class="alert alert-secondary alert-dismissible fade show " role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show " role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                aria-label="Close"></button>
+        </div>
+    @endif
     <form method="GET" id='search-form' action="{{ route('barcode4', ['id' => $product->p_name ?? null]) }}"
         class="mb-4" style="text-align: center; margin-bottom: 20px; margin-top: 2%;">
         <div class="input-group" style="max-width: 500px; margin: 0 auto; position: relative;">

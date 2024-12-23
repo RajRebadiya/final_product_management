@@ -45,11 +45,18 @@ Route::controller(ApiController::class)->group(function () {
 
     Route::get('/displayAllProducts', 'displayAllProducts')->name('displayAllProducts');
 
+
+
+
+
 });
 
 Route::controller(StaffController::class)->group(function () {
     Route::post('/api_login', 'api_login')->name('api_login');
+    Route::post('/api_login_2', 'api_login_2')->name('api_login_2');
     Route::post('/api_logout', 'api_logout')->name('api_logout')->middleware('auth:sanctum');
+    Route::post('/api_logout_2', 'api_logout_2')->name('api_logout_2')->middleware('auth:sanctum');
+    Route::post('/reset_login', 'reset_login')->name('reset_login');
     Route::get('/get_profile', 'get_profile')->name('get_profile')->middleware('auth:sanctum');
     Route::get('/get_permissions', 'get_permissions')->name('get_permissions')->middleware('auth:sanctum');
     Route::get('/get_config', 'get_config')->name('get_config')->middleware('auth:sanctum');

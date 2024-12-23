@@ -67,6 +67,8 @@ Route::controller(HomeController::class)->middleware(['auth:staff', 'check.permi
     // Route::get('/barcode5/{id}', 'printProduct5')->name('barcode5');
     Route::get('/barcode5/{id?}', 'printProduct5')->name('barcode5');
 
+    Route::get('/custom-barcode', 'showCustomBarcodePage')->name('custom_barcode');
+    Route::post('/generate-custom-barcode', 'generateCustomBarcode')->name('custom.barcode.generate');
 
 
     Route::get('barcode', 'barcode')->name('barcode')->middleware('check.permission');
